@@ -1,0 +1,21 @@
+User-agent: Googlebot
+Allow: /
+Disallow: /leads
+
+User-agent: Bingbot
+Allow: /
+Disallow: /leads
+
+User-agent: Twitterbot
+Allow: /
+Disallow: /leads
+
+User-agent: facebookexternalhit
+Allow: /
+Disallow: /leads
+
+User-agent: *
+Allow: /
+Disallow: /leads
+
+Sitemap: https://dxbdubaicreekharbour.ae/sitemap.xml

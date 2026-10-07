@@ -1,38 +1,29 @@
-# dxbdubaicreekharbour.ae
+# Welcome to your Lovable project
 
-An independent buyer's guide to Dubai Creek Harbour with an enquiry form.
-Enquiries are saved in a Neon database and listed at `/leads` behind a
-password.
+This project was built with [Lovable](https://lovable.dev).
 
-## Going live
+## Build with Lovable
 
-1. **Vercel**: vercel.com → Add New → Project → import this repository.
-   It's detected as Next.js; leave the defaults.
-2. **Neon**: in the Vercel project, Storage → Connect Database → Neon
-   (or paste your own Neon pooled connection string as `DATABASE_URL`
-   under Settings → Environment Variables).
-3. **Leads password**: Settings → Environment Variables → add
-   `LEADS_PASSWORD` with a password of your choice.
-4. **Redeploy** once both variables are in (Deployments → ⋯ → Redeploy).
-   The build creates the enquiries table in Neon by itself.
-5. **Domain**: Settings → Domains → add `dxbdubaicreekharbour.ae` and
-   `www.dxbdubaicreekharbour.ae`, then copy the DNS records Vercel shows
-   into the .ae registrar's DNS panel.
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
 
-Open `https://dxbdubaicreekharbour.ae/leads` to see enquiries (any
-username, `LEADS_PASSWORD` as the password).
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
 
-## Working on it
+## Development
 
-```bash
-npm install
-npm run dev         # http://localhost:3000
-npm test            # type check, lint, and the site rules below
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
 ```
 
-`scripts/verify-site.mjs` guards the rules the site is built on: nothing
-naming any other business, no market figures (prices, PSF, yields, rents,
-transaction counts) in the copy, and the "not the official site / not
-Emaar" line stays in the footer.
+## Built with
 
-Copy lives in `src/lib/site.ts`.
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS
