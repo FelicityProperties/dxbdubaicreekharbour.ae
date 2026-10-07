@@ -7,6 +7,28 @@ import { BEDROOMS, BUDGETS, BUY_AS, FUNDING, TIMINGS } from "@/lib/site";
 
 const initial: EnquiryState = { ok: false, message: "" };
 
+const KEPT = ["name", "phone", "email", "buy_as", "bedrooms", "budget", "timing", "funding", "message", "consent"];
+
+/**
+ * The server action, with the failures it can't report itself caught here: a
+ * dropped connection, or a redeploy since the page was opened (the old page's
+ * action no longer exists). Uncaught, either replaces the whole page with an
+ * error screen and loses everything the visitor typed.
+ */
+async function send(prev: EnquiryState, form: FormData): Promise<EnquiryState> {
+  try {
+    return await submitEnquiry(prev, form);
+  } catch {
+    return {
+      ok: false,
+      message:
+        "We couldn't send that. Check your connection and press Send again. If it still doesn't go through, refresh the page and send it once more.",
+      fields: Object.fromEntries(KEPT.map((k) => [k, String(form.get(k) ?? "")])),
+      attempt: Date.now(),
+    };
+  }
+}
+
 const input =
   "w-full rounded-md border border-rule bg-white px-3.5 py-2.5 text-ink placeholder:text-ink-muted/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30";
 const label = "grid gap-1.5 text-sm font-medium text-ink";
@@ -26,7 +48,7 @@ function Choice({ name, title, options, value }: { name: string; title: string; 
 }
 
 export function EnquiryForm() {
-  const [state, action, pending] = useActionState(submitEnquiry, initial);
+  const [state, action, pending] = useActionState(send, initial);
   const f = state.fields ?? {};
 
   if (state.ok) {
@@ -69,11 +91,13 @@ export function EnquiryForm() {
         </span>
         <textarea className={`${input} min-h-28`} name="message" defaultValue={f.message} maxLength={2000} />
       </label>
-      {/* Honeypot — hidden from people, filled by bots. */}
+      {/* Honeypot — hidden from people, filled by bots. Its name and label
+          match nothing a browser or password manager autofills (never
+          "company", "website", "address"), or real buyers would be caught. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label>
-          Company
-          <input name="company" tabIndex={-1} autoComplete="off" />
+          Leave this empty
+          <input name="hp_ref" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
       <label className="flex items-start gap-2.5 text-sm text-ink-muted">

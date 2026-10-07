@@ -35,8 +35,11 @@ export async function submitEnquiry(_prev: EnquiryState, form: FormData): Promis
   const fail = (message: string): EnquiryState => ({ ok: false, message, fields, attempt: Date.now() });
 
   // Honeypot: a field people never see. Bots fill every input; pretend it
-  // worked so they don't retry.
-  if (field(form, "company", 200)) return { ok: true, message: "Thank you — we'll be in touch shortly." };
+  // worked so they don't retry. Logged so a false positive would show up.
+  if (field(form, "hp_ref", 200)) {
+    console.warn("enquiry: spam trap triggered — not saved");
+    return { ok: true, message: "Thank you — we'll be in touch shortly." };
+  }
 
   const name = field(form, "name", 120);
   const phone = field(form, "phone", 40);

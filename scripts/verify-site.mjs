@@ -13,7 +13,7 @@
  *
  *   node scripts/verify-site.mjs
  */
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 function walk(dir, out = []) {
@@ -25,7 +25,7 @@ function walk(dir, out = []) {
   return out;
 }
 
-const files = [...walk("src"), ...walk("public")];
+const files = [...walk("src"), ...(existsSync("public") ? walk("public") : [])];
 const text = Object.fromEntries(files.map((f) => [f, readFileSync(f, "utf8")]));
 
 let failures = 0;
