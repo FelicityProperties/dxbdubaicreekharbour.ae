@@ -8,10 +8,13 @@ export type EnquiryState = {
   message: string;
   /**
    * What the visitor typed, sent back on an error so the form can refill
-   * itself. React clears a form after its action runs; without this a
-   * buyer who hits one mistake has to type everything again.
+   * itself. React clears a form after its action runs (dropdowns included)
+   * so the form is rebuilt from these; without them a buyer who hits one
+   * mistake has to fill everything in again.
    */
   fields?: Record<string, string>;
+  /** Changes on every failed attempt, so the form rebuilds with `fields`. */
+  attempt?: number;
 };
 
 const KEPT = ["name", "phone", "email", "buy_as", "bedrooms", "budget", "timing", "funding", "message", "consent"];
@@ -29,7 +32,7 @@ const choice = (form: FormData, key: string, options: readonly string[]) => {
 
 export async function submitEnquiry(_prev: EnquiryState, form: FormData): Promise<EnquiryState> {
   const fields = Object.fromEntries(KEPT.map((k) => [k, field(form, k, 2000)]));
-  const fail = (message: string): EnquiryState => ({ ok: false, message, fields });
+  const fail = (message: string): EnquiryState => ({ ok: false, message, fields, attempt: Date.now() });
 
   // Honeypot: a field people never see. Bots fill every input; pretend it
   // worked so they don't retry.

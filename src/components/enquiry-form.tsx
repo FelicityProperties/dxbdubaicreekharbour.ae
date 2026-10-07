@@ -39,7 +39,7 @@ export function EnquiryForm() {
   }
 
   return (
-    <form action={action} className="relative grid gap-4 rounded-lg border border-rule bg-white p-6 sm:p-8">
+    <form key={state.attempt ?? 0} action={action} className="relative grid gap-4 rounded-lg border border-rule bg-white p-6 sm:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className={label}>
           Name
