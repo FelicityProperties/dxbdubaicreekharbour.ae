@@ -12,6 +12,7 @@
 ## Showcase architecture
 - Keep all project facts in the supplied typed data module; presentation reads them without calculations or fabricated defaults.
 - Use shared showcase components for cards, WhatsApp URLs, navigation and the exact disclaimer so every page remains consistent.
+- Keep the brand lockup in the shared Wordmark component with its pixel-tuned `.dxbch-*` styles, and serve every icon from `public/` wired through the root route head; this keeps header, footer and installed shortcuts identical.
 - Generate canonical social-image metadata through the shared helper in content-route heads, never at the root or on missing projects, to prevent inherited sharing previews.
 - Keep the full home showcase at the index route and project details at `/projects/$slug`; hash navigation is for sections of this explicitly requested scrolling home page.
 - The showcase is frontend-only with no persistence; enquiries leave the site through encoded WhatsApp links.

@@ -22,3 +22,7 @@
 - [x] Gallery grid skips the cover photo, lightbox keeps cycling the full list
 - [x] Larger lightbox close target, focus return and arrow-key navigation
 - [x] Hero headline width and caption backing at tablet width
+
+## Final brand mark
+- [x] New mark, favicon set, app icons and web manifest
+- [x] Header and footer lockup replaced with the supplied pixel-tuned markup
