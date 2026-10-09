@@ -208,3 +208,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
  .market-block h3 {font-size:24px;}
  .detail-heading .badge-row {margin-top:12px;}
 }
+/* WhatsApp brand green on the two always-visible WhatsApp buttons (the floating bubble and the phone bar). */
+.floating-wa,.wa-green {background:#25D366;color:#fff;}.floating-wa:hover,.wa-green:hover {background:#1EBE5D;color:#fff;}
+.floating-wa svg {width:26px;height:26px;}
+.mobile-nav .nav-link {display:inline-flex;align-items:center;min-height:40px;}

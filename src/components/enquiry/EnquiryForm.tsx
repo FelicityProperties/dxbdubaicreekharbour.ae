@@ -2,10 +2,9 @@
  * The enquiry form that saves to Neon (see src/lib/enquiries.functions.ts).
  */
 import { useState } from "react";
-import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
-import { whatsappUrl } from "@/components/showcase/shared";
+import { whatsappUrl, mailtoUrl, WhatsAppIcon } from "@/components/showcase/shared";
 import {
   ANY_PROJECT,
   BEDROOMS,
@@ -102,7 +101,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
         </div>
         <Button asChild variant="outline" className="mt-5">
           <a href={whatsappUrl(summary())} target="_blank" rel="noopener noreferrer">
-            <MessageCircle />
+            <WhatsAppIcon />
             Also send it on WhatsApp
           </a>
         </Button>
@@ -223,6 +222,12 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           rel="noopener noreferrer"
         >
           or WhatsApp us instead
+        </a>
+        <a
+          className="inline-flex min-h-11 items-center text-[13px] text-muted-foreground underline underline-offset-4"
+          href={mailtoUrl(v.project && v.project !== ANY_PROJECT ? `Enquiry: ${v.project}` : "Dubai Creek Harbour enquiry", summary())}
+        >
+          or email us
         </a>
       </div>
     </form>

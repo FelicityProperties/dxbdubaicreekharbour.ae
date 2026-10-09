@@ -8,6 +8,7 @@ export const SITE = {
   url: "https://dxbdubaicreekharbour.ae",
   whatsapp: "971563520611",
   whatsappDisplay: "+971 56 352 0611",
+  email: "mouhannadnwilati@gmail.com",
   dldPermit: "", // shown in the footer only once filled in
   pricesCheckedOn: "9 October 2026",
   constructionSource: "PropertyIndex — DLD registrations loaded through September 2026",

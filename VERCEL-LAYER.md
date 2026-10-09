@@ -51,6 +51,11 @@ by hand.
   - `LEADS_PASSWORD` — password for `/leads`, **at least 20 characters**
     (shorter ones are refused, because nothing slows down guessing). Set it
     before the last deployment or redeploy after setting it.
+  - `RESEND_API_KEY` — optional. When set, every new enquiry is also emailed
+    to `LEAD_EMAIL` (default: the address in `SITE.email`, currently the
+    owner's Gmail) through Resend; `LEAD_FROM` overrides the sender once a
+    domain is verified there. Without the key, enquiries are only saved to
+    the database and shown on `/leads`.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 

@@ -7,7 +7,7 @@
  * needs no setup.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { PROJECTS } from "@/data/projects";
+import { PROJECTS, SITE } from "@/data/projects";
 
 export const BUY_AS = ["A home to live in", "An investment", "Both / not sure"] as const;
 export const BEDROOMS = ["Studio", "1 bedroom", "2 bedrooms", "3 bedrooms", "4+ bedrooms", "Townhouse", "Not sure"] as const;
@@ -161,6 +161,32 @@ function createTable(sql: Sql): Promise<void> {
 
 const asObject = <T,>(d: unknown): T => (d && typeof d === "object" ? d : {}) as T;
 
+/**
+ * Lead alert by email, through Resend's HTTP API (no SDK needed). Switched on
+ * by RESEND_API_KEY in Vercel; goes to LEAD_EMAIL, or the site's own address
+ * when that is unset. A failure here is logged and never fails the enquiry —
+ * the enquiry is already saved and visible on /leads.
+ */
+async function emailLeadAlert(lead: Record<string, string | null>): Promise<void> {
+  const key = process.env["RESEND_API_KEY"];
+  if (!key) return;
+  const to = process.env["LEAD_EMAIL"] || SITE.email;
+  const from = process.env["LEAD_FROM"] || "DXB Creek Harbour <onboarding@resend.dev>";
+  const rows = Object.entries(lead).filter(([, v]) => v).map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`);
+  const subject = `New enquiry: ${lead["name"]}${lead["project"] && lead["project"] !== ANY_PROJECT ? ` — ${lead["project"]}` : ""}`;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to: [to], subject, text: `${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) console.error("lead alert not sent:", res.status, (await res.text()).slice(0, 200));
+  } catch (err) {
+    console.error("lead alert not sent:", err instanceof Error ? err.message : String(err));
+  }
+}
+
 export const submitEnquiry = createServerFn({ method: "POST" })
   .validator((d: unknown) => asObject<EnquiryInput>(d))
   .handler(async ({ data }): Promise<EnquiryResult> => {
@@ -206,6 +232,13 @@ export const submitEnquiry = createServerFn({ method: "POST" })
       console.error("enquiry not saved:", redact(err, url));
       return { ok: false, reason: "offline" };
     }
+
+    await emailLeadAlert({
+      name, phone, email: email || null, country: country || null, language: pick(data.language, LANGUAGES),
+      project: pick(data.project, PROJECT_OPTIONS), looking_for: pick(data.looking_for, LOOKING_FOR), buy_as: pick(data.buy_as, BUY_AS),
+      bedrooms: pick(data.bedrooms, BEDROOMS), budget: pick(data.budget, BUDGETS), timing: pick(data.timing, TIMINGS), funding: pick(data.funding, FUNDING),
+      message: message || null, page: text(data.page, 200) || null,
+    });
 
     return { ok: true, firstName: name.split(/\s+/)[0] ?? "" };
   });
