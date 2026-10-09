@@ -13,7 +13,7 @@ export const sharingMeta = (canonicalUrl: string, image = `${SITE.url}/og-image.
   { property: "og:url", content: canonicalUrl },
 ];
 export const GENERIC_MESSAGE = "Hi, I'm interested in Emaar's projects at Dubai Creek Harbour.";
-export const projectMessage = (name: string) => `Hi, I'm interested in ${name} at Dubai Creek Harbour. Please send me the latest price list, payment plan and available units.`;
+export const projectMessage = (name: string) => `Hi, I'm interested in ${name} at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan.`;
 export const whatsappUrl = (message = GENERIC_MESSAGE) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
 export const DISCLAIMER = `DXB Creek Harbour is an independent property showcase run by a Dubai broker. The projects shown are developed by Emaar Properties PJSC; this website is not owned, operated or endorsed by Emaar. Prices, sizes, unit counts, payment plans and handover dates are Emaar's own published figures as checked on ${SITE.pricesCheckedOn}; all can change without notice and availability is limited — confirm current details before you commit. Registered sale and rental figures are Dubai Land Department records supplied by ${SITE.constructionSource}; they are shown as registered and are not valuations or advice. Images and brochures are Emaar's; project names belong to their owners.`;
 
@@ -41,7 +41,7 @@ export function Header() {
   return <header className="site-header"><div className="container header-inner"><Wordmark /><nav className="main-nav" aria-label="Main navigation"><NavLinks /><WhatsApp variant="outline" className="header-wa">Let's talk <ArrowUpRight /></WhatsApp></nav><Button variant="ghost" size="icon" className="mobile-toggle" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</Button></div>{open && <nav className="mobile-nav" aria-label="Mobile navigation"><NavLinks onPick={() => setOpen(false)} /><WhatsApp /><a href={mailtoUrl()} className="nav-link"><Mail className="inline size-3.5 mr-1.5" />{SITE.email}</a></nav>}</header>;
 }
 export function Footer() {
-  return <><footer className="site-footer"><div className="container"><div className="footer-top"><Wordmark /><nav className="footer-nav" aria-label="Footer navigation"><Link to="/" hash="projects">Projects</Link><Link to="/market">Market data</Link><Link to="/area">The area</Link><Link to="/guide">Buying guide</Link><Link to="/guide" hash="faq">FAQs</Link><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight className="inline size-3" /></a><a href={mailtoUrl()}>Email <ArrowUpRight className="inline size-3" /></a></nav></div><p className="disclaimer">{DISCLAIMER}</p>{SITE.dldPermit && <p className="disclaimer">DLD Permit No. {SITE.dldPermit}</p>}<div className="footer-bottom"><span>DXB Creek Harbour · Independent property showcase · WhatsApp {SITE.whatsappDisplay} · <a href={mailtoUrl()}>{SITE.email}</a></span><span>Dubai, United Arab Emirates</span></div></div></footer><Button asChild className="floating-wa" size="icon"><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><WhatsAppIcon /></a></Button></>;
+  return <><footer className="site-footer"><div className="container"><div className="footer-top"><Wordmark /><nav className="footer-nav" aria-label="Footer navigation"><Link to="/" hash="projects">Projects</Link><Link to="/market">Market data</Link><Link to="/area">The area</Link><Link to="/guide">Buying guide</Link><Link to="/guide" hash="faq">FAQs</Link><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight className="inline size-3" /></a><a href={mailtoUrl()}>Email <ArrowUpRight className="inline size-3" /></a></nav></div><p className="disclaimer">{DISCLAIMER}</p><p className="disclaimer" id="privacy">Privacy: the details you send through the enquiry form or WhatsApp are kept in our enquiry records and used only to answer your enquiry; the database and email services that run the site process them on our behalf. Email us at {SITE.email} to see or delete what we hold.</p>{SITE.dldPermit && <p className="disclaimer">DLD Permit No. {SITE.dldPermit}</p>}<div className="footer-bottom"><span>DXB Creek Harbour · Independent property showcase · WhatsApp {SITE.whatsappDisplay} · <a href={mailtoUrl()}>{SITE.email}</a></span><span>Dubai, United Arab Emirates</span></div></div></footer><Button asChild className="floating-wa" size="icon"><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><WhatsAppIcon /></a></Button></>;
 }
 /** Phone-only bottom bar: the two things a visitor actually does on a phone. */
 export function MobileBar() {
@@ -67,13 +67,13 @@ export function priceSummary(p: Project): { main: string; note: string | null } 
 }
 export function handoverText(p: Project): string {
   if (p.construction === "completed") return "Completed";
-  if (p.handover) return `Handover ${dateShort(p.handover.text)}`;
+  if (p.handover) return `Est. handover ${dateShort(p.handover.text)}`;
   if (p.construction === "under_construction") return "Under construction";
   return p.isNewLaunch ? "New launch" : "Handover date on request";
 }
+/** What a buyer can actually pay today: the lowest listed unit when Emaar lists units, else the advertised starting price. */
 export function minPriceAed(p: Project): number | null {
-  const c = [p.pricesFromAed, p.startingPriceAed].filter((x): x is number => typeof x === "number");
-  return c.length ? Math.min(...c) : null;
+  return p.pricesFromAed ?? p.startingPriceAed ?? null;
 }
 export function bedroomRange(p: Project): [number, number] | null {
   const d = p.bedrooms.match(/\d/g)?.map(Number) ?? [];

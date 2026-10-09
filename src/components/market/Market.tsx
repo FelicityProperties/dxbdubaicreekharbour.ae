@@ -101,9 +101,9 @@ export function LatestTransactions({ initial = 10, showKind = true }: { initial?
   const [tab, setTab] = useState<"ready" | "offplan" | "rent">("ready");
   const ready = TX.sales.filter((s) => s.basis === "ready"), off = TX.sales.filter((s) => s.basis === "offplan");
   const tabs: { id: typeof tab; label: string; note: string }[] = [
-    { id: "ready", label: "Ready homes", note: `${TX.recent.readySales.count} registered sales of completed homes, ${dateRange(TX.recent.readySales.from, TX.recent.readySales.to)}` },
-    { id: "offplan", label: "Off-plan", note: `${TX.recent.offplanSales.count} registered off-plan sales, ${dateRange(TX.recent.offplanSales.from, TX.recent.offplanSales.to)}. Rows marked "not yet named" are new-launch registrations the DLD register has not yet assigned to a building.` },
-    { id: "rent", label: "Tenancy contracts", note: `${TX.recent.rentals.count} registered Ejari contracts (${TX.recent.rentals.newContracts} new, the rest renewals), ${dateRange(TX.recent.rentals.from, TX.recent.rentals.to)}` },
+    { id: "ready", label: "Ready homes", note: `The ${TX.recent.readySales.count} most recent registered market sales of completed homes in our snapshot (${dateRange(TX.recent.readySales.from, TX.recent.readySales.to)}).` },
+    { id: "offplan", label: "Off-plan", note: `The ${TX.recent.offplanSales.count} most recent registered off-plan sales in our snapshot (${dateRange(TX.recent.offplanSales.from, TX.recent.offplanSales.to)}). Rows marked "not yet named" are new-launch registrations the DLD register has not yet assigned to a building.` },
+    { id: "rent", label: "Tenancy contracts", note: `The ${TX.recent.rentals.count} most recent registered Ejari contracts in our snapshot (${TX.recent.rentals.newContracts} new, the rest renewals; ${dateRange(TX.recent.rentals.from, TX.recent.rentals.to)}).` },
   ];
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
   return <div>

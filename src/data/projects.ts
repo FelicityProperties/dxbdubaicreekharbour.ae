@@ -11,7 +11,7 @@ export const SITE = {
   email: "mouhannadnwilati@gmail.com",
   dldPermit: "", // shown in the footer only once filled in
   pricesCheckedOn: "9 October 2026",
-  constructionSource: "PropertyIndex — DLD registrations loaded through September 2026",
+  constructionSource: "PropertyIndex (Dubai Land Department data modelled by PropertyIndex; DLD registrations loaded through September 2026)",
 };
 
 export type Status = "Now selling" | "Ready" | "Resale";
@@ -210,7 +210,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Haven",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 18 units",
+    "statusNote": "Off-plan — Emaar lists 18 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -230,7 +230,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2030-03-31",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Creek Haven A-P1-P101, checked 7 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 7 October 2026",
       "source": "https://www.emaar.com/en/properties/creek-haven-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -295,7 +295,7 @@ export const PROJECTS: Project[] = [
           "date": "2030-03-31"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Creek Haven A-P1-P101, checked 7 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 7 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/creek-haven-at-dubai-creek-harbour"
     },
     "overview": "Two residential towers on the water with one-, two- and three-bedroom apartments. Homes look over the Creek, the parks and the skyline, in a walkable waterfront neighbourhood of promenades, landscaped gardens and retail streets.",
@@ -410,7 +410,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Bay",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 18 units",
+    "statusNote": "Off-plan — Emaar lists 18 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -430,7 +430,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2030-04-30",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Creek Bay B-1-108, checked 7 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 7 October 2026",
       "source": "https://www.emaar.com/en/properties/creek-bay-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -495,7 +495,7 @@ export const PROJECTS: Project[] = [
           "date": "2030-04-30"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Creek Bay B-1-108, checked 7 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 7 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/creek-bay-at-dubai-creek-harbour"
     },
     "overview": "Waterfront apartments on a quiet bay of Dubai Creek, framed by sculpted gardens and the Downtown skyline across the water. Walkways lead along the water's edge and into the community's parks, with Ras Al Khor's wildlife in view.",
@@ -610,7 +610,7 @@ export const PROJECTS: Project[] = [
     "name": "Lyvia by Palace",
     "brand": "by Palace",
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 15 units",
+    "statusNote": "Off-plan — Emaar lists 15 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Green Gate",
@@ -631,7 +631,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2029-07-31",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Lyvia 1-104, checked 9 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 9 October 2026",
       "source": "https://www.emaar.com/en/properties/lyvia-by-palace-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -696,7 +696,7 @@ export const PROJECTS: Project[] = [
           "date": "2029-07-31"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Lyvia 1-104, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/lyvia-by-palace-at-dubai-creek-harbour"
     },
     "overview": "A Palace-branded tower in the heart of Green Gate, with one- to three-bedroom apartments and three-bedroom townhouses oriented towards the greenery. Garden retreats, landscaped terraces, a padel court and an infinity pool deck.",
@@ -811,7 +811,7 @@ export const PROJECTS: Project[] = [
     "name": "Montiva by Vida",
     "brand": "by Vida",
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 9 units",
+    "statusNote": "Off-plan — Emaar lists 9 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -831,7 +831,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2029-09-30",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Montiva P1-P103, checked 9 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 9 October 2026",
       "source": "https://www.emaar.com/en/properties/montiva-by-vida-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -896,7 +896,7 @@ export const PROJECTS: Project[] = [
           "date": "2029-09-30"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Montiva P1-P103, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/montiva-by-vida-at-dubai-creek-harbour"
     },
     "overview": "A Vida-branded tower woven into gardens and green space, with one- to three-bedroom apartments framed by park views and the golf course. An infinity pool, yoga terraces, a sports park and a running track for an outdoor rhythm of life.",
@@ -1010,7 +1010,7 @@ export const PROJECTS: Project[] = [
     "name": "Silva",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 10 units",
+    "statusNote": "Off-plan — Emaar lists 10 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Green Gate",
@@ -1142,7 +1142,7 @@ export const PROJECTS: Project[] = [
     "name": "Altan",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 18 units",
+    "statusNote": "Off-plan — Emaar lists 18 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Green Gate",
@@ -1275,7 +1275,7 @@ export const PROJECTS: Project[] = [
     "name": "Albero",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 23 units",
+    "statusNote": "Off-plan — Emaar lists 23 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -1296,7 +1296,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2029-09-30",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Albero P2-P204, checked 9 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 9 October 2026",
       "source": "https://www.emaar.com/en/properties/albero-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -1361,7 +1361,7 @@ export const PROJECTS: Project[] = [
           "date": "2029-09-30"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Albero P2-P204, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/albero-at-dubai-creek-harbour"
     },
     "overview": "A tower of one- to three-bedroom apartments and three-bedroom townhouses with views over the Creek, the golf course and the city. Life centres on the waterfront, the parks and the retail promenade, with a sports park, running track and lawns.",
@@ -1475,7 +1475,7 @@ export const PROJECTS: Project[] = [
     "name": "Altus",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 4 units",
+    "statusNote": "Off-plan — Emaar lists 4 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -1498,9 +1498,9 @@ export const PROJECTS: Project[] = [
     "overview": "Two towers in a district near Creek Beach, pairing waterfront views with city life. Emaar describes a four-minute walk to the metro; residents have a pool, kids' pool, indoor and outdoor gyms and a yoga area, with the promenade and sports courts close by.",
     "highlights": [
       "Two towers of one- to three-bedroom apartments",
-      "Four-minute walk to the metro (Emaar)",
+      "Four-minute walk to the planned Blue Line station (Emaar's description; station due 2029 per Emaar)",
       "Pool, kids' pool, yoga area and gyms",
-      "Near the RTA ferry terminal"
+      "RTA ferry terminal and planned metro connections (Emaar's description)"
     ],
     "amenities": [
       "Kids Play Area",
@@ -1609,7 +1609,7 @@ export const PROJECTS: Project[] = [
     "name": "Address Residences Dubai Creek Harbour",
     "brand": "Address-branded",
     "status": "Resale",
-    "statusNote": "Under construction — sold out with Emaar; resale on request",
+    "statusNote": "Construction under way (PropertyIndex) — Emaar lists no units; resale on request",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -1747,7 +1747,7 @@ export const PROJECTS: Project[] = [
     "name": "Palace Residences Creek Blue",
     "brand": "Palace-branded",
     "status": "Resale",
-    "statusNote": "Under construction — sold out with Emaar; resale on request",
+    "statusNote": "Construction under way (PropertyIndex) — Emaar lists no units; resale on request",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": null,
@@ -1883,7 +1883,7 @@ export const PROJECTS: Project[] = [
     "name": "ARLO",
     "brand": null,
     "status": "Resale",
-    "statusNote": "Under construction — sold out with Emaar; resale on request",
+    "statusNote": "Construction under way (PropertyIndex) — Emaar lists no units; resale on request",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -1907,9 +1907,9 @@ export const PROJECTS: Project[] = [
     "overview": "Apartments and three-bedroom townhouses in a district near Creek Beach, with views of Dubai Creek and the Creek Island bridge. Emaar describes a four-minute walk to the metro; the promenade, adventure playground, cycling track and sports courts are the neighbourhood.",
     "highlights": [
       "Apartments and three-bedroom townhouses",
-      "Four-minute walk to the metro (Emaar)",
+      "Four-minute walk to the planned Blue Line station (Emaar's description; station due 2029 per Emaar)",
       "Pool, kids' pool, yoga area and gyms",
-      "Near the RTA ferry terminal"
+      "RTA ferry terminal and planned metro connections (Emaar's description)"
     ],
     "amenities": [
       "Kids Play Area",
@@ -2018,7 +2018,7 @@ export const PROJECTS: Project[] = [
     "name": "Palace Residences North",
     "brand": "Palace-branded",
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2151,7 +2151,7 @@ export const PROJECTS: Project[] = [
     "name": "The Grand",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2216,7 +2216,7 @@ export const PROJECTS: Project[] = [
     "name": "Aeon",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 1 unit",
+    "statusNote": "Off-plan — Emaar lists 1 unit; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -2353,7 +2353,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Edge",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2437,7 +2437,7 @@ export const PROJECTS: Project[] = [
     "name": "Surf",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -2522,7 +2522,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Palace",
     "brand": "Palace-branded",
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 1 unit",
+    "statusNote": "Emaar lists 1 unit — construction completed (PropertyIndex)",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2616,8 +2616,8 @@ export const PROJECTS: Project[] = [
     "name": "Dubai Creek Residences",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 6 units",
-    "construction": "completed",
+    "statusNote": "Emaar lists 6 units — PropertyIndex records no construction status for this project; ask us",
+    "construction": null,
     "isNewLaunch": false,
     "district": "Creek Island",
     "unitTypes": [
@@ -2663,7 +2663,7 @@ export const PROJECTS: Project[] = [
           "date": "2026-11-07"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Dubai Creek Residences T2-31-3103, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/dubai-creek-residences"
     },
     "overview": "Apartments and penthouses at the edge of Creek Island with open views over Creek Marina, its yacht club and the skyline beyond. The Vida Creek Harbour hotel sits between the two clusters of towers, bringing resort-style services to residents.",
@@ -2729,7 +2729,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Rise",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2801,7 +2801,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Horizon",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -2895,7 +2895,7 @@ export const PROJECTS: Project[] = [
     "name": "Vida Residences Creek Beach",
     "brand": "Vida-branded",
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -2978,7 +2978,7 @@ export const PROJECTS: Project[] = [
     "name": "The Cove",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 1 unit",
+    "statusNote": "Emaar lists 1 unit — construction completed (PropertyIndex)",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -3115,7 +3115,7 @@ export const PROJECTS: Project[] = [
     "name": "Harbour Views",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -3135,7 +3135,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": null,
     "handover": null,
     "paymentPlan": null,
-    "overview": "The tallest twin towers on Creek Island, rising 51 floors above the Creek with more than 750 glass-fronted apartments (Emaar). Homes face Creek Marina and the Downtown skyline on one side and the parkland on the other.",
+    "overview": "Emaar describes Harbour Views as the tallest twin towers on Creek Island: 51 floors and more than 750 glass-fronted apartments. Homes face Creek Marina and the Downtown skyline on one side and the parkland on the other.",
     "highlights": [
       "51-floor twin towers, 750+ apartments (Emaar)",
       "Marina, skyline and park views",
@@ -3187,7 +3187,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Gate",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 3 units",
+    "statusNote": "Emaar lists 3 units — construction completed (PropertyIndex)",
     "construction": "completed",
     "isNewLaunch": false,
     "district": null,
@@ -3229,7 +3229,7 @@ export const PROJECTS: Project[] = [
           "date": "2026-11-18"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Creek Gate T1-1-101, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/creek-gate"
     },
     "overview": "High-rise one- to three-bedroom apartments at a waterfront hotspot, with balconies that look over Dubai Creek Harbour and the park. Interiors use wood, polished tile and light finishes.",
@@ -3282,7 +3282,7 @@ export const PROJECTS: Project[] = [
     "name": "Harbour Gate",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 7 units",
+    "statusNote": "Emaar lists 7 units — construction completed (PropertyIndex)",
     "construction": "completed",
     "isNewLaunch": false,
     "district": null,
@@ -3341,7 +3341,7 @@ export const PROJECTS: Project[] = [
     "name": "Creekside 18",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 1 unit",
+    "statusNote": "Emaar lists 1 unit — construction completed (PropertyIndex)",
     "construction": "completed",
     "isNewLaunch": false,
     "district": null,
@@ -3383,7 +3383,7 @@ export const PROJECTS: Project[] = [
           "date": "2026-11-18"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Creekside 18 P2-P202, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/creekside-18"
     },
     "overview": "Twin towers in a palm-lined waterfront setting with two-, three- and four-bedroom apartments. Floor-to-ceiling windows and wide balconies face Dubai Creek Tower and Downtown; the podium carries green walkways and temperature-controlled pools.",
@@ -3447,7 +3447,7 @@ export const PROJECTS: Project[] = [
     "name": "Grove",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -3528,13 +3528,13 @@ export const PROJECTS: Project[] = [
     "name": "Rosewater",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
     "unitTypes": [],
-    "bedrooms": "3–4",
-    "propertyTypes": "Villas",
+    "bedrooms": "1–4",
+    "propertyTypes": "Apartments per Emaar's description — Emaar's key-facts block lists 3–4-bedroom villas; confirm with us",
     "startingPrice": null,
     "startingPriceAed": null,
     "startingPriceNote": null,
@@ -3611,7 +3611,7 @@ export const PROJECTS: Project[] = [
     "name": "Lotus",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -3694,7 +3694,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Crescent",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -3787,7 +3787,7 @@ export const PROJECTS: Project[] = [
     "name": "Orchid",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -3869,8 +3869,8 @@ export const PROJECTS: Project[] = [
     "name": "Cedar",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 8 units",
-    "construction": "completed",
+    "statusNote": "Emaar lists 8 units — PropertyIndex records no construction status for this project; ask us",
+    "construction": null,
     "isNewLaunch": false,
     "district": "Creek Beach",
     "unitTypes": [
@@ -4006,8 +4006,8 @@ export const PROJECTS: Project[] = [
     "name": "Savanna",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 1 unit",
-    "construction": "completed",
+    "statusNote": "Emaar lists 1 unit — PropertyIndex records no construction status for this project; ask us",
+    "construction": null,
     "isNewLaunch": false,
     "district": "Creek Beach",
     "unitTypes": [
@@ -4141,7 +4141,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Waters",
     "brand": null,
     "status": "Resale",
-    "statusNote": "Under construction — sold out with Emaar; resale on request",
+    "statusNote": "Construction under way (PropertyIndex) — Emaar lists no units; resale on request",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -4275,7 +4275,7 @@ export const PROJECTS: Project[] = [
     "name": "Creek Waters 2",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 1 unit",
+    "statusNote": "Off-plan — Emaar lists 1 unit; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -4409,7 +4409,7 @@ export const PROJECTS: Project[] = [
     "name": "Valo",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Off-plan — Emaar lists 2 units",
+    "statusNote": "Off-plan — Emaar lists 2 units; construction under way (PropertyIndex)",
     "construction": "under_construction",
     "isNewLaunch": false,
     "district": "Creek Beach",
@@ -4430,7 +4430,7 @@ export const PROJECTS: Project[] = [
     "sizesNote": "Sizes of the units Emaar listed on 9 October 2026",
     "handover": {
       "text": "2028-01-31",
-      "note": "'100% construction and handover' milestone on Emaar's booking page for unit DC Valo 3-304, checked 9 October 2026",
+      "note": "'100% construction and handover' milestone on Emaar's booking page for one listed unit, checked 9 October 2026",
       "source": "https://www.emaar.com/en/properties/valo-at-dubai-creek-harbour"
     },
     "paymentPlan": {
@@ -4485,7 +4485,7 @@ export const PROJECTS: Project[] = [
           "date": "2028-01-31"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Valo 3-304, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/valo-at-dubai-creek-harbour"
     },
     "overview": "A tower beside the main plaza in the Creek Beach district, with one- to three-bedroom apartments and three-bedroom townhouses. Built for an active life: the waterfront promenade, cycling track, skate park and sports courts are close, and the amenities podium carries the pools and gyms.",
@@ -4493,7 +4493,7 @@ export const PROJECTS: Project[] = [
       "Apartments and townhouses by the main plaza",
       "6,000 sq m amenities podium (Emaar)",
       "Indoor and outdoor gyms, yoga area, kids' pools",
-      "Near the RTA ferry terminal and planned metro station"
+      "RTA ferry terminal and planned metro connections (Emaar's description)"
     ],
     "amenities": [
       "Flexible Lawn and Kids Play Area",
@@ -4605,8 +4605,8 @@ export const PROJECTS: Project[] = [
     "name": "Mangrove",
     "brand": null,
     "status": "Now selling",
-    "statusNote": "Ready to move in — Emaar lists 4 units",
-    "construction": "completed",
+    "statusNote": "Emaar lists 4 units — PropertyIndex records no construction status for this project; ask us",
+    "construction": null,
     "isNewLaunch": false,
     "district": "Creek Beach",
     "unitTypes": [
@@ -4647,7 +4647,7 @@ export const PROJECTS: Project[] = [
           "date": "2026-11-18"
         }
       ],
-      "note": "Emaar's booking page schedule for unit DC Mangrove Building 1-2-201, checked 9 October 2026. Other units can differ; confirm today's terms.",
+      "note": "Emaar's booking page schedule for one listed unit, checked 9 October 2026. Other units can differ; confirm today's terms.",
       "source": "https://www.emaar.com/en/properties/mangrove-at-dubai-creek-harbour"
     },
     "overview": "Low-rise one- to three-bedroom apartments beside a park in Creek Beach, with views over the Creek. Two town squares, a community pool, outdoor play areas and a co-working space make it a family neighbourhood close to the beach.",
@@ -4762,7 +4762,7 @@ export const PROJECTS: Project[] = [
     "name": "17 Icon Bay",
     "brand": null,
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -4833,7 +4833,7 @@ export const PROJECTS: Project[] = [
     "name": "Address Harbour Point",
     "brand": "Address-branded",
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
@@ -4915,13 +4915,13 @@ export const PROJECTS: Project[] = [
     "name": "Palace Residences",
     "brand": "Palace-branded",
     "status": "Ready",
-    "statusNote": "Completed — Emaar lists no units; resale and rentals on request",
+    "statusNote": "Construction completed (PropertyIndex) — Emaar lists no units; resale and rentals on request",
     "construction": "completed",
     "isNewLaunch": false,
     "district": "Creek Island",
     "unitTypes": [],
-    "bedrooms": "3–5",
-    "propertyTypes": "Villas",
+    "bedrooms": "Apartments — bedroom mix on request",
+    "propertyTypes": "Tower apartments per Emaar's description — Emaar's key-facts block lists 3–5-bedroom villas; confirm with us",
     "startingPrice": null,
     "startingPriceAed": null,
     "startingPriceNote": null,
@@ -4988,10 +4988,10 @@ export const PROJECTS: Project[] = [
     "slug": "oria",
     "name": "Oria",
     "brand": null,
-    "status": "Resale",
-    "statusNote": "Under construction — sold out with Emaar; resale on request",
+    "status": "Now selling",
+    "statusNote": "New launch — Emaar is registering interest",
     "construction": "under_construction",
-    "isNewLaunch": false,
+    "isNewLaunch": true,
     "district": "Creek Beach",
     "unitTypes": [
       "1,2 & 3-Bedroom Apartments"
@@ -5014,7 +5014,7 @@ export const PROJECTS: Project[] = [
       "One- to three-bedroom apartments in Creek Beach",
       "6,000 sq m amenities podium (Emaar)",
       "Indoor and outdoor gyms, yoga area, kids' pools",
-      "Near the RTA ferry terminal and the planned metro station"
+      "RTA ferry terminal and planned metro connections (Emaar's description)"
     ],
     "amenities": [
       "Flexible Lawn and Kids Play Area",
@@ -5165,12 +5165,12 @@ export const DISTRICT = {
       "minutes": 40
     }
   ],
-  "driveTimesNote": "Drive times as published by Emaar.",
+  "driveTimesNote": "Drive times as published in Emaar's Dubai Creek Harbour investor guide; some Emaar project pages quote 15 minutes to DXB airport and 20 minutes to Downtown.",
   "driveTimesSource": "https://www.emaar.com/en/blog/invest-in-dubai-creek-harbour-for-global-investors",
   "places": [
     {
       "title": "Creek Beach",
-      "body": "Dubai's first urban beach: 700 metres of white sand with an infinity pool and sunset views across the water (Emaar).",
+      "body": "What Emaar calls Dubai's first urban beach: 700 metres of white sand with an infinity pool and sunset views across the water (Emaar).",
       "image": "creek-beach"
     },
     {
@@ -5180,7 +5180,7 @@ export const DISTRICT = {
     },
     {
       "title": "Creek Marina and the Harbour Promenade",
-      "body": "A yacht club, promenade dining and boat trips on the water; an RTA ferry terminal serves the district.",
+      "body": "A yacht club, promenade dining and boat trips on the water; Emaar's project pages cite connections to an RTA ferry terminal and the planned metro station.",
       "image": "creek-marina"
     },
     {
@@ -5218,7 +5218,7 @@ export const DISTRICT = {
     },
     {
       "name": "Green Gate",
-      "body": "The newest quarter beside Green Gate Sports Park and the golf course views, where Lyvia, Altan and Silva are rising."
+      "body": "A new quarter beside Green Gate Sports Park and the golf course views, where Lyvia, Altan and Silva are rising."
     }
   ],
   "images": {
@@ -5389,7 +5389,7 @@ export const GUIDE = {
   "resale": [
     {
       "step": "Agree the price",
-      "body": "On a sold-out tower you buy from an existing owner. For an off-plan resale you normally reimburse what the seller has paid, agree any premium, and take over the remaining instalments."
+      "body": "When Emaar lists no units, you buy from an existing owner. For an off-plan resale you normally reimburse what the seller has paid, agree any premium, and take over the remaining instalments."
     },
     {
       "step": "Emaar's no-objection certificate",
@@ -5454,11 +5454,11 @@ export const COSTS = {
     {
       "label": "Service charges",
       "value": "Set yearly per building",
-      "detail": "Approved by RERA through DLD's Mollak system and published on DLD's Service Charge Index. Ask us for the approved rate of the exact tower; the first year is paid before handover.",
-      "source": "https://www.emaar.com/cms-media/uploads/Finance_Fact_Sheet_a645471c4c_prod.pdf"
+      "detail": "Vary by building; Emaar's investor guide says approved charges can be checked through DLD's Service Charge Index. Ask us for the approved rate of the exact tower; the first year is paid before handover.",
+      "source": "https://www.emaar.com/en/blog/guide-to-dubai-property-investment-for-first-time-international-investors"
     }
   ],
-  "vat": "Emaar's administration and booking fees include 5% VAT. The purchase price of a new home bought from the developer is zero-rated for VAT."
+  "vat": "Emaar's administration and booking fees include 5% VAT."
 };
 
 export const FAQ = [
@@ -5472,34 +5472,36 @@ export const FAQ = [
   },
   {
     "q": "What do 'Now selling', 'Ready' and 'Resale' mean here?",
-    "a": "'Now selling' means Emaar listed units for sale on its website when we checked. 'Ready' means the Dubai Land Department records the building as completed and Emaar lists no units, so you buy from an owner. 'Resale' means the tower is still under construction and sold out with Emaar, so you take over an owner's contract and payment plan."
+    "a": "'Now selling' means Emaar listed units for sale on its website when we checked, or is registering interest for a launch. 'Ready' means PropertyIndex, which models Dubai Land Department data, shows the building's construction as completed and Emaar lists no units, so you buy from an owner. 'Resale' means PropertyIndex shows construction under way and Emaar listed no units when we checked, so you take over an owner's contract and payment plan. Where PropertyIndex records no construction status we say so and you ask us."
   },
   {
     "q": "Can foreigners buy in Dubai Creek Harbour?",
-    "a": "Yes. Emaar states that all properties in Dubai Creek Harbour are freehold, with full ownership rights for UAE nationals and foreign investors, and that non-residents can buy with a valid passport. Foreign freehold ownership in Dubai is allowed in areas designated under Law No. 7 of 2006.",
+    "a": "Yes. Emaar states that all properties in Dubai Creek Harbour are freehold, with full ownership rights for UAE nationals and foreign investors, and that non-residents can buy with a valid passport. Emaar's freehold guide notes that foreign ownership in Dubai is governed by Law No. 7 of 2006 in designated areas.",
     "source": "https://www.emaar.com/en/property-for-sale/dubai-creek-harbour"
   },
   {
     "q": "Does buying here get me a residence visa?",
-    "a": "Property worth at least AED 2 million, in your name, can qualify you for a long-term UAE Golden Residence; DLD runs the Dubai application, and a mortgaged property can qualify with a bank letter stating what you have paid. Owners of any Dubai property can also apply through DLD's Taskeen service for a renewable two-year residence visa (a jointly owned share must be at least AED 400,000). Emaar does not sponsor visas itself. Rules change — we check the current requirements with you.",
+    "a": "Emaar's investor-visa guide says property worth at least AED 2 million can qualify you for a long-term UAE Golden Residence, that a mortgaged property may also qualify subject to the Dubai Land Department's requirements, and that owners of any Dubai property can apply through DLD's Taskeen service for a renewable two-year residence visa (a jointly owned share must be at least AED 400,000). Emaar does not sponsor visas; eligibility is decided by the UAE immigration authorities, not by Emaar or by us. Rules change — we check the current requirements with you.",
     "source": "https://www.emaar.com/en/blog/dubai-investor-visa-guide-requirements-eligibility-and-benefits-2026"
   },
   {
     "q": "Can I buy with a mortgage?",
-    "a": "On a completed unit, yes — UAE banks lend to residents and non-residents, within the Central Bank's loan-to-value caps. Off-plan is mostly a cash-flow purchase: the Central Bank caps a mortgage on a unit under construction at 50% of its value, and Emaar says some projects come with bank pre-approval for up to 50%, renewable yearly until handover. Emaar registers the mortgage for AED 5,000 and DLD charges 0.25% of the loan plus AED 10.",
+    "a": "On a completed home, yes — UAE banks lend to residents and non-residents within their own lending limits. Off-plan is mostly paid from your own funds during construction; Emaar's investor guide says that for selected off-plan projects eligible customers may have access to financing with pre-approval for up to 50% of the property's value, renewable annually until handover. Emaar registers a mortgage for AED 5,000 and DLD charges 0.25% of the loan plus AED 10.",
     "source": "https://www.emaar.com/en/faq"
   },
   {
     "q": "How is my money protected on an off-plan purchase?",
-    "a": "Dubai's escrow law requires every instalment to be paid into a project-specific escrow account controlled by an escrow agent, and the sale must be recorded in DLD's interim register (Oqood). Ask us for the project's escrow account details and cross-check them with Emaar before you transfer."
+    "a": "For off-plan purchases, Emaar's guidance is that funds are held in escrow accounts overseen by the Dubai Land Department, and every Emaar instalment is paid into the project's own escrow account; the purchase is pre-registered in DLD's interim register (Oqood). Ask us for the project's escrow account details and cross-check them with Emaar before you transfer.",
+    "source": "https://www.emaar.com/cms-media/uploads/Finance_Fact_Sheet_a645471c4c_prod.pdf"
   },
   {
     "q": "What are the service charges?",
-    "a": "Service charges are an annual cost per unit, set each year from a budget that RERA approves through DLD's Mollak system; the approved rate for any building is public on DLD's Service Charge Index. We quote the approved rate for the exact tower — never an estimate."
+    "a": "Service charges are an annual cost per unit that vary by building; Emaar's investor guide notes that approved charges can be checked through DLD's Service Charge Index. We quote the approved rate for the exact tower — never an estimate.",
+    "source": "https://www.emaar.com/en/blog/guide-to-dubai-property-investment-for-first-time-international-investors"
   },
   {
     "q": "Can I rent it out?",
-    "a": "Yes. Emaar says you are free to lease the home once it is handed over. Long-term lets are registered with Ejari; short-term holiday letting needs a permit from Dubai's Department of Economy and Tourism.",
+    "a": "Yes. Emaar says you are free to lease the home once it is handed over. Long-term lets are registered with Ejari; short-term holiday letting is separately regulated in Dubai — ask us before you plan on it.",
     "source": "https://www.emaar.com/en/faq"
   },
   {
