@@ -1,7 +1,7 @@
 /**
- * Private list of website enquiries. Vercel-only layer (see
- * src/lib/enquiries.functions.ts). The password is LEADS_PASSWORD in Vercel;
- * it is checked on the server and no enquiry leaves the server without it.
+ * Private list of website enquiries (see src/lib/enquiries.functions.ts).
+ * The password is LEADS_PASSWORD in Vercel; it is checked on the server and
+ * no enquiry leaves the server without it.
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -93,7 +93,7 @@ function LeadsPage() {
             Password
             <input
               type="password"
-              className="w-full rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] text-foreground"
+              className="w-full rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] max-sm:text-[16px] text-foreground"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
@@ -147,11 +147,15 @@ function LeadsPage() {
                   {(
                     [
                       ["Project", r.project],
+                      ["Looking for", r.looking_for],
                       ["Buying as", r.buy_as],
                       ["Bedrooms", r.bedrooms],
                       ["Budget", r.budget],
                       ["When", r.timing],
                       ["Paying by", r.funding],
+                      ["Lives in", r.country],
+                      ["Language", r.language],
+                      ["Page", r.page],
                     ] as const
                   )
                     .filter(([, value]) => value)

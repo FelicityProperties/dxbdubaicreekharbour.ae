@@ -1,13 +1,10 @@
 /**
  * Server side of the enquiry form and the private /leads page.
  *
- * Vercel-only layer: this file, src/components/enquiry/EnquirySection.tsx and
- * src/routes/leads.tsx are added when the Lovable project is copied into the
- * GitHub repo that Vercel deploys. Lovable never sees them, so a Lovable edit
- * can't overwrite them.
- *
- * Enquiries go to the Neon database Vercel provides as DATABASE_URL. The
- * table creates itself on first use, so a fresh database needs no setup.
+ * This file, src/components/enquiry/* and src/routes/leads.tsx are the
+ * database layer: enquiries go to the Neon database Vercel provides as
+ * DATABASE_URL. The table creates itself on first use, so a fresh database
+ * needs no setup.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { PROJECTS } from "@/data/projects";
@@ -17,6 +14,8 @@ export const BEDROOMS = ["Studio", "1 bedroom", "2 bedrooms", "3 bedrooms", "4+ 
 export const BUDGETS = ["Under AED 2M", "AED 2M – 3M", "AED 3M – 5M", "AED 5M+", "Prefer not to say"] as const;
 export const TIMINGS = ["Ready to buy now", "Within 3 months", "3 – 12 months", "Just researching"] as const;
 export const FUNDING = ["Cash", "Mortgage", "Not sure yet"] as const;
+export const LOOKING_FOR = ["A new launch (off-plan)", "Ready to move in", "Resale while under construction", "Renting", "Not sure yet"] as const;
+export const LANGUAGES = ["English", "Arabic", "Russian", "Chinese", "Hindi / Urdu", "French", "German", "Other"] as const;
 export const ANY_PROJECT = "Any / not sure";
 export const PROJECT_OPTIONS = [ANY_PROJECT, ...PROJECTS.map((p) => (p.brand?.startsWith("by ") ? `${p.name} ${p.brand}` : p.name))];
 
@@ -24,7 +23,10 @@ export type EnquiryInput = {
   name: string;
   phone: string;
   email: string;
+  country: string;
+  language: string;
   project: string;
+  looking_for: string;
   buy_as: string;
   bedrooms: string;
   budget: string;
@@ -47,7 +49,10 @@ export type Lead = {
   name: string;
   phone: string;
   email: string | null;
+  country: string | null;
+  language: string | null;
   project: string | null;
+  looking_for: string | null;
   buy_as: string | null;
   bedrooms: string | null;
   budget: string | null;
@@ -82,8 +87,8 @@ export const MIN_LEADS_PASSWORD = 20;
  */
 export function normalisePhone(raw: string): string {
   return raw
-    .replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x660))
-    .replace(/[\u06F0-\u06F9]/g, (c) => String(c.charCodeAt(0) - 0x6f0))
+    .replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, (c) => String(c.charCodeAt(0) - 0x6f0))
     .replace(/\./g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -141,6 +146,10 @@ function createTable(sql: Sql): Promise<void> {
         status TEXT NOT NULL DEFAULT 'new'
       )`;
       await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS project TEXT`;
+      // Added October 2026 with the longer form; older rows simply have NULLs here.
+      await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS country TEXT`;
+      await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS language TEXT`;
+      await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS looking_for TEXT`;
       await sql`CREATE INDEX IF NOT EXISTS enquiries_created_at_idx ON enquiries (created_at DESC)`;
     })().catch((err) => {
       tableReady = null;
@@ -164,6 +173,7 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     const name = text(data.name, 120);
     const phone = normalisePhone(text(data.phone, 40));
     const email = text(data.email, 200);
+    const country = text(data.country, 80);
     const message = text(data.message, 2000);
 
     if (name.length < 2) return { ok: false, reason: "invalid", message: "Please tell us your name." };
@@ -184,9 +194,10 @@ export const submitEnquiry = createServerFn({ method: "POST" })
       const sql = await connect(url);
       await ensureTable(sql);
       await sql`
-        INSERT INTO enquiries (name, phone, email, project, buy_as, bedrooms, budget, timing, funding, message, page)
+        INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
         VALUES (
-          ${name}, ${phone}, ${email || null}, ${pick(data.project, PROJECT_OPTIONS)},
+          ${name}, ${phone}, ${email || null}, ${country || null}, ${pick(data.language, LANGUAGES)},
+          ${pick(data.project, PROJECT_OPTIONS)}, ${pick(data.looking_for, LOOKING_FOR)},
           ${pick(data.buy_as, BUY_AS)}, ${pick(data.bedrooms, BEDROOMS)}, ${pick(data.budget, BUDGETS)},
           ${pick(data.timing, TIMINGS)}, ${pick(data.funding, FUNDING)}, ${message || null}, ${text(data.page, 200) || null}
         )
@@ -219,7 +230,7 @@ export const getLeads = createServerFn({ method: "POST" })
       const sql = await connect(url);
       await ensureTable(sql);
       const rows = (await sql`
-        SELECT id::text AS id, created_at, name, phone, email, project, buy_as, bedrooms, budget, timing, funding, message, page
+        SELECT id::text AS id, created_at, name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page
         FROM enquiries ORDER BY created_at DESC LIMIT 500
       `) as Lead[];
       return { status: "ok", leads: rows.map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() })) };

@@ -26,3 +26,13 @@
 ## Final brand mark
 - [x] New mark, favicon set, app icons and web manifest
 - [x] Header and footer lockup replaced with the supplied pixel-tuned markup
+## October 2026: the broker's edition
+- [x] All 42 Emaar projects at Dubai Creek Harbour, with Emaar's two prices (starting price and cheapest listed unit), unit counts, sizes, dated payment schedules and handover milestones
+- [x] Self-hosted Emaar renders for every project (480/960/1600 WebP, sharing image each)
+- [x] Registered sales (ready and off-plan) and tenancy contracts from PropertyIndex / DLD on the home page, a market page and every project page
+- [x] Filters by status, quarter, bedrooms and budget; compare table
+- [x] Area page, buying guide with Emaar-sourced costs, fuller FAQ
+- [x] Enquiry form: looking-for, country, language; phone bottom bar; 16px fields on phones
+- [x] Titles, descriptions, canonical links, JSON-LD and a 46-route sitemap
+- [ ] DLD permit number in the footer (SITE.dldPermit) once issued
+- [ ] Refresh both data snapshots monthly

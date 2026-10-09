@@ -1,24 +1,43 @@
 <!-- LOVABLE:BEGIN -->
 > [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
+> This project started in [Lovable](https://lovable.dev). Avoid rewriting
 > published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
+> that are already pushed.
 <!-- LOVABLE:END -->
 
-## Showcase architecture
-- Keep all project facts in the supplied typed data module; presentation reads them without calculations or fabricated defaults.
-- Use shared showcase components for cards, WhatsApp URLs, navigation and the exact disclaimer so every page remains consistent.
-- Keep the brand lockup in the shared Wordmark component with its pixel-tuned `.dxbch-*` styles, and serve every icon from `public/` wired through the root route head; this keeps header, footer and installed shortcuts identical.
-- Generate canonical social-image metadata through the shared helper in content-route heads, never at the root or on missing projects, to prevent inherited sharing previews.
-- Keep the full home showcase at the index route and project details at `/projects/$slug`; hash navigation is for sections of this explicitly requested scrolling home page.
-- The showcase is frontend-only with no persistence; enquiries leave the site through encoded WhatsApp links.
-- Define visual tokens and reusable layout styles in the global stylesheet; allow dynamic plan flex proportions solely from supplied percentages.
+## Numbers: Emaar or the Land Department, never typed in
 
-- Keep captioned project media and Dialog lightbox in the shared gallery module with per-image failure state; this prevents broken icons and preserves cover art fallbacks.
-- The gallery grid shows only the images other than the cover while the lightbox cycles the full list, returning focus to the tile that opened it and following the arrow keys; this keeps the cover visible once on the page yet still reachable.
-- Reuse the single WhatsApp-only EnquirySection on home and project pages; this keeps enquiries frontend-only and consistent.
-- Keep Vercel hosting configuration separate from Lovable preview settings; this preserves the existing preview build.
+- Every price, size, unit count, payment schedule, handover date and status
+  lives in `src/data/projects.ts`, generated from Emaar's own pages and
+  dated. Every registered sale, rent, count and median lives in
+  `src/data/transactions.json`, generated from PropertyIndex (Dubai Land
+  Department records) and dated. Presentation reads them; it never
+  calculates beyond adding up counts, and never invents a default.
+- If a figure is missing, show "on request" or leave the row out. A
+  plausible-sounding number is wrong even when it is close.
+- The area page and the buying guide quote Emaar's published figures with a
+  source link beside each one. Editorial copy stays qualitative.
+
+## Showcase architecture
+
+- Shared showcase components (`src/components/showcase/shared.tsx`) own the
+  header, footer, cards, status wording, price wording, WhatsApp URLs and the
+  exact disclaimer, so every page says the same thing.
+- Keep the brand lockup in the shared `Wordmark` with its pixel-tuned
+  `.dxbch-*` styles, and serve every icon from `public/` wired through the
+  root route head.
+- Routes: `/` (home: snapshot, filterable collection, plans, latest
+  transactions, district teaser, guide teaser, enquiry, FAQ), `/projects/$slug`,
+  `/market`, `/area`, `/guide`, `/leads`. Hash links are for sections of the
+  home page.
+- Canonical social-image metadata goes through the shared helper in each
+  content route's head, never at the root or on missing projects. Project
+  pages use their own `og.jpg`.
+- Images are self-hosted WebP variants under `public/img`; render them with
+  the shared `Picture` (srcset + sizes, lazy except the first on a page) and
+  keep the gallery's lightbox, failure state and focus return.
+- Visual tokens and reusable layout styles live in the global stylesheet;
+  plan-bar proportions come solely from the supplied percentages.
+- Enquiries save to Neon through `src/lib/enquiries.functions.ts` with a
+  WhatsApp fallback; the private `/leads` page is password-protected on the
+  server. Nothing is ever emailed from the site.

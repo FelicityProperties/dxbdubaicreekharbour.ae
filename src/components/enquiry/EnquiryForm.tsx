@@ -1,6 +1,5 @@
 /**
- * The enquiry form that saves to Neon. Vercel-only layer (see
- * src/lib/enquiries.functions.ts); Lovable shows a WhatsApp card in its place.
+ * The enquiry form that saves to Neon (see src/lib/enquiries.functions.ts).
  */
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
@@ -13,6 +12,8 @@ import {
   BUDGETS,
   BUY_AS,
   FUNDING,
+  LANGUAGES,
+  LOOKING_FOR,
   PROJECT_OPTIONS,
   TIMINGS,
   submitEnquiry,
@@ -28,8 +29,9 @@ function projectOption(name?: string): string {
 }
 
 // tracking/weight reset: inputs inherit the label's uppercase letter-spacing otherwise.
+// 16px on phones so iOS doesn't zoom into the field.
 const field =
-  "w-full min-h-11 rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] font-normal tracking-normal normal-case text-foreground focus:border-[color:var(--brass)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brass)]/30";
+  "w-full min-h-11 rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] max-sm:text-[16px] font-normal tracking-normal normal-case text-foreground focus:border-[color:var(--brass)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brass)]/30";
 const labelCls = "grid gap-1.5 text-[12px] font-medium uppercase tracking-[1px] text-muted-foreground";
 
 type State =
@@ -44,7 +46,10 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
     name: "",
     phone: "",
     email: "",
+    country: "",
+    language: "",
     project: projectOption(project),
+    looking_for: "",
     buy_as: "",
     bedrooms: "",
     budget: "",
@@ -62,11 +67,14 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
     [
       `Hi, I'm ${v.name.trim() || "interested"}.`,
       v.project && v.project !== ANY_PROJECT ? `Project: ${v.project}.` : "Dubai Creek Harbour.",
+      v.looking_for && `Looking for: ${v.looking_for}.`,
       v.buy_as && `Buying as: ${v.buy_as}.`,
       v.bedrooms && `Bedrooms: ${v.bedrooms}.`,
       v.budget && `Budget: ${v.budget}.`,
       v.timing && `When: ${v.timing}.`,
       v.funding && `Paying by: ${v.funding}.`,
+      v.country.trim() && `Based in: ${v.country.trim()}.`,
+      v.language && v.language !== "English" && `Preferred language: ${v.language}.`,
       v.message.trim(),
     ]
       .filter(Boolean)
@@ -88,9 +96,9 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
   if (state.kind === "done") {
     return (
       <div className="rounded-[3px] border border-border bg-background p-6" role="status">
-        {/* div, not p: Lovable's `.enquiry-card p` rule would shrink it to grey 13px. */}
+        {/* div, not p: the `.enquiry-card p` rule would shrink it to grey 13px. */}
         <div className="font-[family-name:var(--font-display)] text-[28px] leading-tight text-foreground">
-          Thank you{state.firstName ? `, ${state.firstName}` : ""}. We'll call you shortly.
+          Thank you{state.firstName ? `, ${state.firstName}` : ""}. We'll be in touch shortly.
         </div>
         <Button asChild variant="outline" className="mt-5">
           <a href={whatsappUrl(summary())} target="_blank" rel="noopener noreferrer">
@@ -136,12 +144,20 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           <input className={field} value={v.phone} onChange={set("phone")} type="tel" autoComplete="tel" required maxLength={40} placeholder="+971 …" />
         </label>
       </div>
-      <label className={labelCls}>
-        <span>
-          Email <span className="normal-case tracking-normal">(optional)</span>
-        </span>
-        <input className={field} value={v.email} onChange={set("email")} type="email" autoComplete="email" maxLength={200} />
-      </label>
+      <div className={cols}>
+        <label className={labelCls}>
+          <span>
+            Email <span className="normal-case tracking-normal">(optional)</span>
+          </span>
+          <input className={field} value={v.email} onChange={set("email")} type="email" autoComplete="email" maxLength={200} />
+        </label>
+        <label className={labelCls}>
+          <span>
+            Country you live in <span className="normal-case tracking-normal">(optional)</span>
+          </span>
+          <input className={field} value={v.country} onChange={set("country")} autoComplete="country-name" maxLength={80} />
+        </label>
+      </div>
       <div className={cols}>
         <label className={labelCls}>
           Project
@@ -151,11 +167,13 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
             ))}
           </select>
         </label>
+        {select("looking_for", "Looking for", LOOKING_FOR)}
         {select("buy_as", "Buying as", BUY_AS)}
         {select("bedrooms", "Bedrooms", BEDROOMS)}
         {select("budget", "Budget", BUDGETS)}
         {select("timing", "When", TIMINGS)}
-        {!compact && select("funding", "Paying by", FUNDING)}
+        {select("funding", "Paying by", FUNDING)}
+        {select("language", "Preferred language", LANGUAGES)}
       </div>
       <label className={labelCls}>
         <span>
@@ -179,7 +197,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           required
           className="mt-0.5 size-4 shrink-0 accent-[color:var(--brass)]"
         />
-        <span>You may contact me by phone, WhatsApp or email about this enquiry.</span>
+        <span>You may contact me by phone, WhatsApp or email about this enquiry. We never share your details.</span>
       </label>
       {state.kind === "invalid" && (
         <div className="rounded-[2px] bg-red-50 px-3 py-2.5 text-[13px] text-red-800" role="alert">
