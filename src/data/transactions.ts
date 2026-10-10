@@ -1,10 +1,11 @@
 /**
  * Registered Dubai Land Department sales and tenancy contracts for Dubai Creek
- * Harbour. transactions.json is a committed snapshot produced by scratchpad
- * tooling from the data supplier's query results (source.provider, internal) —
- * never edit the figures by hand; re-run the snapshot instead. The site credits
- * the Dubai Land Department, whose records these are. Every number shown on
- * the site comes from this file or from Emaar's pages (projects.ts).
+ * Harbour. transactions.json is a committed snapshot of Dubai Land Department
+ * registration records, produced by scratchpad tooling — never edit the
+ * figures by hand; re-run the snapshot instead. The site credits the Dubai
+ * Land Department, whose records these are, and this file carries no other
+ * supplier name or link. Every number shown on the site comes from this file
+ * or from Emaar's pages (projects.ts).
  */
 import raw from "./transactions.json";
 
@@ -34,10 +35,10 @@ export type RentRow = {
   rentPsf: number | null;
   newContract: boolean;
 };
-export type BuildingSales = { building: string; project: string | null; basis: Basis; count: number; medianPsf: number | null; p25Psf: number | null; p75Psf: number | null; medianPrice: number | null; url: string };
-export type BuildingRentals = { building: string; project: string | null; count: number; medianRent: number | null; p25Rent: number | null; p75Rent: number | null; medianRentPsf: number | null; url: string };
+export type BuildingSales = { building: string; project: string | null; basis: Basis; count: number; medianPsf: number | null; p25Psf: number | null; p75Psf: number | null; medianPrice: number | null };
+export type BuildingRentals = { building: string; project: string | null; count: number; medianRent: number | null; p25Rent: number | null; p75Rent: number | null; medianRentPsf: number | null };
 export type Transactions = {
-  source: { name: string; basis: string; coverage: string; snapshotDate: string; provider: string; providerUrl: string; filters: string };
+  source: { name: string; basis: string; coverage: string; snapshotDate: string; filters: string };
   window: { from: string; to: string; label: string };
   recent: {
     readySales: { count: number; from: string; to: string };

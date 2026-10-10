@@ -4,8 +4,6 @@
   "basis": "Dubai Land Department registration records",
   "coverage": "DLD registrations loaded through September 2026",
   "snapshotDate": "2026-10-09",
-  "provider": "PropertyIndex supplied the DLD records (internal note; the site names the Dubai Land Department)",
-  "providerUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons",
   "filters": "Market sales only: related-party transfers and completion re-registrations of the same purchase are left out. Apartments only in the 12-month summaries."
  },
  "window": {
@@ -207,8 +205,7 @@
     "medianPsf": 2736,
     "p25Psf": 2484,
     "p75Psf": 3130,
-    "medianPrice": 3302888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-bay"
+    "medianPrice": 3302888
    },
    {
     "building": "Lyvia by Palace",
@@ -218,8 +215,7 @@
     "medianPsf": 2673,
     "p25Psf": 2583,
     "p75Psf": 2747,
-    "medianPrice": 2933030,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-lyvia-by-palace"
+    "medianPrice": 2933030
    },
    {
     "building": "New launches not yet named in the register",
@@ -229,8 +225,7 @@
     "medianPsf": 2602,
     "p25Psf": 2515,
     "p75Psf": 2723,
-    "medianPrice": 2275888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons"
+    "medianPrice": 2275888
    },
    {
     "building": "Creek Haven Tower A",
@@ -240,8 +235,7 @@
     "medianPsf": 2679,
     "p25Psf": 2599,
     "p75Psf": 2860,
-    "medianPrice": 2795888,
-    "url": "https://www.propertyindex.ae/dubai/creek-haven-dubai-creek-harbour-the-lagoons-creek-haven-tower-a"
+    "medianPrice": 2795888
    },
    {
     "building": "Montiva Tower",
@@ -251,8 +245,7 @@
     "medianPsf": 2525,
     "p25Psf": 2455,
     "p75Psf": 2618,
-    "medianPrice": 2870888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-montiva-tower"
+    "medianPrice": 2870888
    },
    {
     "building": "Creek Haven Tower B",
@@ -262,8 +255,7 @@
     "medianPsf": 2688,
     "p25Psf": 2613,
     "p75Psf": 2948,
-    "medianPrice": 1970888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-haven-creek-haven-tower-b"
+    "medianPrice": 1970888
    },
    {
     "building": "Silva Tower",
@@ -273,8 +265,7 @@
     "medianPsf": 2248,
     "p25Psf": 2172,
     "p75Psf": 2430,
-    "medianPrice": 3087888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-silva-tower"
+    "medianPrice": 3087888
    },
    {
     "building": "The Grand",
@@ -284,8 +275,7 @@
     "medianPsf": 2733,
     "p25Psf": 2420,
     "p75Psf": 2998,
-    "medianPrice": 3150000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-grand"
+    "medianPrice": 3150000
    },
    {
     "building": "Altan",
@@ -295,8 +285,7 @@
     "medianPsf": 2306,
     "p25Psf": 2271,
     "p75Psf": 2408,
-    "medianPrice": 3303888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-altan"
+    "medianPrice": 3303888
    },
    {
     "building": "Palace Residence North",
@@ -306,8 +295,7 @@
     "medianPsf": 2699,
     "p25Psf": 2493,
     "p75Psf": 2811,
-    "medianPrice": 2520000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residence-north"
+    "medianPrice": 2520000
    },
    {
     "building": "Moor at Creek Beach Building 4",
@@ -317,8 +305,7 @@
     "medianPsf": 2294,
     "p25Psf": 2260,
     "p75Psf": 2318,
-    "medianPrice": 2400000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-4"
+    "medianPrice": 2400000
    },
    {
     "building": "Creek Palace",
@@ -328,8 +315,7 @@
     "medianPsf": 2792,
     "p25Psf": 2650,
     "p75Psf": 2985,
-    "medianPrice": 3077000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-palace"
+    "medianPrice": 3077000
    },
    {
     "building": "Creek Waters",
@@ -339,8 +325,7 @@
     "medianPsf": 2363,
     "p25Psf": 2245,
     "p75Psf": 2549,
-    "medianPrice": 2744444,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-waters"
+    "medianPrice": 2744444
    },
    {
     "building": "Canopy at Creek Beach Building 1",
@@ -350,8 +335,7 @@
     "medianPsf": 2315,
     "p25Psf": 2247,
     "p75Psf": 2516,
-    "medianPrice": 2377752,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-canopy-at-creek-beach-canopy-at-creek-beach-building-1"
+    "medianPrice": 2377752
    },
    {
     "building": "Creek Waters 2",
@@ -361,8 +345,7 @@
     "medianPsf": 2333,
     "p25Psf": 2206,
     "p75Psf": 2443,
-    "medianPrice": 2354888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-waters-2"
+    "medianPrice": 2354888
    },
    {
     "building": "Creek Rise Tower 2",
@@ -372,8 +355,7 @@
     "medianPsf": 2175,
     "p25Psf": 2049,
     "p75Psf": 2334,
-    "medianPrice": 2400000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-tower-2"
+    "medianPrice": 2400000
    },
    {
     "building": "Albero by Emaar",
@@ -383,8 +365,7 @@
     "medianPsf": 2284,
     "p25Psf": 2262,
     "p75Psf": 2361,
-    "medianPrice": 3417888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-albero-by-emaar"
+    "medianPrice": 3417888
    },
    {
     "building": "Address Residences Dubai Creek Harbour",
@@ -394,8 +375,7 @@
     "medianPsf": 2989,
     "p25Psf": 2749,
     "p75Psf": 3174,
-    "medianPrice": 3398559,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-residences-dubai-creek-harbour"
+    "medianPrice": 3398559
    },
    {
     "building": "Creek Edge Tower 1",
@@ -405,8 +385,7 @@
     "medianPsf": 2502,
     "p25Psf": 2286,
     "p75Psf": 2684,
-    "medianPrice": 2000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge-creek-edge-tower-1"
+    "medianPrice": 2000000
    },
    {
     "building": "17 Icon Bay",
@@ -416,8 +395,7 @@
     "medianPsf": 2194,
     "p25Psf": 2076,
     "p75Psf": 2266,
-    "medianPrice": 2400000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-17-icon-bay"
+    "medianPrice": 2400000
    },
    {
     "building": "Island Park II",
@@ -427,8 +405,7 @@
     "medianPsf": 2446,
     "p25Psf": 2254,
     "p75Psf": 2524,
-    "medianPrice": 2720000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-ii"
+    "medianPrice": 2720000
    },
    {
     "building": "Creek Crescent",
@@ -438,8 +415,7 @@
     "medianPsf": 2509,
     "p25Psf": 2423,
     "p75Psf": 2680,
-    "medianPrice": 3055000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-crescent"
+    "medianPrice": 3055000
    },
    {
     "building": "Creek Horizon Tower 1",
@@ -449,8 +425,7 @@
     "medianPsf": 2248,
     "p25Psf": 2172,
     "p75Psf": 2301,
-    "medianPrice": 2510000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-tower-1"
+    "medianPrice": 2510000
    },
    {
     "building": "Island Park I",
@@ -460,8 +435,7 @@
     "medianPsf": 2441,
     "p25Psf": 2317,
     "p75Psf": 2497,
-    "medianPrice": 2600000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-i"
+    "medianPrice": 2600000
    },
    {
     "building": "Harbour Gate Tower 1",
@@ -471,8 +445,7 @@
     "medianPsf": 2220,
     "p25Psf": 2165,
     "p75Psf": 2340,
-    "medianPrice": 2550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-1"
+    "medianPrice": 2550000
    },
    {
     "building": "Address Harbour Point Tower 2",
@@ -482,8 +455,7 @@
     "medianPsf": 3319,
     "p25Psf": 2960,
     "p75Psf": 3647,
-    "medianPrice": 3565000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-2"
+    "medianPrice": 3565000
    },
    {
     "building": "Harbour Views 1",
@@ -493,8 +465,7 @@
     "medianPsf": 2232,
     "p25Psf": 2061,
     "p75Psf": 2398,
-    "medianPrice": 2512500,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-1"
+    "medianPrice": 2512500
    },
    {
     "building": "Harbour Views 2",
@@ -504,8 +475,7 @@
     "medianPsf": 2397,
     "p25Psf": 2201,
     "p75Psf": 2513,
-    "medianPrice": 2676300,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-2"
+    "medianPrice": 2676300
    },
    {
     "building": "Palace Residence North",
@@ -515,8 +485,7 @@
     "medianPsf": 2649,
     "p25Psf": 2578,
     "p75Psf": 2760,
-    "medianPrice": 1900000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residence-north"
+    "medianPrice": 1900000
    },
    {
     "building": "Vida Residences Creek Beach",
@@ -526,8 +495,7 @@
     "medianPsf": 2611,
     "p25Psf": 2513,
     "p75Psf": 2777,
-    "medianPrice": 2950000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-vida-residences-creek-beach"
+    "medianPrice": 2950000
    },
    {
     "building": "Creekside 18 A",
@@ -537,8 +505,7 @@
     "medianPsf": 2226,
     "p25Psf": 2107,
     "p75Psf": 2321,
-    "medianPrice": 2700000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-a"
+    "medianPrice": 2700000
    },
    {
     "building": "Palace Residences",
@@ -548,8 +515,7 @@
     "medianPsf": 2955,
     "p25Psf": 2822,
     "p75Psf": 3065,
-    "medianPrice": 2330000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences"
+    "medianPrice": 2330000
    },
    {
     "building": "Creek Rise Tower 1",
@@ -559,8 +525,7 @@
     "medianPsf": 2229,
     "p25Psf": 1991,
     "p75Psf": 2312,
-    "medianPrice": 2500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-tower-1"
+    "medianPrice": 2500000
    },
    {
     "building": "Rosewater at Creek Beach Building 2",
@@ -570,8 +535,7 @@
     "medianPsf": 2296,
     "p25Psf": 2216,
     "p75Psf": 2436,
-    "medianPrice": 2662500,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-2"
+    "medianPrice": 2662500
    },
    {
     "building": "Creek Gate Tower 2",
@@ -581,8 +545,7 @@
     "medianPsf": 2270,
     "p25Psf": 2181,
     "p75Psf": 2394,
-    "medianPrice": 2530000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate-creek-gate-tower-2"
+    "medianPrice": 2530000
    },
    {
     "building": "Creek Horizon Tower 2",
@@ -592,8 +555,7 @@
     "medianPsf": 2201,
     "p25Psf": 2055,
     "p75Psf": 2329,
-    "medianPrice": 2300000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-tower-2"
+    "medianPrice": 2300000
    },
    {
     "building": "The Cove II Building 4",
@@ -603,8 +565,7 @@
     "medianPsf": 2259,
     "p25Psf": 2067,
     "p75Psf": 2567,
-    "medianPrice": 2500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-4"
+    "medianPrice": 2500000
    },
    {
     "building": "Dubai Creek Residences North Tower 2",
@@ -614,8 +575,7 @@
     "medianPsf": 2057,
     "p25Psf": 1771,
     "p75Psf": 2266,
-    "medianPrice": 2227083,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-2"
+    "medianPrice": 2227083
    },
    {
     "building": "Altus 1",
@@ -625,8 +585,7 @@
     "medianPsf": 2397,
     "p25Psf": 2385,
     "p75Psf": 2500,
-    "medianPrice": 1848888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-altus-altus-1"
+    "medianPrice": 1848888
    },
    {
     "building": "Address Harbour Point Tower 1",
@@ -636,8 +595,7 @@
     "medianPsf": 3563,
     "p25Psf": 3267,
     "p75Psf": 4025,
-    "medianPrice": 4500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-1"
+    "medianPrice": 4500000
    },
    {
     "building": "Harbour Gate Tower 2",
@@ -647,8 +605,7 @@
     "medianPsf": 2184,
     "p25Psf": 2120,
     "p75Psf": 2257,
-    "medianPrice": 2420000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-2"
+    "medianPrice": 2420000
    },
    {
     "building": "Address Harbour Point Tower 2",
@@ -658,8 +615,7 @@
     "medianPsf": 3673,
     "p25Psf": 3417,
     "p75Psf": 4247,
-    "medianPrice": 4350000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-2"
+    "medianPrice": 4350000
    },
    {
     "building": "Creekside 18 B",
@@ -669,8 +625,7 @@
     "medianPsf": 2320,
     "p25Psf": 2192,
     "p75Psf": 2352,
-    "medianPrice": 3525000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-b"
+    "medianPrice": 3525000
    },
    {
     "building": "Palace Residences",
@@ -680,8 +635,7 @@
     "medianPsf": 2834,
     "p25Psf": 2722,
     "p75Psf": 3124,
-    "medianPrice": 3400000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences"
+    "medianPrice": 3400000
    },
    {
     "building": "Orchid at Creek Beach Building 2",
@@ -691,8 +645,7 @@
     "medianPsf": 2058,
     "p25Psf": 1971,
     "p75Psf": 2144,
-    "medianPrice": 1800000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-orchid-at-creek-beach-orchid-at-creek-beach-building-2"
+    "medianPrice": 1800000
    },
    {
     "building": "The Cove Building 1",
@@ -702,8 +655,7 @@
     "medianPsf": 2330,
     "p25Psf": 2054,
     "p75Psf": 2465,
-    "medianPrice": 3050000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-1"
+    "medianPrice": 3050000
    },
    {
     "building": "Savanna at Creek Beach Tower 3",
@@ -713,8 +665,7 @@
     "medianPsf": 2243,
     "p25Psf": 2131,
     "p75Psf": 2507,
-    "medianPrice": 2300000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-3"
+    "medianPrice": 2300000
    },
    {
     "building": "Dubai Creek Residences South Tower 2",
@@ -724,8 +675,7 @@
     "medianPsf": 2212,
     "p25Psf": 1961,
     "p75Psf": 2510,
-    "medianPrice": 3450000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-2"
+    "medianPrice": 3450000
    },
    {
     "building": "Creek Gate Tower 1",
@@ -735,8 +685,7 @@
     "medianPsf": 2397,
     "p25Psf": 2293,
     "p75Psf": 2437,
-    "medianPrice": 2650000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate-creek-gate-tower-1"
+    "medianPrice": 2650000
    },
    {
     "building": "Rosewater at Creek Beach Building 3",
@@ -746,8 +695,7 @@
     "medianPsf": 2038,
     "p25Psf": 1988,
     "p75Psf": 2231,
-    "medianPrice": 2450000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-3"
+    "medianPrice": 2450000
    },
    {
     "building": "The Cove II Building 9",
@@ -757,8 +705,7 @@
     "medianPsf": 2550,
     "p25Psf": 2173,
     "p75Psf": 2748,
-    "medianPrice": 2850000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-9"
+    "medianPrice": 2850000
    },
    {
     "building": "Palace Residences Creek Blue Tower 1",
@@ -768,8 +715,7 @@
     "medianPsf": 2740,
     "p25Psf": 2686,
     "p75Psf": 3099,
-    "medianPrice": 2447888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences-creek-blue-palace-residences-creek-blue-tower-1"
+    "medianPrice": 2447888
    },
    {
     "building": "Lotus at Creek Beach Building 3",
@@ -779,8 +725,7 @@
     "medianPsf": 2364,
     "p25Psf": 2233,
     "p75Psf": 2429,
-    "medianPrice": 1870000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-3"
+    "medianPrice": 1870000
    },
    {
     "building": "Orchid at Creek Beach Building 1",
@@ -790,8 +735,7 @@
     "medianPsf": 2213,
     "p25Psf": 2122,
     "p75Psf": 2338,
-    "medianPrice": 2300000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-orchid-at-creek-beach-orchid-at-creek-beach-building-1"
+    "medianPrice": 2300000
    },
    {
     "building": "Valo",
@@ -801,8 +745,7 @@
     "medianPsf": 2354,
     "p25Psf": 2177,
     "p75Psf": 2498,
-    "medianPrice": 2217944,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-valo"
+    "medianPrice": 2217944
    },
    {
     "building": "Bayshore at Creek Beach Building 3",
@@ -812,8 +755,7 @@
     "medianPsf": 2100,
     "p25Psf": 2010,
     "p75Psf": 2101,
-    "medianPrice": 2050000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-3"
+    "medianPrice": 2050000
    },
    {
     "building": "The Cove II Building 5",
@@ -823,8 +765,7 @@
     "medianPsf": 2139,
     "p25Psf": 2081,
     "p75Psf": 2282,
-    "medianPrice": 3680444,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-5"
+    "medianPrice": 3680444
    },
    {
     "building": "The Cove Building 2",
@@ -834,8 +775,7 @@
     "medianPsf": 2291,
     "p25Psf": 2192,
     "p75Psf": 2438,
-    "medianPrice": 2925000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-2"
+    "medianPrice": 2925000
    },
    {
     "building": "Dubai Creek Residences North Tower 1",
@@ -845,8 +785,7 @@
     "medianPsf": 2180,
     "p25Psf": 2110,
     "p75Psf": 2248,
-    "medianPrice": 3200000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-1"
+    "medianPrice": 3200000
    },
    {
     "building": "The Cove II Building 6",
@@ -856,8 +795,7 @@
     "medianPsf": 2094,
     "p25Psf": 2000,
     "p75Psf": 2337,
-    "medianPrice": 2487888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-6"
+    "medianPrice": 2487888
    },
    {
     "building": "Bayshore at Creek Beach Building 4",
@@ -867,8 +805,7 @@
     "medianPsf": 2230,
     "p25Psf": 2179,
     "p75Psf": 2426,
-    "medianPrice": 1550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-4"
+    "medianPrice": 1550000
    },
    {
     "building": "Rosewater at Creek Beach Building 1",
@@ -878,8 +815,7 @@
     "medianPsf": 2415,
     "p25Psf": 2297,
     "p75Psf": 2494,
-    "medianPrice": 4450000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-1"
+    "medianPrice": 4450000
    },
    {
     "building": "Creek Edge Tower 2",
@@ -889,8 +825,7 @@
     "medianPsf": 2386,
     "p25Psf": 2343,
     "p75Psf": 2513,
-    "medianPrice": 2550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge-creek-edge-tower-2"
+    "medianPrice": 2550000
    },
    {
     "building": "Island Park I",
@@ -900,8 +835,7 @@
     "medianPsf": 2389,
     "p25Psf": 2356,
     "p75Psf": 2495,
-    "medianPrice": 3891194,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-i"
+    "medianPrice": 3891194
    },
    {
     "building": "Arlo",
@@ -911,8 +845,7 @@
     "medianPsf": 2581,
     "p25Psf": 2330,
     "p75Psf": 2843,
-    "medianPrice": 2041888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-arlo"
+    "medianPrice": 2041888
    },
    {
     "building": "The Cove II Building 10",
@@ -922,8 +855,7 @@
     "medianPsf": 2499,
     "p25Psf": 2410,
     "p75Psf": 2818,
-    "medianPrice": 3350000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-10"
+    "medianPrice": 3350000
    },
    {
     "building": "Dubai Creek Residences South Tower 1",
@@ -933,8 +865,7 @@
     "medianPsf": 2399,
     "p25Psf": 2254,
     "p75Psf": 2519,
-    "medianPrice": 2962500,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-1"
+    "medianPrice": 2962500
    },
    {
     "building": "Oria",
@@ -944,8 +875,7 @@
     "medianPsf": 2336,
     "p25Psf": 2269,
     "p75Psf": 2651,
-    "medianPrice": 2658085,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-oria"
+    "medianPrice": 2658085
    },
    {
     "building": "Grove at Creek Beach Building 1",
@@ -955,8 +885,7 @@
     "medianPsf": 2249,
     "p25Psf": 1979,
     "p75Psf": 2316,
-    "medianPrice": 2079378,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-1"
+    "medianPrice": 2079378
    },
    {
     "building": "Lotus at Creek Beach Building 2",
@@ -966,8 +895,7 @@
     "medianPsf": 2418,
     "p25Psf": 2213,
     "p75Psf": 2492,
-    "medianPrice": 2150000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-2"
+    "medianPrice": 2150000
    },
    {
     "building": "Grove at Creek Beach Building 5",
@@ -977,8 +905,7 @@
     "medianPsf": 2208,
     "p25Psf": 2064,
     "p75Psf": 2279,
-    "medianPrice": 2425000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-5"
+    "medianPrice": 2425000
    },
    {
     "building": "Breeze at Creek Beach Building 2",
@@ -988,8 +915,7 @@
     "medianPsf": 2334,
     "p25Psf": 2021,
     "p75Psf": 2433,
-    "medianPrice": 2550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-breeze-at-creek-beach-breeze-at-creek-beach-building-2"
+    "medianPrice": 2550000
    },
    {
     "building": "Cedar at Creek Beach Building 2",
@@ -999,8 +925,7 @@
     "medianPsf": 2228,
     "p25Psf": 2077,
     "p75Psf": 2266,
-    "medianPrice": 1500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-2"
+    "medianPrice": 1500000
    },
    {
     "building": "The Cove II Building 8",
@@ -1010,8 +935,7 @@
     "medianPsf": 2463,
     "p25Psf": 2447,
     "p75Psf": 2868,
-    "medianPrice": 3361888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-8"
+    "medianPrice": 3361888
    },
    {
     "building": "Savanna at Creek Beach Tower 2",
@@ -1021,8 +945,7 @@
     "medianPsf": 2283,
     "p25Psf": 2185,
     "p75Psf": 2344,
-    "medianPrice": 1750000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-2"
+    "medianPrice": 1750000
    },
    {
     "building": "Lotus at Creek Beach Building 4",
@@ -1032,8 +955,7 @@
     "medianPsf": 2161,
     "p25Psf": 1884,
     "p75Psf": 2315,
-    "medianPrice": 2000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-4"
+    "medianPrice": 2000000
    },
    {
     "building": "Savanna at Creek Beach Tower 3",
@@ -1043,8 +965,7 @@
     "medianPsf": 2224,
     "p25Psf": 2114,
     "p75Psf": 2275,
-    "medianPrice": 2325000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-3"
+    "medianPrice": 2325000
    },
    {
     "building": "Grove at Creek Beach Building 3",
@@ -1054,8 +975,7 @@
     "medianPsf": 1495,
     "p25Psf": 1353,
     "p75Psf": 2041,
-    "medianPrice": 2625000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-3"
+    "medianPrice": 2625000
    },
    {
     "building": "Mangrove at Creek Beach Building 2",
@@ -1065,8 +985,7 @@
     "medianPsf": 2468,
     "p25Psf": 2406,
     "p75Psf": 2571,
-    "medianPrice": 1692388,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach-mangrove-at-creek-beach-building-2"
+    "medianPrice": 1692388
    },
    {
     "building": "Cedar at Creek Beach Building 3",
@@ -1076,8 +995,7 @@
     "medianPsf": 2091,
     "p25Psf": 2027,
     "p75Psf": 2223,
-    "medianPrice": 2189444,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-3"
+    "medianPrice": 2189444
    },
    {
     "building": "Harbour Gate Tower 2",
@@ -1087,8 +1005,7 @@
     "medianPsf": 2148,
     "p25Psf": 2076,
     "p75Psf": 2224,
-    "medianPrice": 3520000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-2"
+    "medianPrice": 3520000
    },
    {
     "building": "Aeon Tower 1",
@@ -1098,8 +1015,7 @@
     "medianPsf": 2296,
     "p25Psf": 2279,
     "p75Psf": 2296,
-    "medianPrice": 1752888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-aeon-aeon-tower-1"
+    "medianPrice": 1752888
    },
    {
     "building": "Surf at Creek Beach Building 2",
@@ -1109,8 +1025,7 @@
     "medianPsf": 2386,
     "p25Psf": 2381,
     "p75Psf": 2389,
-    "medianPrice": 1650000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach-surf-at-creek-beach-building-2"
+    "medianPrice": 1650000
    },
    {
     "building": "The Cove II Building 7",
@@ -1120,8 +1035,7 @@
     "medianPsf": 2752,
     "p25Psf": 2695,
     "p75Psf": 3105,
-    "medianPrice": 5800000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-7"
+    "medianPrice": 5800000
    },
    {
     "building": "Dubai Creek Residences South Tower 3",
@@ -1131,8 +1045,7 @@
     "medianPsf": 2289,
     "p25Psf": 2241,
     "p75Psf": 2590,
-    "medianPrice": 3850000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-3"
+    "medianPrice": 3850000
    },
    {
     "building": "Cedar at Creek Beach Building 2",
@@ -1142,8 +1055,7 @@
     "medianPsf": 2196,
     "p25Psf": 2149,
     "p75Psf": 2304,
-    "medianPrice": 1550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-2"
+    "medianPrice": 1550000
    },
    {
     "building": "Dubai Creek Residences North Tower 3",
@@ -1153,8 +1065,7 @@
     "medianPsf": 2115,
     "p25Psf": 2026,
     "p75Psf": 2836,
-    "medianPrice": 6550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-3"
+    "medianPrice": 6550000
    },
    {
     "building": "Address Harbour Point Tower 1",
@@ -1164,8 +1075,7 @@
     "medianPsf": 3783,
     "p25Psf": 3504,
     "p75Psf": 4027,
-    "medianPrice": 5000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-1"
+    "medianPrice": 5000000
    },
    {
     "building": "Breeze at Creek Beach Building 3",
@@ -1175,8 +1085,7 @@
     "medianPsf": 2470,
     "p25Psf": 2347,
     "p75Psf": 2792,
-    "medianPrice": 2600000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-breeze-at-creek-beach-breeze-at-creek-beach-building-3"
+    "medianPrice": 2600000
    },
    {
     "building": "The Cove Building 3",
@@ -1186,8 +1095,7 @@
     "medianPsf": 2233,
     "p25Psf": 2209,
     "p75Psf": 2352,
-    "medianPrice": 3000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-3"
+    "medianPrice": 3000000
    },
    {
     "building": "Grove at Creek Beach Building 2",
@@ -1197,8 +1105,7 @@
     "medianPsf": 2057,
     "p25Psf": 1720,
     "p75Psf": 2099,
-    "medianPrice": 2400000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-2"
+    "medianPrice": 2400000
    },
    {
     "building": "Cedar at Creek Beach Building 4",
@@ -1208,8 +1115,7 @@
     "medianPsf": 2268,
     "p25Psf": 2238,
     "p75Psf": 2307,
-    "medianPrice": 2235000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-4"
+    "medianPrice": 2235000
    },
    {
     "building": "The Cove II Building 4",
@@ -1219,8 +1125,7 @@
     "medianPsf": 2253,
     "p25Psf": 2215,
     "p75Psf": 2293,
-    "medianPrice": 2075000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-4"
+    "medianPrice": 2075000
    },
    {
     "building": "The Cove II Building 11",
@@ -1230,8 +1135,7 @@
     "medianPsf": 2757,
     "p25Psf": 2171,
     "p75Psf": 3358,
-    "medianPrice": 4550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-11"
+    "medianPrice": 4550000
    },
    {
     "building": "Sunset at Creek Beach Building 2",
@@ -1241,8 +1145,7 @@
     "medianPsf": 2266,
     "p25Psf": 2151,
     "p75Psf": 2332,
-    "medianPrice": 1867500,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-2"
+    "medianPrice": 1867500
    },
    {
     "building": "Surf at Creek Beach Building 2",
@@ -1252,8 +1155,7 @@
     "medianPsf": 2418,
     "p25Psf": 2387,
     "p75Psf": 2443,
-    "medianPrice": 1667500,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach-surf-at-creek-beach-building-2"
+    "medianPrice": 1667500
    },
    {
     "building": "Bayshore at Creek Beach Building 1",
@@ -1263,8 +1165,7 @@
     "medianPsf": 2163,
     "p25Psf": 2104,
     "p75Psf": 2240,
-    "medianPrice": 1865000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-1"
+    "medianPrice": 1865000
    },
    {
     "building": "Cedar at Creek Beach Building 1",
@@ -1274,8 +1175,7 @@
     "medianPsf": 2194,
     "p25Psf": 2156,
     "p75Psf": 2262,
-    "medianPrice": 1955000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-1"
+    "medianPrice": 1955000
    },
    {
     "building": "Cedar at Creek Beach Building 1",
@@ -1285,8 +1185,7 @@
     "medianPsf": 2165,
     "p25Psf": 2091,
     "p75Psf": 2192,
-    "medianPrice": 1905000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-1"
+    "medianPrice": 1905000
    },
    {
     "building": "Bayshore at Creek Beach Building 2",
@@ -1296,8 +1195,7 @@
     "medianPsf": 2491,
     "p25Psf": 2409,
     "p75Psf": 2572,
-    "medianPrice": 1730000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-2"
+    "medianPrice": 1730000
    },
    {
     "building": "Harbour Gate Tower 1",
@@ -1307,8 +1205,7 @@
     "medianPsf": 2215,
     "p25Psf": 2190,
     "p75Psf": 2404,
-    "medianPrice": 3550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-1"
+    "medianPrice": 3550000
    },
    {
     "building": "Grove at Creek Beach Building 3",
@@ -1318,8 +1215,7 @@
     "medianPsf": 2341,
     "p25Psf": 2215,
     "p75Psf": 2368,
-    "medianPrice": 2550000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-3"
+    "medianPrice": 2550000
    },
    {
     "building": "The Cove II Building 5",
@@ -1329,8 +1225,7 @@
     "medianPsf": 2212,
     "p25Psf": 2068,
     "p75Psf": 2356,
-    "medianPrice": 1735000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-5"
+    "medianPrice": 1735000
    },
    {
     "building": "Savanna at Creek Beach Tower 1",
@@ -1340,8 +1235,7 @@
     "medianPsf": 2236,
     "p25Psf": 2234,
     "p75Psf": 2341,
-    "medianPrice": 2350000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-1"
+    "medianPrice": 2350000
    },
    {
     "building": "Sunset at Creek Beach Building 3",
@@ -1351,8 +1245,7 @@
     "medianPsf": 2195,
     "p25Psf": 2109,
     "p75Psf": 2279,
-    "medianPrice": 2310000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-3"
+    "medianPrice": 2310000
    },
    {
     "building": "Mangrove at Creek Beach Building 2",
@@ -1362,8 +1255,7 @@
     "medianPsf": 2290,
     "p25Psf": 2232,
     "p75Psf": 2295,
-    "medianPrice": 2200000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach-mangrove-at-creek-beach-building-2"
+    "medianPrice": 2200000
    },
    {
     "building": "Aeon Tower 2",
@@ -1373,8 +1265,7 @@
     "medianPsf": 2417,
     "p25Psf": 2244,
     "p75Psf": 2451,
-    "medianPrice": 3202888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-aeon-aeon-tower-2"
+    "medianPrice": 3202888
    },
    {
     "building": "Moor at Creek Beach Building 1",
@@ -1384,8 +1275,7 @@
     "medianPsf": 2034,
     "p25Psf": 2023,
     "p75Psf": 2091,
-    "medianPrice": 2150000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-1"
+    "medianPrice": 2150000
    },
    {
     "building": "Summer at Creek Beach Building 2",
@@ -1395,8 +1285,7 @@
     "medianPsf": 1798,
     "p25Psf": 1781,
     "p75Psf": 1811,
-    "medianPrice": 1725000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-2"
+    "medianPrice": 1725000
    },
    {
     "building": "Moor at Creek Beach Building 3",
@@ -1406,8 +1295,7 @@
     "medianPsf": 2484,
     "p25Psf": 2399,
     "p75Psf": 2515,
-    "medianPrice": 2566510,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-3"
+    "medianPrice": 2566510
    },
    {
     "building": "Cedar at Creek Beach Building 4",
@@ -1417,8 +1305,7 @@
     "medianPsf": 2233,
     "p25Psf": 1665,
     "p75Psf": 2472,
-    "medianPrice": 1808941,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-4"
+    "medianPrice": 1808941
    },
    {
     "building": "Dubai Creek Residences North Tower Podium",
@@ -1428,8 +1315,7 @@
     "medianPsf": 2178,
     "p25Psf": 1861,
     "p75Psf": 2181,
-    "medianPrice": 4500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-podium"
+    "medianPrice": 4500000
    },
    {
     "building": "Bayshore at Creek Beach Building 2",
@@ -1439,8 +1325,7 @@
     "medianPsf": 2491,
     "p25Psf": 2409,
     "p75Psf": 2572,
-    "medianPrice": 1730000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-2"
+    "medianPrice": 1730000
    },
    {
     "building": "Lotus at Creek Beach Building 1",
@@ -1450,8 +1335,7 @@
     "medianPsf": 2323,
     "p25Psf": 2182,
     "p75Psf": 2327,
-    "medianPrice": 1700000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-1"
+    "medianPrice": 1700000
    },
    {
     "building": "Summer at Creek Beach Building 1",
@@ -1461,8 +1345,7 @@
     "medianPsf": 2365,
     "p25Psf": 2304,
     "p75Psf": 2431,
-    "medianPrice": 1580000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-1"
+    "medianPrice": 1580000
    },
    {
     "building": "Creek Edge Tower 2",
@@ -1472,8 +1355,7 @@
     "medianPsf": 2431,
     "p25Psf": 2290,
     "p75Psf": 2571,
-    "medianPrice": 3016888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge-creek-edge-tower-2"
+    "medianPrice": 3016888
    },
    {
     "building": "Dubai Creek Residences South Tower Podium",
@@ -1483,8 +1365,7 @@
     "medianPsf": 2201,
     "p25Psf": 1989,
     "p75Psf": 2413,
-    "medianPrice": 6125000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-podium"
+    "medianPrice": 6125000
    },
    {
     "building": "Surf at Creek Beach Building 1",
@@ -1494,8 +1375,7 @@
     "medianPsf": 2210,
     "p25Psf": 2110,
     "p75Psf": 2310,
-    "medianPrice": 2200000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach-surf-at-creek-beach-building-1"
+    "medianPrice": 2200000
    },
    {
     "building": "Dubai Creek Residences South Tower 1",
@@ -1505,8 +1385,7 @@
     "medianPsf": 2859,
     "p25Psf": 2828,
     "p75Psf": 2889,
-    "medianPrice": 5391374,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-1"
+    "medianPrice": 5391374
    },
    {
     "building": "The Cove Building 1",
@@ -1516,8 +1395,7 @@
     "medianPsf": 2451,
     "p25Psf": 2346,
     "p75Psf": 2556,
-    "medianPrice": 3712444,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-1"
+    "medianPrice": 3712444
    },
    {
     "building": "Creek Rise Podium",
@@ -1527,8 +1405,7 @@
     "medianPsf": 2033,
     "p25Psf": 1958,
     "p75Psf": 2108,
-    "medianPrice": 2375000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-podium"
+    "medianPrice": 2375000
    },
    {
     "building": "Savanna at Creek Beach Tower 1",
@@ -1538,8 +1415,7 @@
     "medianPsf": 2468,
     "p25Psf": 2287,
     "p75Psf": 2649,
-    "medianPrice": 2090388,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-1"
+    "medianPrice": 2090388
    },
    {
     "building": "Summer at Creek Beach Building 4",
@@ -1549,8 +1425,7 @@
     "medianPsf": 2328,
     "p25Psf": 2278,
     "p75Psf": 2379,
-    "medianPrice": 1640000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-4"
+    "medianPrice": 1640000
    },
    {
     "building": "Dubai Creek Residences South Tower 2",
@@ -1560,8 +1435,7 @@
     "medianPsf": 2299,
     "p25Psf": 2007,
     "p75Psf": 2592,
-    "medianPrice": 5010816,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-2"
+    "medianPrice": 5010816
    },
    {
     "building": "Rosewater at Creek Beach Building 1",
@@ -1571,8 +1445,7 @@
     "medianPsf": 2112,
     "p25Psf": 2110,
     "p75Psf": 2114,
-    "medianPrice": 2300000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-1"
+    "medianPrice": 2300000
    },
    {
     "building": "Harbour Views Podium",
@@ -1582,8 +1455,7 @@
     "medianPsf": 1818,
     "p25Psf": 1794,
     "p75Psf": 1843,
-    "medianPrice": 5300000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-podium"
+    "medianPrice": 5300000
    },
    {
     "building": "Vida Residences Creek Beach",
@@ -1593,8 +1465,7 @@
     "medianPsf": 2590,
     "p25Psf": 2544,
     "p75Psf": 2637,
-    "medianPrice": 2352944,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-vida-residences-creek-beach"
+    "medianPrice": 2352944
    },
    {
     "building": "Moor at Creek Beach Building 1",
@@ -1604,8 +1475,7 @@
     "medianPsf": 2472,
     "p25Psf": 2408,
     "p75Psf": 2536,
-    "medianPrice": 2894388,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-1"
+    "medianPrice": 2894388
    },
    {
     "building": "Sunset at Creek Beach Building 1",
@@ -1615,8 +1485,7 @@
     "medianPsf": 2214,
     "p25Psf": 2198,
     "p75Psf": 2229,
-    "medianPrice": 1775000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-1"
+    "medianPrice": 1775000
    },
    {
     "building": "Altus 2",
@@ -1626,8 +1495,7 @@
     "medianPsf": 2302,
     "p25Psf": 2288,
     "p75Psf": 2316,
-    "medianPrice": 2202944,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-altus-altus-2"
+    "medianPrice": 2202944
    },
    {
     "building": "17 Icon Bay",
@@ -1637,8 +1505,7 @@
     "medianPsf": 1367,
     "p25Psf": 1367,
     "p75Psf": 1367,
-    "medianPrice": 1900000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-17-icon-bay"
+    "medianPrice": 1900000
    },
    {
     "building": "Creekside 18 A",
@@ -1648,8 +1515,7 @@
     "medianPsf": 2970,
     "p25Psf": 2970,
     "p75Psf": 2970,
-    "medianPrice": 4788844,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-a"
+    "medianPrice": 4788844
    },
    {
     "building": "Dubai Creek Residences South Tower 3",
@@ -1659,8 +1525,7 @@
     "medianPsf": 1650,
     "p25Psf": 1650,
     "p75Psf": 1650,
-    "medianPrice": 3444372,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-3"
+    "medianPrice": 3444372
    },
    {
     "building": "Creek Horizon Tower 2",
@@ -1670,8 +1535,7 @@
     "medianPsf": 1759,
     "p25Psf": 1759,
     "p75Psf": 1759,
-    "medianPrice": 2131888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-tower-2"
+    "medianPrice": 2131888
    },
    {
     "building": "Dubai Creek Residences North Tower 2",
@@ -1681,8 +1545,7 @@
     "medianPsf": 2996,
     "p25Psf": 2996,
     "p75Psf": 2996,
-    "medianPrice": 5784888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-2"
+    "medianPrice": 5784888
    },
    {
     "building": "Harbour Gate Podium",
@@ -1692,8 +1555,7 @@
     "medianPsf": 1629,
     "p25Psf": 1629,
     "p75Psf": 1629,
-    "medianPrice": 2250000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-podium"
+    "medianPrice": 2250000
    },
    {
     "building": "The Cove II Building 7",
@@ -1703,8 +1565,7 @@
     "medianPsf": 2286,
     "p25Psf": 2286,
     "p75Psf": 2286,
-    "medianPrice": 3000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-7"
+    "medianPrice": 3000000
    },
    {
     "building": "Creekside 18 B",
@@ -1714,8 +1575,7 @@
     "medianPsf": 1852,
     "p25Psf": 1852,
     "p75Psf": 1852,
-    "medianPrice": 3000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-b"
+    "medianPrice": 3000000
    },
    {
     "building": "Palace Residences Creek Blue Podium",
@@ -1725,8 +1585,7 @@
     "medianPsf": 2981,
     "p25Psf": 2981,
     "p75Psf": 2981,
-    "medianPrice": 4771888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences-creek-blue-palace-residences-creek-blue-podium"
+    "medianPrice": 4771888
    },
    {
     "building": "Dubai Creek Residences North Tower 3",
@@ -1736,8 +1595,7 @@
     "medianPsf": 3034,
     "p25Psf": 3034,
     "p75Psf": 3034,
-    "medianPrice": 6445888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-3"
+    "medianPrice": 6445888
    },
    {
     "building": "Island Park II",
@@ -1747,8 +1605,7 @@
     "medianPsf": 2625,
     "p25Psf": 2625,
     "p75Psf": 2625,
-    "medianPrice": 1926418,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-ii"
+    "medianPrice": 1926418
    },
    {
     "building": "Summer at Creek Beach Building 3",
@@ -1758,8 +1615,7 @@
     "medianPsf": 1923,
     "p25Psf": 1923,
     "p75Psf": 1923,
-    "medianPrice": 2900000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-3"
+    "medianPrice": 2900000
    },
    {
     "building": "Creek Rise Tower 1",
@@ -1769,8 +1625,7 @@
     "medianPsf": 2255,
     "p25Psf": 2255,
     "p75Psf": 2255,
-    "medianPrice": 2500000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-tower-1"
+    "medianPrice": 2500000
    },
    {
     "building": "The Cove ll",
@@ -1780,8 +1635,7 @@
     "medianPsf": 3230,
     "p25Psf": 3230,
     "p75Psf": 3230,
-    "medianPrice": 7975130,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll"
+    "medianPrice": 7975130
    },
    {
     "building": "The Cove Building 2",
@@ -1791,8 +1645,7 @@
     "medianPsf": 2274,
     "p25Psf": 2274,
     "p75Psf": 2274,
-    "medianPrice": 5000000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-2"
+    "medianPrice": 5000000
    },
    {
     "building": "Canopy at Creek Beach Building 3",
@@ -1802,8 +1655,7 @@
     "medianPsf": 2551,
     "p25Psf": 2551,
     "p75Psf": 2551,
-    "medianPrice": 1845888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-canopy-at-creek-beach-canopy-at-creek-beach-building-3"
+    "medianPrice": 1845888
    },
    {
     "building": "Mangrove at Creek Beach Building 1",
@@ -1813,8 +1665,7 @@
     "medianPsf": 2702,
     "p25Psf": 2702,
     "p75Psf": 2702,
-    "medianPrice": 1867888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach-mangrove-at-creek-beach-building-1"
+    "medianPrice": 1867888
    },
    {
     "building": "Creek Gate Tower 2",
@@ -1824,8 +1675,7 @@
     "medianPsf": 2162,
     "p25Psf": 2162,
     "p75Psf": 2162,
-    "medianPrice": 3200000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate-creek-gate-tower-2"
+    "medianPrice": 3200000
    },
    {
     "building": "Savanna at Creek Beach Tower 2",
@@ -1835,8 +1685,7 @@
     "medianPsf": 2102,
     "p25Psf": 2102,
     "p75Psf": 2102,
-    "medianPrice": 3547888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-2"
+    "medianPrice": 3547888
    },
    {
     "building": "Creek Palace",
@@ -1846,8 +1695,7 @@
     "medianPsf": 2210,
     "p25Psf": 2210,
     "p75Psf": 2210,
-    "medianPrice": 3657888,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-palace"
+    "medianPrice": 3657888
    },
    {
     "building": "Creek Horizon Podium",
@@ -1857,8 +1705,7 @@
     "medianPsf": 2017,
     "p25Psf": 2017,
     "p75Psf": 2017,
-    "medianPrice": 3580000,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-podium"
+    "medianPrice": 3580000
    }
   ],
   "rentals": [
@@ -1869,8 +1716,7 @@
     "medianRent": 150000,
     "p25Rent": 112250,
     "p75Rent": 178250,
-    "medianRentPsf": 150,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences"
+    "medianRentPsf": 150
    },
    {
     "building": "The Grand",
@@ -1879,8 +1725,7 @@
     "medianRent": 172000,
     "p25Rent": 120000,
     "p75Rent": 190000,
-    "medianRentPsf": 139,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-grand"
+    "medianRentPsf": 139
    },
    {
     "building": "Harbour Views 2",
@@ -1889,8 +1734,7 @@
     "medianRent": 130000,
     "p25Rent": 95000,
     "p75Rent": 160000,
-    "medianRentPsf": 124,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-2"
+    "medianRentPsf": 124
    },
    {
     "building": "Creek Edge Tower 1",
@@ -1899,8 +1743,7 @@
     "medianRent": 130000,
     "p25Rent": 95500,
     "p75Rent": 160000,
-    "medianRentPsf": 137,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge-creek-edge-tower-1"
+    "medianRentPsf": 137
    },
    {
     "building": "Harbour Views 1",
@@ -1909,8 +1752,7 @@
     "medianRent": 140000,
     "p25Rent": 100000,
     "p75Rent": 180000,
-    "medianRentPsf": 123,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-1"
+    "medianRentPsf": 123
    },
    {
     "building": "17 Icon Bay",
@@ -1919,8 +1761,7 @@
     "medianRent": 121000,
     "p25Rent": 92999,
     "p75Rent": 140000,
-    "medianRentPsf": 119,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-17-icon-bay"
+    "medianRentPsf": 119
    },
    {
     "building": "Address Harbour Point Tower 2",
@@ -1929,8 +1770,7 @@
     "medianRent": 175000,
     "p25Rent": 147188,
     "p75Rent": 230000,
-    "medianRentPsf": 181,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-2"
+    "medianRentPsf": 181
    },
    {
     "building": "Creek Rise Tower 1",
@@ -1939,8 +1779,7 @@
     "medianRent": 134596,
     "p25Rent": 110000,
     "p75Rent": 165000,
-    "medianRentPsf": 121,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-tower-1"
+    "medianRentPsf": 121
    },
    {
     "building": "Creek Palace",
@@ -1949,8 +1788,7 @@
     "medianRent": 130000,
     "p25Rent": 105000,
     "p75Rent": 180000,
-    "medianRentPsf": 149,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-palace"
+    "medianRentPsf": 149
    },
    {
     "building": "Creek Gate Tower 1",
@@ -1959,8 +1797,7 @@
     "medianRent": 128000,
     "p25Rent": 110000,
     "p75Rent": 154500,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate-creek-gate-tower-1"
+    "medianRentPsf": 122
    },
    {
     "building": "Palace Residence North",
@@ -1969,8 +1806,7 @@
     "medianRent": 140000,
     "p25Rent": 110000,
     "p75Rent": 182500,
-    "medianRentPsf": 140,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residence-north"
+    "medianRentPsf": 140
    },
    {
     "building": "Harbour Gate Tower 1",
@@ -1979,8 +1815,7 @@
     "medianRent": 132000,
     "p25Rent": 100000,
     "p75Rent": 155000,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-1"
+    "medianRentPsf": 122
    },
    {
     "building": "Creek Horizon Tower 2",
@@ -1989,8 +1824,7 @@
     "medianRent": 120000,
     "p25Rent": 97625,
     "p75Rent": 151250,
-    "medianRentPsf": 123,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-tower-2"
+    "medianRentPsf": 123
    },
    {
     "building": "Creek Horizon Tower 1",
@@ -1999,8 +1833,7 @@
     "medianRent": 123900,
     "p25Rent": 95000,
     "p75Rent": 155500,
-    "medianRentPsf": 124,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-tower-1"
+    "medianRentPsf": 124
    },
    {
     "building": "Creekside 18 B",
@@ -2009,8 +1842,7 @@
     "medianRent": 135000,
     "p25Rent": 100000,
     "p75Rent": 165516,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-b"
+    "medianRentPsf": 122
    },
    {
     "building": "Creekside 18 A",
@@ -2019,8 +1851,7 @@
     "medianRent": 120000,
     "p25Rent": 85000,
     "p75Rent": 150000,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-a"
+    "medianRentPsf": 122
    },
    {
     "building": "Creek Rise Tower 2",
@@ -2029,8 +1860,7 @@
     "medianRent": 128025,
     "p25Rent": 95750,
     "p75Rent": 158750,
-    "medianRentPsf": 118,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-tower-2"
+    "medianRentPsf": 118
    },
    {
     "building": "Creek Gate Tower 2",
@@ -2039,8 +1869,7 @@
     "medianRent": 130000,
     "p25Rent": 114037,
     "p75Rent": 160700,
-    "medianRentPsf": 125,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate-creek-gate-tower-2"
+    "medianRentPsf": 125
    },
    {
     "building": "Vida Residences Creek Beach",
@@ -2049,8 +1878,7 @@
     "medianRent": 135000,
     "p25Rent": 110000,
     "p75Rent": 168462,
-    "medianRentPsf": 150,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-vida-residences-creek-beach"
+    "medianRentPsf": 150
    },
    {
     "building": "Creek Crescent",
@@ -2059,8 +1887,7 @@
     "medianRent": 149590,
     "p25Rent": 100000,
     "p75Rent": 180000,
-    "medianRentPsf": 139,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-crescent"
+    "medianRentPsf": 139
    },
    {
     "building": "Harbour Gate Tower 2",
@@ -2069,8 +1896,7 @@
     "medianRent": 125000,
     "p25Rent": 98273,
     "p75Rent": 157500,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-tower-2"
+    "medianRentPsf": 122
    },
    {
     "building": "Creek Edge Tower 2",
@@ -2079,8 +1905,7 @@
     "medianRent": 131500,
     "p25Rent": 100000,
     "p75Rent": 155000,
-    "medianRentPsf": 134,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge-creek-edge-tower-2"
+    "medianRentPsf": 134
    },
    {
     "building": "Dubai Creek Residences North Tower 1",
@@ -2089,8 +1914,7 @@
     "medianRent": 145000,
     "p25Rent": 110000,
     "p75Rent": 207500,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-1"
+    "medianRentPsf": 117
    },
    {
     "building": "Address Harbour Point Tower 1",
@@ -2099,8 +1923,7 @@
     "medianRent": 200000,
     "p25Rent": 150000,
     "p75Rent": 240000,
-    "medianRentPsf": 189,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point-address-harbour-point-tower-1"
+    "medianRentPsf": 189
    },
    {
     "building": "Dubai Creek Residences South Tower 1",
@@ -2109,8 +1932,7 @@
     "medianRent": 157000,
     "p25Rent": 115000,
     "p75Rent": 187866,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-1"
+    "medianRentPsf": 117
    },
    {
     "building": "Dubai Creek Residences North Tower 2",
@@ -2119,8 +1941,7 @@
     "medianRent": 150000,
     "p25Rent": 120000,
     "p75Rent": 205000,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-2"
+    "medianRentPsf": 117
    },
    {
     "building": "Dubai Creek Residences South Tower 2",
@@ -2129,8 +1950,7 @@
     "medianRent": 135000,
     "p25Rent": 114895,
     "p75Rent": 185000,
-    "medianRentPsf": 112,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-2"
+    "medianRentPsf": 112
    },
    {
     "building": "Island Park II",
@@ -2139,8 +1959,7 @@
     "medianRent": 150000,
     "p25Rent": 117000,
     "p75Rent": 185000,
-    "medianRentPsf": 147,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-ii"
+    "medianRentPsf": 147
    },
    {
     "building": "Orchid at Creek Beach Building 1",
@@ -2149,8 +1968,7 @@
     "medianRent": 102000,
     "p25Rent": 88500,
     "p75Rent": 128605,
-    "medianRentPsf": 129,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-orchid-at-creek-beach-orchid-at-creek-beach-building-1"
+    "medianRentPsf": 129
    },
    {
     "building": "Summer at Creek Beach Building 1",
@@ -2159,8 +1977,7 @@
     "medianRent": 90000,
     "p25Rent": 84000,
     "p75Rent": 131500,
-    "medianRentPsf": 119,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-1"
+    "medianRentPsf": 119
    },
    {
     "building": "The Cove Building 1",
@@ -2169,8 +1986,7 @@
     "medianRent": 145000,
     "p25Rent": 120000,
     "p75Rent": 185000,
-    "medianRentPsf": 127,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-1"
+    "medianRentPsf": 127
    },
    {
     "building": "Bayshore at Creek Beach Building 2",
@@ -2179,8 +1995,7 @@
     "medianRent": 100000,
     "p25Rent": 89816,
     "p75Rent": 115375,
-    "medianRentPsf": 129,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-2"
+    "medianRentPsf": 129
    },
    {
     "building": "Surf at Creek Beach Building 2",
@@ -2189,8 +2004,7 @@
     "medianRent": 107500,
     "p25Rent": 85000,
     "p75Rent": 136250,
-    "medianRentPsf": 133,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach-surf-at-creek-beach-building-2"
+    "medianRentPsf": 133
    },
    {
     "building": "Dubai Creek Residences North Tower 3",
@@ -2199,8 +2013,7 @@
     "medianRent": 245000,
     "p25Rent": 170000,
     "p75Rent": 300000,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-3"
+    "medianRentPsf": 117
    },
    {
     "building": "Bayshore at Creek Beach Building 3",
@@ -2209,8 +2022,7 @@
     "medianRent": 95000,
     "p25Rent": 84768,
     "p75Rent": 136500,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-3"
+    "medianRentPsf": 122
    },
    {
     "building": "Dubai Creek Residences South Tower 3",
@@ -2219,8 +2031,7 @@
     "medianRent": 200000,
     "p25Rent": 165000,
     "p75Rent": 285300,
-    "medianRentPsf": 114,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-3"
+    "medianRentPsf": 114
    },
    {
     "building": "Surf at Creek Beach Building 1",
@@ -2229,8 +2040,7 @@
     "medianRent": 98000,
     "p25Rent": 87300,
     "p75Rent": 129500,
-    "medianRentPsf": 127,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach-surf-at-creek-beach-building-1"
+    "medianRentPsf": 127
    },
    {
     "building": "Lotus at Creek Beach Building 2",
@@ -2239,8 +2049,7 @@
     "medianRent": 113000,
     "p25Rent": 100000,
     "p75Rent": 140000,
-    "medianRentPsf": 138,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-2"
+    "medianRentPsf": 138
    },
    {
     "building": "Orchid at Creek Beach Building 2",
@@ -2249,8 +2058,7 @@
     "medianRent": 109000,
     "p25Rent": 90000,
     "p75Rent": 130000,
-    "medianRentPsf": 127,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-orchid-at-creek-beach-orchid-at-creek-beach-building-2"
+    "medianRentPsf": 127
    },
    {
     "building": "Breeze at Creek Beach Building 1",
@@ -2259,8 +2067,7 @@
     "medianRent": 160000,
     "p25Rent": 120000,
     "p75Rent": 169536,
-    "medianRentPsf": 140,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-breeze-at-creek-beach-breeze-at-creek-beach-building-1"
+    "medianRentPsf": 140
    },
    {
     "building": "Breeze at Creek Beach Building 2",
@@ -2269,8 +2076,7 @@
     "medianRent": 131034,
     "p25Rent": 112500,
     "p75Rent": 150206,
-    "medianRentPsf": 133,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-breeze-at-creek-beach-breeze-at-creek-beach-building-2"
+    "medianRentPsf": 133
    },
    {
     "building": "Bayshore at Creek Beach Building 1",
@@ -2279,8 +2085,7 @@
     "medianRent": 100000,
     "p25Rent": 88200,
     "p75Rent": 123500,
-    "medianRentPsf": 129,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-1"
+    "medianRentPsf": 129
    },
    {
     "building": "Summer at Creek Beach Building 3",
@@ -2289,8 +2094,7 @@
     "medianRent": 100000,
     "p25Rent": 90000,
     "p75Rent": 126000,
-    "medianRentPsf": 129,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-3"
+    "medianRentPsf": 129
    },
    {
     "building": "Rosewater at Creek Beach Building 2",
@@ -2299,8 +2103,7 @@
     "medianRent": 160000,
     "p25Rent": 110000,
     "p75Rent": 185000,
-    "medianRentPsf": 135,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-2"
+    "medianRentPsf": 135
    },
    {
     "building": "The Cove Building 2",
@@ -2309,8 +2112,7 @@
     "medianRent": 159563,
     "p25Rent": 110000,
     "p75Rent": 170000,
-    "medianRentPsf": 124,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-2"
+    "medianRentPsf": 124
    },
    {
     "building": "Lotus at Creek Beach Building 3",
@@ -2319,8 +2121,7 @@
     "medianRent": 115000,
     "p25Rent": 95000,
     "p75Rent": 140000,
-    "medianRentPsf": 132,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-3"
+    "medianRentPsf": 132
    },
    {
     "building": "Canopy at Creek Beach Building 1",
@@ -2329,8 +2130,7 @@
     "medianRent": 130000,
     "p25Rent": 105000,
     "p75Rent": 130000,
-    "medianRentPsf": 127,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-canopy-at-creek-beach-canopy-at-creek-beach-building-1"
+    "medianRentPsf": 127
    },
    {
     "building": "Mangrove at Creek Beach Building 2",
@@ -2339,8 +2139,7 @@
     "medianRent": 84000,
     "p25Rent": 78000,
     "p75Rent": 122000,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach-mangrove-at-creek-beach-building-2"
+    "medianRentPsf": 117
    },
    {
     "building": "Cedar at Creek Beach Building 4",
@@ -2349,8 +2148,7 @@
     "medianRent": 110000,
     "p25Rent": 95000,
     "p75Rent": 128750,
-    "medianRentPsf": 131,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-4"
+    "medianRentPsf": 131
    },
    {
     "building": "Summer at Creek Beach Building 4",
@@ -2359,8 +2157,7 @@
     "medianRent": 95000,
     "p25Rent": 84250,
     "p75Rent": 123362,
-    "medianRentPsf": 123,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-4"
+    "medianRentPsf": 123
    },
    {
     "building": "Island Park I",
@@ -2369,8 +2166,7 @@
     "medianRent": 165000,
     "p25Rent": 150000,
     "p75Rent": 210000,
-    "medianRentPsf": 147,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-island-park-i"
+    "medianRentPsf": 147
    },
    {
     "building": "Grove at Creek Beach Building 2",
@@ -2379,8 +2175,7 @@
     "medianRent": 135000,
     "p25Rent": 110000,
     "p75Rent": 155000,
-    "medianRentPsf": 116,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-2"
+    "medianRentPsf": 116
    },
    {
     "building": "Breeze at Creek Beach Building 3",
@@ -2389,8 +2184,7 @@
     "medianRent": 140000,
     "p25Rent": 117750,
     "p75Rent": 160000,
-    "medianRentPsf": 140,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-breeze-at-creek-beach-breeze-at-creek-beach-building-3"
+    "medianRentPsf": 140
    },
    {
     "building": "The Cove Building 3",
@@ -2399,8 +2193,7 @@
     "medianRent": 176092,
     "p25Rent": 134269,
     "p75Rent": 217500,
-    "medianRentPsf": 119,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-the-cove-building-3"
+    "medianRentPsf": 119
    },
    {
     "building": "Cedar at Creek Beach Building 3",
@@ -2409,8 +2202,7 @@
     "medianRent": 117500,
     "p25Rent": 109000,
     "p75Rent": 150000,
-    "medianRentPsf": 118,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-3"
+    "medianRentPsf": 118
    },
    {
     "building": "Sunset at Creek Beach Building 1",
@@ -2419,8 +2211,7 @@
     "medianRent": 152000,
     "p25Rent": 129964,
     "p75Rent": 165000,
-    "medianRentPsf": 131,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-1"
+    "medianRentPsf": 131
    },
    {
     "building": "Bayshore at Creek Beach Building 4",
@@ -2429,8 +2220,7 @@
     "medianRent": 110000,
     "p25Rent": 88000,
     "p75Rent": 129635,
-    "medianRentPsf": 130,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-bayshore-at-creek-beach-bayshore-at-creek-beach-building-4"
+    "medianRentPsf": 130
    },
    {
     "building": "Savanna at Creek Beach Tower 2",
@@ -2439,8 +2229,7 @@
     "medianRent": 111385,
     "p25Rent": 95500,
     "p75Rent": 122500,
-    "medianRentPsf": 135,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-2"
+    "medianRentPsf": 135
    },
    {
     "building": "Sunset at Creek Beach Building 2",
@@ -2449,8 +2238,7 @@
     "medianRent": 140000,
     "p25Rent": 95004,
     "p75Rent": 155000,
-    "medianRentPsf": 116,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-2"
+    "medianRentPsf": 116
    },
    {
     "building": "Cedar at Creek Beach Building 1",
@@ -2459,8 +2247,7 @@
     "medianRent": 115000,
     "p25Rent": 110000,
     "p75Rent": 135000,
-    "medianRentPsf": 115,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-1"
+    "medianRentPsf": 115
    },
    {
     "building": "Cedar at Creek Beach Building 2",
@@ -2469,8 +2256,7 @@
     "medianRent": 95000,
     "p25Rent": 80000,
     "p75Rent": 115000,
-    "medianRentPsf": 115,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach-cedar-at-creek-beach-building-2"
+    "medianRentPsf": 115
    },
    {
     "building": "Lotus at Creek Beach Building 4",
@@ -2479,8 +2265,7 @@
     "medianRent": 98500,
     "p25Rent": 90000,
     "p75Rent": 113750,
-    "medianRentPsf": 125,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-4"
+    "medianRentPsf": 125
    },
    {
     "building": "Summer at Creek Beach Building 2",
@@ -2489,8 +2274,7 @@
     "medianRent": 115000,
     "p25Rent": 90000,
     "p75Rent": 130000,
-    "medianRentPsf": 134,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-summer-at-creek-beach-summer-at-creek-beach-building-2"
+    "medianRentPsf": 134
    },
    {
     "building": "Grove at Creek Beach Building 5",
@@ -2499,8 +2283,7 @@
     "medianRent": 122500,
     "p25Rent": 100000,
     "p75Rent": 146250,
-    "medianRentPsf": 115,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-5"
+    "medianRentPsf": 115
    },
    {
     "building": "Lotus at Creek Beach Building 1",
@@ -2509,8 +2292,7 @@
     "medianRent": 100000,
     "p25Rent": 85750,
     "p75Rent": 133750,
-    "medianRentPsf": 126,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach-lotus-at-creek-beach-building-1"
+    "medianRentPsf": 126
    },
    {
     "building": "Grove at Creek Beach Building 4",
@@ -2519,8 +2301,7 @@
     "medianRent": 162500,
     "p25Rent": 135000,
     "p75Rent": 197500,
-    "medianRentPsf": 144,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-4"
+    "medianRentPsf": 144
    },
    {
     "building": "Sunset at Creek Beach Building 3",
@@ -2529,8 +2310,7 @@
     "medianRent": 130000,
     "p25Rent": 95000,
     "p75Rent": 147484,
-    "medianRentPsf": 121,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-sunset-at-creek-beach-sunset-at-creek-beach-building-3"
+    "medianRentPsf": 121
    },
    {
     "building": "Moor at Creek Beach Building 2",
@@ -2539,8 +2319,7 @@
     "medianRent": 100000,
     "p25Rent": 79945,
     "p75Rent": 115000,
-    "medianRentPsf": 112,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-2"
+    "medianRentPsf": 112
    },
    {
     "building": "Grove at Creek Beach Building 3",
@@ -2549,8 +2328,7 @@
     "medianRent": 155000,
     "p25Rent": 121500,
     "p75Rent": 270750,
-    "medianRentPsf": 124,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-3"
+    "medianRentPsf": 124
    },
    {
     "building": "Savanna at Creek Beach Tower 3",
@@ -2559,8 +2337,7 @@
     "medianRent": 115000,
     "p25Rent": 85000,
     "p75Rent": 125000,
-    "medianRentPsf": 117,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-3"
+    "medianRentPsf": 117
    },
    {
     "building": "Moor at Creek Beach Building 4",
@@ -2569,8 +2346,7 @@
     "medianRent": 83500,
     "p25Rent": 78000,
     "p75Rent": 110000,
-    "medianRentPsf": 112,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-4"
+    "medianRentPsf": 112
    },
    {
     "building": "Moor at Creek Beach Building 1",
@@ -2579,8 +2355,7 @@
     "medianRent": 110000,
     "p25Rent": 90000,
     "p75Rent": 127500,
-    "medianRentPsf": 113,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-1"
+    "medianRentPsf": 113
    },
    {
     "building": "Grove at Creek Beach Building 1",
@@ -2589,8 +2364,7 @@
     "medianRent": 130000,
     "p25Rent": 105092,
     "p75Rent": 135000,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach-grove-at-creek-beach-building-1"
+    "medianRentPsf": 122
    },
    {
     "building": "Creekside 18 Podium",
@@ -2599,8 +2373,7 @@
     "medianRent": 140000,
     "p25Rent": 130000,
     "p75Rent": 176000,
-    "medianRentPsf": 114,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18-creekside-18-podium"
+    "medianRentPsf": 114
    },
    {
     "building": "Mangrove at Creek Beach Building 1",
@@ -2609,8 +2382,7 @@
     "medianRent": 110000,
     "p25Rent": 105000,
     "p75Rent": 120000,
-    "medianRentPsf": 114,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach-mangrove-at-creek-beach-building-1"
+    "medianRentPsf": 114
    },
    {
     "building": "Savanna at Creek Beach Tower 1",
@@ -2619,8 +2391,7 @@
     "medianRent": 110000,
     "p25Rent": 86500,
     "p75Rent": 130000,
-    "medianRentPsf": 114,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach-savanna-at-creek-beach-tower-1"
+    "medianRentPsf": 114
    },
    {
     "building": "Rosewater at Creek Beach Building 3",
@@ -2629,8 +2400,7 @@
     "medianRent": 95000,
     "p25Rent": 89463,
     "p75Rent": 100000,
-    "medianRentPsf": 121,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-3"
+    "medianRentPsf": 121
    },
    {
     "building": "Harbour Views Podium",
@@ -2639,8 +2409,7 @@
     "medianRent": 230000,
     "p25Rent": 106500,
     "p75Rent": 327749,
-    "medianRentPsf": 97,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views-harbour-views-podium"
+    "medianRentPsf": 97
    },
    {
     "building": "Dubai Creek Residences South Tower Podium",
@@ -2649,8 +2418,7 @@
     "medianRent": 160000,
     "p25Rent": 108095,
     "p75Rent": 212953,
-    "medianRentPsf": 91,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-south-dubai-creek-residences-south-tower-podium"
+    "medianRentPsf": 91
    },
    {
     "building": "Moor at Creek Beach Building 3",
@@ -2659,8 +2427,7 @@
     "medianRent": 105000,
     "p25Rent": 86500,
     "p75Rent": 115000,
-    "medianRentPsf": 47,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-moor-at-creek-beach-moor-at-creek-beach-building-3"
+    "medianRentPsf": 47
    },
    {
     "building": "The Cove II Building 5",
@@ -2669,8 +2436,7 @@
     "medianRent": 150000,
     "p25Rent": 147500,
     "p75Rent": 160000,
-    "medianRentPsf": 109,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-5"
+    "medianRentPsf": 109
    },
    {
     "building": "Dubai Creek Residences North Tower Podium",
@@ -2679,8 +2445,7 @@
     "medianRent": 190000,
     "p25Rent": 90964,
     "p75Rent": 251632,
-    "medianRentPsf": 122,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences-dubai-creek-residences-north-dubai-creek-residences-north-tower-podium"
+    "medianRentPsf": 122
    },
    {
     "building": "Creek Horizon Podium",
@@ -2689,8 +2454,7 @@
     "medianRent": 177630,
     "p25Rent": 101250,
     "p75Rent": 270000,
-    "medianRentPsf": 104,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon-creek-horizon-podium"
+    "medianRentPsf": 104
    },
    {
     "building": "Canopy at Creek Beach Building 2",
@@ -2699,8 +2463,7 @@
     "medianRent": 118000,
     "p25Rent": 92500,
     "p75Rent": 118000,
-    "medianRentPsf": 118,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-canopy-at-creek-beach-canopy-at-creek-beach-building-2"
+    "medianRentPsf": 118
    },
    {
     "building": "The Cove II Building 7",
@@ -2709,8 +2472,7 @@
     "medianRent": 160000,
     "p25Rent": 129000,
     "p75Rent": 170000,
-    "medianRentPsf": 109,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-7"
+    "medianRentPsf": 109
    },
    {
     "building": "Harbour Gate Podium",
@@ -2719,8 +2481,7 @@
     "medianRent": 190575,
     "p25Rent": 190000,
     "p75Rent": 230000,
-    "medianRentPsf": 87,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate-harbour-gate-podium"
+    "medianRentPsf": 87
    },
    {
     "building": "Creek Rise Podium",
@@ -2729,8 +2490,7 @@
     "medianRent": 135000,
     "p25Rent": 126276,
     "p75Rent": 147500,
-    "medianRentPsf": 102,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise-creek-rise-podium"
+    "medianRentPsf": 102
    },
    {
     "building": "Canopy at Creek Beach Building 3",
@@ -2739,8 +2499,7 @@
     "medianRent": 91000,
     "p25Rent": 91000,
     "p75Rent": 117000,
-    "medianRentPsf": 128,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-canopy-at-creek-beach-canopy-at-creek-beach-building-3"
+    "medianRentPsf": 128
    },
    {
     "building": "Rosewater at Creek Beach Building 1",
@@ -2749,8 +2508,7 @@
     "medianRent": 95000,
     "p25Rent": 90000,
     "p75Rent": 125000,
-    "medianRentPsf": null,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach-rosewater-at-creek-beach-building-1"
+    "medianRentPsf": null
    },
    {
     "building": "The Cove II Building 4",
@@ -2759,8 +2517,7 @@
     "medianRent": 135000,
     "p25Rent": 112500,
     "p75Rent": 140000,
-    "medianRentPsf": null,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-4"
+    "medianRentPsf": null
    },
    {
     "building": "The Dubai Creek Residences",
@@ -2769,8 +2526,7 @@
     "medianRent": 475230,
     "p25Rent": 475230,
     "p75Rent": 475230,
-    "medianRentPsf": 116,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-dubai-creek-residences"
+    "medianRentPsf": 116
    },
    {
     "building": "Creek Gate",
@@ -2779,8 +2535,7 @@
     "medianRent": 146481,
     "p25Rent": 146481,
     "p75Rent": 146481,
-    "medianRentPsf": 155,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate"
+    "medianRentPsf": 155
    },
    {
     "building": "The Cove II Building 8",
@@ -2789,8 +2544,7 @@
     "medianRent": 160000,
     "p25Rent": 160000,
     "p75Rent": 160000,
-    "medianRentPsf": null,
-    "url": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove-ll-the-cove-ii-building-8"
+    "medianRentPsf": null
    }
   ]
  },

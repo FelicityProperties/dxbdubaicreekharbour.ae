@@ -1,6 +1,6 @@
 // Generated on 9 October 2026 by scratchpad/enhance/gen/build.py — do not hand-edit figures.
 // Every price, size, unit count and date comes from Emaar's own pages (emaarUrl) checked on 9 October 2026;
-// construction status comes from PropertyIndex (Dubai Land Department data, DLD registrations loaded through September 2026).
+// construction status comes from Dubai Land Department registration records (DLD registrations loaded through September 2026; snapshot tooling in scratchpad).
 // Images are Emaar's official renders and photos, self-hosted under /public/img.
 
 export const SITE = {
@@ -56,7 +56,6 @@ export type Project = {
   brochureUrl: string | null;
   floorPlanUrl: string | null;
   emaarUrl: string;
-  pixUrl: string | null;
   images: ProjectImage[];
   ogImage: string | null;
 };
@@ -125,7 +124,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/VALIA_DUBAI_CREEK_HARBOUR_BROCHURE_d348255309_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/valia-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/valia-at-dubai-creek-harbour",
-    "pixUrl": null,
     "images": [
       {
         "base": "/img/valia/1",
@@ -325,7 +323,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/428929_brochure_File_f91b9a4a8b_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creek-haven-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-haven-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-haven",
     "images": [
       {
         "base": "/img/creek-haven/1",
@@ -525,7 +522,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/428926_brochure_File_8ca3036a82_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creek-bay-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-bay-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-bay",
     "images": [
       {
         "base": "/img/creek-bay/1",
@@ -726,7 +722,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/lyvia-by-palace-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/lyvia-by-palace-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-lyvia-by-palace",
     "images": [
       {
         "base": "/img/lyvia-by-palace/1",
@@ -925,7 +920,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/419522_brochure_File_1ed1216b0b_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/montiva-by-vida-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/montiva-by-vida-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-montiva-tower",
     "images": [
       {
         "base": "/img/montiva-by-vida/1",
@@ -1057,7 +1051,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/417987_brochure_File_2d3a287542_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/silva-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/silva-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-silva-tower",
     "images": [
       {
         "base": "/img/silva/1",
@@ -1190,7 +1183,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/410790_brochure_File_095285ba79_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/altan-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/altan-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-altan",
     "images": [
       {
         "base": "/img/altan/1",
@@ -1390,7 +1382,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/401668_brochure_File_18ca13ec56_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/albero-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/albero-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-albero-by-emaar",
     "images": [
       {
         "base": "/img/albero/1",
@@ -1524,7 +1515,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/389204_brochure_File_45705e9c8e_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/altus-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/altus-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-altus",
     "images": [
       {
         "base": "/img/altus/1",
@@ -1662,7 +1652,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/address-residences-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-residences-dubai-creek-harbour",
     "images": [
       {
         "base": "/img/address-residences-dubai-creek-harbour/1",
@@ -1798,7 +1787,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/388449_brochure_File_06c2ee36fb_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/palace-residences-creek-blue",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences-creek-blue",
     "images": [
       {
         "base": "/img/palace-residences-creek-blue/1",
@@ -1933,7 +1921,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/385314_brochure_File_7b6c971980_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/arlo-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-arlo",
     "images": [
       {
         "base": "/img/arlo/1",
@@ -2066,7 +2053,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/306262_brochure_File_0536c852cb_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/palace-residences-north",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residence-north",
     "images": [
       {
         "base": "/img/palace-residences-north/1",
@@ -2198,7 +2184,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": null,
     "emaarUrl": "https://www.emaar.com/en/press-release-listing/emaar-launches-its-most-premium-ultra-luxe-residential-tower-in-dubai-creek-harbour-the-grand",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-grand",
     "images": [
       {
         "base": "/img/district/11",
@@ -2268,7 +2253,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/378815_brochure_File_4f35d53ea5_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/aeon-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/aeon",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-aeon",
     "images": [
       {
         "base": "/img/aeon/1",
@@ -2396,7 +2380,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/1594_brochure_File_ca03e6da46_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-edge",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-edge",
     "images": [
       {
         "base": "/img/creek-edge/1",
@@ -2481,7 +2464,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/1596_brochure_File_44129965e5_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/surf",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-surf-at-creek-beach",
     "images": [
       {
         "base": "/img/surf/1",
@@ -2564,7 +2546,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/1598_brochure_File_41ccdcb4d4_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creek-palace-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-palace",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-palace",
     "images": [
       {
         "base": "/img/creek-palace/1",
@@ -2688,7 +2669,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-residences-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/dubai-creek-residences",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-dubai-creek-residences",
     "images": [
       {
         "base": "/img/dubai-creek-residences/1",
@@ -2771,7 +2751,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-rise",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-rise",
     "images": [
       {
         "base": "/img/creek-rise/1",
@@ -2843,7 +2822,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-horizon",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-horizon",
     "images": [
       {
         "base": "/img/creek-horizon/1",
@@ -2937,7 +2915,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/109246_brochure_File_1b62e4ecfd_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/vida-residences-creek-beach",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-vida-residences-creek-beach",
     "images": [
       {
         "base": "/img/vida-residences-creek-beach/1",
@@ -3030,7 +3007,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/274689_brochure_File_9f711c9a5a_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/the-cove-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/the-cove",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-the-cove",
     "images": [
       {
         "base": "/img/the-cove/1",
@@ -3157,7 +3133,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/harbour-views",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-views",
     "images": [
       {
         "base": "/img/harbour-views/1",
@@ -3252,7 +3227,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creek-gate-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-gate",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-gate",
     "images": [
       {
         "base": "/img/creek-gate/1",
@@ -3322,7 +3296,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/harbour-gate-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/harbour-gate",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-harbour-gate",
     "images": [
       {
         "base": "/img/harbour-gate/1",
@@ -3406,7 +3379,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creekside-18-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creekside-18",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creekside-18",
     "images": [
       {
         "base": "/img/creekside-18/1",
@@ -3487,7 +3459,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/167402_brochure_File_359ca8b7f9_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/grove",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-grove-at-creek-beach",
     "images": [
       {
         "base": "/img/grove/1",
@@ -3570,7 +3541,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/167418_brochure_File_2f81644226_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/rosewater",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-rosewater-at-creek-beach",
     "images": [
       {
         "base": "/img/rosewater/1",
@@ -3653,7 +3623,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/lotus",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-lotus-at-creek-beach",
     "images": [
       {
         "base": "/img/lotus/1",
@@ -3735,7 +3704,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-crescent",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-crescent",
     "images": [
       {
         "base": "/img/creek-crescent/1",
@@ -3828,7 +3796,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/orchid",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-orchid-at-creek-beach",
     "images": [
       {
         "base": "/img/orchid/1",
@@ -3921,7 +3888,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/321449_brochure_File_e3cd2fdfcb_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/cedar-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/cedar",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-cedar-at-creek-beach",
     "images": [
       {
         "base": "/img/cedar/1",
@@ -4056,7 +4022,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/316109_brochure_File_9597cba292_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/savanna",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-savanna-at-creek-beach",
     "images": [
       {
         "base": "/img/savanna/1",
@@ -4190,7 +4155,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/337968_brochure_File_b408b379b6_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-waters",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-waters",
     "images": [
       {
         "base": "/img/creek-waters/1",
@@ -4324,7 +4288,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/355879_brochure_File_dcfeb6d834_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/creek-waters-2-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/creek-waters-2",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-waters-2",
     "images": [
       {
         "base": "/img/creek-waters-2/1",
@@ -4520,7 +4483,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/383250_brochure_File_74bf62e8b9_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/valo-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/valo-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-valo",
     "images": [
       {
         "base": "/img/valo/1",
@@ -4677,7 +4639,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/383970_brochure_File_42b682232e_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/mangrove-at-dubai-creek-harbour-floor-plans.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/mangrove-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-creek-beach-mangrove-at-creek-beach",
     "images": [
       {
         "base": "/img/mangrove/1",
@@ -4803,7 +4764,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": null,
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/17-icon-bay",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-17-icon-bay",
     "images": [
       {
         "base": "/img/17-icon-bay/1",
@@ -4874,7 +4834,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/2430_brochure_File_ec6df2a2a4_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/address-harbour-point",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-address-harbour-point",
     "images": [
       {
         "base": "/img/address-harbour-point/1",
@@ -4959,7 +4918,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/167427_brochure_File_fd6de6b75c_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/palace-residences",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-palace-residences",
     "images": [
       {
         "base": "/img/palace-residences/1",
@@ -5041,7 +4999,6 @@ export const PROJECTS: Project[] = [
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/380449_brochure_File_864967dac2_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/oria-at-dubai-creek-harbour",
-    "pixUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons-oria",
     "images": [
       {
         "base": "/img/oria/1",

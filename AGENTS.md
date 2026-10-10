@@ -10,9 +10,14 @@
 - Every price, size, unit count, payment schedule, handover date and status
   lives in `src/data/projects.ts`, generated from Emaar's own pages and
   dated. Every registered sale, rent, count and median lives in
-  `src/data/transactions.json`, generated from PropertyIndex (Dubai Land
-  Department records) and dated. Presentation reads them; it never
-  calculates beyond adding up counts, and never invents a default.
+  `src/data/transactions.json`: Dubai Land Department registration records,
+  generated from the data supplier's query results and dated. Presentation
+  reads them; it never calculates beyond adding up counts, and never invents
+  a default.
+- On the site, registered figures and construction status are credited to
+  the Dubai Land Department and to nobody else; the supplier is named only
+  in `VERCEL-LAYER.md` and the generators. Do not add supplier names or
+  links to page code or to the data files.
 - If a figure is missing, show "on request" or leave the row out. A
   plausible-sounding number is wrong even when it is close.
 - The area page and the buying guide quote Emaar's published figures with a

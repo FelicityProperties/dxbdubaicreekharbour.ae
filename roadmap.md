@@ -36,3 +36,11 @@
 - [x] Titles, descriptions, canonical links, JSON-LD and a 46-route sitemap
 - [ ] DLD permit number in the footer (SITE.dldPermit) once issued
 - [ ] Refresh both data snapshots monthly
+
+## October 2026: app feel, legal pages, why-buy
+- [x] Phone tab bar (Home · Projects · Market · Enquire · WhatsApp), back button, sideways filter rows, Share, add-to-home-screen, service worker and standalone manifest
+- [x] Terms of Use and Privacy Notice in plain English (`/terms`, `/privacy`), linked from footer, phone menu and the form's consent line
+- [x] "Why Dubai Creek Harbour": eight sourced reasons incl. freehold, Golden Residency, payment plans, escrow, no annual property tax, location, lifestyle, registered rental market
+- [x] Registered figures credited to the Dubai Land Department throughout
+- [ ] Licensed company name, ORN/BRN and advertising permit number (SITE.company, SITE.licence, SITE.dldPermit)
+

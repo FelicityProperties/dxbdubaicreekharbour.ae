@@ -12,9 +12,21 @@ starting point but is now behind this repo and should not be copied over it.
   from Emaar's own pages by the snapshot tooling (see "Refreshing the data");
   never hand-edit a figure.
 - `src/data/transactions.json` — registered sales and tenancy contracts for
-  Dubai Creek Harbour, supplied by PropertyIndex (Dubai Land Department
-  records). Also generated; `src/data/transactions.ts` types it and adds the
-  per-project helpers. Shown as registered, never as valuations.
+  Dubai Creek Harbour: Dubai Land Department registration records, obtained
+  through the PropertyIndex data service (the site credits the Dubai Land
+  Department and names no supplier; PropertyIndex appears only here and in
+  the generators). Also generated; `src/data/transactions.ts` types it and
+  adds the per-project helpers. Shown as registered, never as valuations.
+- `src/data/legal.ts` — the Terms of Use and Privacy Notice as structured
+  sections (`/terms`, `/privacy`); `{{company}}` and `{{licence}}` are filled
+  from `SITE.company` / `SITE.licence` in `projects.ts` once supplied.
+- `src/data/benefits.ts` — the "Why Dubai Creek Harbour" cards; every card
+  cites an Emaar page or the DLD snapshot, with the exact quotes kept in
+  `design/benefits-sources.json`.
+- `public/sw.js` + `public/site.webmanifest` — the site installs on phones
+  like an app (standalone display, home-screen icon). Pages are always
+  fetched from the network first; only images and hashed build assets are
+  cached. Bump `VERSION` in `sw.js` to clear old caches.
 - `public/img/<project-slug>/` — Emaar's renders and photos, resized to
   480/960/1600 WebP plus a 1200×630 `og.jpg` for sharing previews.
   `public/img/district/` holds the area images.
