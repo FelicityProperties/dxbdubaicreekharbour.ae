@@ -196,7 +196,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           required
           className="mt-0.5 size-4 shrink-0 accent-[color:var(--brass)]"
         />
-        <span>You may contact me by phone, WhatsApp or email about this enquiry. We use your details only to answer it (<a className="underline underline-offset-4" href="#privacy">privacy</a>).</span>
+        <span>You may contact me by phone, WhatsApp or email about this enquiry. We use your details only to answer it — see our <a className="underline underline-offset-4" href="/privacy">Privacy Notice</a>.</span>
       </label>
       {state.kind === "invalid" && (
         <div className="rounded-[2px] bg-red-50 px-3 py-2.5 text-[13px] text-red-800" role="alert">

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, ArrowRight, ArrowDown, BedDouble, CalendarDays, Menu, X, PenLine, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
+import { ArrowUpRight, ArrowRight, ArrowDown, ArrowLeft, BedDouble, CalendarDays, Menu, X, PenLine, Mail, Home, Building2, TrendingUp, Share2, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SITE, imageSrc, imageSrcSet, type Project, type ProjectImage, type PlanStep } from "@/data/projects";
 import { dateShort } from "@/lib/format";
@@ -15,7 +15,7 @@ export const sharingMeta = (canonicalUrl: string, image = `${SITE.url}/og-image.
 export const GENERIC_MESSAGE = "Hi, I'm interested in Emaar's projects at Dubai Creek Harbour.";
 export const projectMessage = (name: string) => `Hi, I'm interested in ${name} at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan.`;
 export const whatsappUrl = (message = GENERIC_MESSAGE) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
-export const DISCLAIMER = `DXB Creek Harbour is an independent property showcase run by a Dubai broker. The projects shown are developed by Emaar Properties PJSC; this website is not owned, operated or endorsed by Emaar. Prices, sizes, unit counts, payment plans and handover dates are Emaar's own published figures as checked on ${SITE.pricesCheckedOn}; all can change without notice and availability is limited — confirm current details before you commit. Registered sale and rental figures are Dubai Land Department records supplied by ${SITE.constructionSource}; they are shown as registered and are not valuations or advice. Images and brochures are Emaar's; project names belong to their owners.`;
+export const DISCLAIMER = `DXB Creek Harbour is an independent property showcase run by a Dubai broker. The projects shown are developed by Emaar Properties PJSC; this website is not owned, operated or endorsed by Emaar. Prices, sizes, unit counts, payment plans and handover dates are Emaar's own published figures as checked on ${SITE.pricesCheckedOn}; all can change without notice and availability is limited — confirm current details before you commit. Registered sale and rental figures and construction status are ${SITE.constructionSource}; they are shown as registered and are not valuations or advice. Images and brochures are Emaar's; project names belong to their owners.`;
 
 /** The WhatsApp glyph (the phone-in-a-speech-bubble people recognise), as a plain SVG so it works anywhere an icon does. */
 export function WhatsAppIcon({ className }: { className?: string | undefined }) {
@@ -36,16 +36,53 @@ function NavLinks({ onPick }: { onPick?: () => void }) {
     <Link to="/" hash="enquire" className="nav-link" onClick={onPick}>Enquire</Link>
   </>;
 }
+type InstallPromptEvent = Event & { prompt: () => Promise<void> };
+/** "Add to home screen": the real install prompt where the browser offers one (Android/Chrome), a one-line hint on iPhone, nothing once installed. */
+function InstallHint() {
+  const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
+  const [mode, setMode] = useState<"unknown" | "installed" | "ios" | "other">("unknown");
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    setMode(standalone ? "installed" : /iPhone|iPad|iPod/.test(navigator.userAgent) ? "ios" : "other");
+    const onPrompt = (e: Event) => { e.preventDefault(); setPrompt(e as InstallPromptEvent); };
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+  }, []);
+  if (mode === "installed") return null;
+  if (prompt) return <button type="button" className="nav-link install-hint" onClick={() => { void prompt.prompt(); }}><Smartphone className="inline size-3.5 mr-1.5" />Add to home screen</button>;
+  if (mode === "ios") return <span className="install-hint nav-note"><Smartphone className="inline size-3.5 mr-1.5" />Add to your home screen: tap Share, then "Add to Home Screen".</span>;
+  return null;
+}
 export function Header() {
   const [open, setOpen] = useState(false);
-  return <header className="site-header"><div className="container header-inner"><Wordmark /><nav className="main-nav" aria-label="Main navigation"><NavLinks /><WhatsApp variant="outline" className="header-wa">Let's talk <ArrowUpRight /></WhatsApp></nav><Button variant="ghost" size="icon" className="mobile-toggle" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</Button></div>{open && <nav className="mobile-nav" aria-label="Mobile navigation"><NavLinks onPick={() => setOpen(false)} /><WhatsApp /><a href={mailtoUrl()} className="nav-link"><Mail className="inline size-3.5 mr-1.5" />{SITE.email}</a></nav>}</header>;
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const router = useRouter();
+  return <header className="site-header"><div className="container header-inner">{path !== "/" && <button type="button" className="mobile-back" aria-label="Back" onClick={() => { if (window.history.length > 1) router.history.back(); else void router.navigate({ to: "/" }); }}><ArrowLeft /></button>}<Wordmark /><nav className="main-nav" aria-label="Main navigation"><NavLinks /><WhatsApp variant="outline" className="header-wa">Let's talk <ArrowUpRight /></WhatsApp></nav><Button variant="ghost" size="icon" className="mobile-toggle" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</Button></div>{open && <nav className="mobile-nav" aria-label="Mobile navigation"><NavLinks onPick={() => setOpen(false)} /><WhatsApp /><a href={mailtoUrl()} className="nav-link"><Mail className="inline size-3.5 mr-1.5" />{SITE.email}</a><InstallHint /><div className="nav-small"><Link to="/terms" onClick={() => setOpen(false)}>Terms</Link><Link to="/privacy" onClick={() => setOpen(false)}>Privacy</Link></div></nav>}</header>;
 }
 export function Footer() {
-  return <><footer className="site-footer"><div className="container"><div className="footer-top"><Wordmark /><nav className="footer-nav" aria-label="Footer navigation"><Link to="/" hash="projects">Projects</Link><Link to="/market">Market data</Link><Link to="/area">The area</Link><Link to="/guide">Buying guide</Link><Link to="/guide" hash="faq">FAQs</Link><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight className="inline size-3" /></a><a href={mailtoUrl()}>Email <ArrowUpRight className="inline size-3" /></a></nav></div><p className="disclaimer">{DISCLAIMER}</p><p className="disclaimer" id="privacy">Privacy: the details you send through the enquiry form or WhatsApp are kept in our enquiry records and used only to answer your enquiry; the database and email services that run the site process them on our behalf. Email us at {SITE.email} to see or delete what we hold.</p>{SITE.dldPermit && <p className="disclaimer">DLD Permit No. {SITE.dldPermit}</p>}<div className="footer-bottom"><span>DXB Creek Harbour · Independent property showcase · WhatsApp {SITE.whatsappDisplay} · <a href={mailtoUrl()}>{SITE.email}</a></span><span>Dubai, United Arab Emirates</span></div></div></footer><Button asChild className="floating-wa" size="icon"><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><WhatsAppIcon /></a></Button></>;
+  return <><footer className="site-footer"><div className="container"><div className="footer-top"><Wordmark /><nav className="footer-nav" aria-label="Footer navigation"><Link to="/" hash="projects">Projects</Link><Link to="/market">Market data</Link><Link to="/area">The area</Link><Link to="/guide">Buying guide</Link><Link to="/guide" hash="faq">FAQs</Link><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight className="inline size-3" /></a><a href={mailtoUrl()}>Email <ArrowUpRight className="inline size-3" /></a></nav></div><p className="disclaimer">{DISCLAIMER}</p><p className="disclaimer">We use the details you send us only to answer your enquiry — see the <Link to="/privacy">Privacy Notice</Link> and <Link to="/terms">Terms of Use</Link>.{SITE.company && ` Operated by ${SITE.company}${SITE.licence ? ` (${SITE.licence})` : ""}.`}</p>{SITE.dldPermit && <p className="disclaimer">DLD Permit No. {SITE.dldPermit}</p>}<div className="footer-bottom"><span>DXB Creek Harbour · Independent property showcase · WhatsApp {SITE.whatsappDisplay} · <a href={mailtoUrl()}>{SITE.email}</a></span><span>Dubai, United Arab Emirates</span></div></div></footer><Button asChild className="floating-wa" size="icon"><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><WhatsAppIcon /></a></Button></>;
 }
-/** Phone-only bottom bar: the two things a visitor actually does on a phone. */
+/** Phone-only bottom tab bar, app style: the three places people go plus the two things they do. */
 export function MobileBar() {
-  return <div className="mobile-bar" role="navigation" aria-label="Quick contact"><Button asChild variant="outline"><a href="#enquire"><PenLine />Enquire</a></Button><Button asChild className="wa-green"><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer"><WhatsAppIcon />WhatsApp</a></Button></div>;
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const cls = (active: boolean) => `tab${active ? " active" : ""}`;
+  return <nav className="mobile-bar" aria-label="Quick navigation">
+    <Link to="/" className={cls(path === "/")}><Home />Home</Link>
+    <Link to="/" hash="projects" className={cls(path.startsWith("/projects"))}><Building2 />Projects</Link>
+    <Link to="/market" className={cls(path.startsWith("/market"))}><TrendingUp />Market</Link>
+    <a href="#enquire" className="tab"><PenLine />Enquire</a>
+    <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="tab tab-wa"><WhatsAppIcon />WhatsApp</a>
+  </nav>;
+}
+/** Native share sheet on phones; copies the link elsewhere. */
+export function ShareButton({ title, url, text }: { title: string; url: string; text?: string }) {
+  const [copied, setCopied] = useState(false);
+  return <Button variant="outline" onClick={async () => {
+    try {
+      if (typeof navigator.share === "function") await navigator.share({ title, url, ...(text ? { text } : {}) });
+      else { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); }
+    } catch { /* the person closed the share sheet */ }
+  }}><Share2 />{copied ? "Link copied" : "Share"}</Button>;
 }
 
 /** One honest status line per project, from Emaar's listing and the DLD completion status. */

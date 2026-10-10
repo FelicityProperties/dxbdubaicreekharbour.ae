@@ -1,7 +1,7 @@
 /**
  * Registered-transaction tables and summaries. Everything here reads the
- * PropertyIndex snapshot in src/data/transactions.json; nothing is computed
- * beyond adding up counts.
+ * Dubai Land Department snapshot in src/data/transactions.json; nothing is
+ * computed beyond adding up counts.
  */
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -46,7 +46,7 @@ export function RentalsTable({ rows, initial = 20 }: { rows: RentRow[]; initial?
 }
 
 export function SourceNote({ compact = false }: { compact?: boolean }) {
-  return <p className="source-note">Source: <a href={TX.source.communityUrl} target="_blank" rel="noopener noreferrer">PropertyIndex</a> — {TX.source.basis}; {TX.source.coverage}. Snapshot taken {dateLong(TX.source.snapshotDate)}.{compact ? "" : ` ${TX.source.filters}`} Figures are as registered with the Dubai Land Department; they are not valuations.</p>;
+  return <p className="source-note">Source: {TX.source.basis}; {TX.source.coverage}. Snapshot taken {dateLong(TX.source.snapshotDate)}.{compact ? "" : ` ${TX.source.filters}`} Figures are as registered with the Dubai Land Department; they are not valuations.</p>;
 }
 
 function Stat({ value, label, note }: { value: string; label: string; note?: string | undefined }) {

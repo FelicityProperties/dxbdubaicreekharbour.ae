@@ -3,7 +3,7 @@ import { Check, Download, ChevronRight, MapPin, ExternalLink, PenLine } from "lu
 import { Button } from "@/components/ui/button";
 import { PROJECTS, DISTRICT, SITE, type Project } from "@/data/projects";
 import { salesFor, rentalsFor, salesCount12m, rentalsCount12m, TX } from "@/data/transactions";
-import { ProjectCard, StatusBadge, WhatsApp, PlanBar, CtaBand, ProjectNotFound, projectMessage, sharingMeta, priceSummary, handoverText, SourceLink } from "@/components/showcase/shared";
+import { ProjectCard, StatusBadge, WhatsApp, PlanBar, CtaBand, ProjectNotFound, projectMessage, sharingMeta, priceSummary, handoverText, SourceLink, ShareButton } from "@/components/showcase/shared";
 import { ProjectGallery } from "@/components/showcase/ProjectGallery";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
 import { SalesTable, RentalsTable, ByBuildingTables, SourceNote, kindHelp } from "@/components/market/Market";
@@ -46,7 +46,7 @@ function ProjectPage() {
   const hood = DISTRICT.neighbourhoods.find((n) => n.name === project.district);
   const bedroomsText = project.unitTypes.length ? project.unitTypes.join(" · ") : project.bedrooms.includes("bedroom") ? project.bedrooms : `${project.bedrooms} bedrooms`;
   return <main><div className="container"><nav className="breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><ChevronRight className="size-3" /><Link to="/" hash="projects">Projects</Link><ChevronRight className="size-3" /><span>{project.name}</span></nav>
-    <header className="detail-heading"><span className="eyebrow">Dubai Creek Harbour{project.district ? ` · ${project.district}` : ""}</span><h1>{project.name}</h1>{project.brand && <p className="brand">{project.brand}</p>}<div className="badge-row"><StatusBadge project={project} /><span className="chip">by Emaar</span>{project.construction && <span className="chip">{project.construction === "completed" ? "Construction completed (PropertyIndex)" : "Construction under way (PropertyIndex)"}</span>}{project.district && <span className="chip brass">{project.district}</span>}</div></header>
+    <header className="detail-heading"><span className="eyebrow">Dubai Creek Harbour{project.district ? ` · ${project.district}` : ""}</span><h1>{project.name}</h1>{project.brand && <p className="brand">{project.brand}</p>}<div className="badge-row"><StatusBadge project={project} /><span className="chip">by Emaar</span>{project.construction && <span className="chip">{project.construction === "completed" ? "Construction completed (DLD records)" : "Construction under way (DLD records)"}</span>}{project.district && <span className="chip brass">{project.district}</span>}</div></header>
     <ProjectGallery key={project.slug} project={project} />
     <div className="detail-layout"><div>
       <section className="detail-section"><span className="eyebrow">A closer look</span><h2>Life at {project.name}</h2><p>{project.overview}</p><ul className="highlight-list">{project.highlights.map((h) => <li key={h}><Check />{h}</li>)}</ul>{project.unitTypes.length > 0 && <p className="mt-5"><strong className="text-foreground font-medium">Unit types:</strong> {project.unitTypes.join(" · ")}</p>}{project.statusNote && <p className="mt-2">{project.statusNote}.</p>}</section>
@@ -57,7 +57,7 @@ function ProjectPage() {
         <ByBuildingTables slug={project.slug} />
         {sales.length > 0 && <div className="market-block mt-8"><h3>Latest registered sales</h3><p className="block-note">The most recent rows in the snapshot. {kindHelp}</p><SalesTable rows={sales} initial={10} /></div>}
         {rentals.length > 0 && <div className="market-block mt-8"><h3>Latest tenancy contracts</h3><p className="block-note">Registered Ejari contracts; "New" is a new tenancy, "Renewal" a renewed one.</p><RentalsTable rows={rentals} initial={10} /></div>}
-        <SourceNote compact />{project.pixUrl && <p className="source-note">Building page on PropertyIndex: <a href={project.pixUrl} target="_blank" rel="noopener noreferrer">{project.pixUrl.replace("https://www.", "")}</a></p>}</section>
+        <SourceNote compact /></section>
 
       <section className="detail-section" id="location"><h2>Location</h2>{hood ? <p>{project.district}: {hood.body}</p> : project.isNewLaunch ? <p>Emaar places {project.name} opposite the district's retail and entertainment hub, beside the canal and the future Blue Line metro station.</p> : <p>Within Emaar's Dubai Creek Harbour master plan, between Downtown Dubai and Dubai International Airport.</p>}{project.nearby && <div className="nearby-list">{project.nearby.map((n) => <span className="chip" key={n}>{n}</span>)}</div>}<div className="inline-links">{project.lat && project.lng && <a className="map-link" href={`https://www.google.com/maps/search/?api=1&query=${project.lat},${project.lng}`} target="_blank" rel="noopener noreferrer"><MapPin className="size-3.5" />Open in Google Maps (Emaar's map pin)</a>}<Link to="/area"><ExternalLink className="size-3.5" />About the area</Link></div></section>
 
@@ -74,7 +74,7 @@ function ProjectPage() {
       <div className="fact-item"><p className="fact-label">Status</p><p className="fact-value">{project.statusNote || project.status}</p></div>
       {project.district && <div className="fact-item"><p className="fact-label">Quarter</p><p className="fact-value">{project.district}</p></div>}
       {(sales12m > 0 || rentals12m > 0) && <div className="fact-item"><p className="fact-label">{TX.window.label}</p><p className="fact-value">{num(sales12m)} registered sales · {num(rentals12m)} tenancy contracts</p><p className="fact-note"><a href="#market" className="underline underline-offset-4">See the registered figures</a></p></div>}
-      <div className="fact-actions"><WhatsApp className="enquiry-button" message={projectMessage(project.name)}>Ask about {project.name.length > 22 ? "this project" : project.name}</WhatsApp><Button asChild variant="outline"><a href="#enquire"><PenLine />Leave your details</a></Button></div>
+      <div className="fact-actions"><WhatsApp className="enquiry-button" message={projectMessage(project.name)}>Ask about {project.name.length > 22 ? "this project" : project.name}</WhatsApp><Button asChild variant="outline"><a href="#enquire"><PenLine />Leave your details</a></Button><ShareButton title={`${project.name} at Dubai Creek Harbour`} url={`${SITE.url}/projects/${project.slug}`} text={`${project.name} by Emaar at Dubai Creek Harbour — ${price.main}`} /></div>
       <div className="fact-links">{project.brochureUrl && <a href={project.brochureUrl} target="_blank" rel="noopener noreferrer"><Download className="size-3.5" />Brochure (PDF)</a>}{project.floorPlanUrl && <a href={project.floorPlanUrl} target="_blank" rel="noopener noreferrer"><Download className="size-3.5" />Floor plans (PDF)</a>}<a href={project.emaarUrl} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3.5" />Emaar's project page</a></div>
     </aside></div></div>
     <CtaBand project={project} />

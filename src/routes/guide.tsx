@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, ArrowRight } from "lucide-react";
 import { GUIDE, COSTS, FAQ, SITE } from "@/data/projects";
 import { CtaBand, sharingMeta, SourceLink, WhatsApp } from "@/components/showcase/shared";
+import { WhyCreekHarbour } from "@/components/showcase/Benefits";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
 
 const TITLE = "Buying in Dubai Creek Harbour: Steps, Costs & FAQ";
@@ -23,6 +24,7 @@ function Steps({ steps }: { steps: { step: string; body: string; source?: string
 function GuidePage() {
   return <main>
     <section className="page-hero"><div className="container"><span className="eyebrow">How buying works</span><h1>From reservation to title deed</h1><p>What happens, in what order, and what it costs — using Emaar's own published terms. {GUIDE.checked}. We walk every client through it personally; this is the map.</p></div></section>
+    <WhyCreekHarbour />
     <section className="section" id="new"><div className="container guide-layout"><div><span className="eyebrow">Buying new from Emaar</span><h2>Seven steps</h2><div className="mt-6"><Steps steps={GUIDE.newFromEmaar} /></div></div>
       <div><div className="costs-box" id="costs"><h3>{COSTS.title}</h3><p className="block-note">{COSTS.note}</p>{COSTS.items.map((c) => <div className="cost-row" key={c.label}><span>{c.label}</span><span className="cost-value">{c.value}</span><span className="cost-detail">{c.detail} <SourceLink href={c.source}>Source</SourceLink></span></div>)}<p className="block-note mt-4">{COSTS.vat}</p></div>
         <div className="costs-box mt-6"><h3>Buying from overseas</h3><ul className="highlight-list">{GUIDE.overseas.map((o) => <li key={o}><span className="text-brass-text">—</span>{o}</li>)}</ul><p className="source-note">Per Emaar's published guidance: {GUIDE.overseasSource.map((s, i) => <span key={s}>{i > 0 && " · "}<a href={s} target="_blank" rel="noopener noreferrer">source {i + 1}</a></span>)}.</p></div></div></div></section>

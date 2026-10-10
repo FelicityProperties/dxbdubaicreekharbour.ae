@@ -14,6 +14,8 @@ import { Route as AreaRouteImport } from './routes/area'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as MarketRouteImport } from './routes/market'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +43,16 @@ const MarketRoute = MarketRouteImport.update({
   path: '/market',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   id: '/projects/$slug',
   path: '/projects/$slug',
@@ -53,6 +65,8 @@ export interface FileRoutesByFullPath {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +75,8 @@ export interface FileRoutesByTo {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRoutesById {
@@ -70,13 +86,31 @@ export interface FileRoutesById {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/area' | '/guide' | '/leads' | '/market' | '/projects/$slug'
+  fullPaths:
+    | '/'
+    | '/area'
+    | '/guide'
+    | '/leads'
+    | '/market'
+    | '/privacy'
+    | '/terms'
+    | '/projects/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/area' | '/guide' | '/leads' | '/market' | '/projects/$slug'
+  to:
+    | '/'
+    | '/area'
+    | '/guide'
+    | '/leads'
+    | '/market'
+    | '/privacy'
+    | '/terms'
+    | '/projects/$slug'
   id:
     | '__root__'
     | '/'
@@ -84,6 +118,8 @@ export interface FileRouteTypes {
     | '/guide'
     | '/leads'
     | '/market'
+    | '/privacy'
+    | '/terms'
     | '/projects/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -93,6 +129,8 @@ export interface RootRouteChildren {
   GuideRoute: typeof GuideRoute
   LeadsRoute: typeof LeadsRoute
   MarketRoute: typeof MarketRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
 }
 
@@ -133,6 +171,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$slug': {
       id: '/projects/$slug'
       path: '/projects/$slug'
@@ -149,6 +201,8 @@ const rootRouteChildren: RootRouteChildren = {
   GuideRoute: GuideRoute,
   LeadsRoute: LeadsRoute,
   MarketRoute: MarketRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
 }
 export const routeTree = rootRouteImport

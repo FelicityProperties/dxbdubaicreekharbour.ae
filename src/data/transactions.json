@@ -1,10 +1,11 @@
 {
  "source": {
-  "name": "PropertyIndex",
-  "basis": "Dubai Land Department registrations modelled by PropertyIndex (PIX© Pro)",
+  "name": "Dubai Land Department",
+  "basis": "Dubai Land Department registration records",
   "coverage": "DLD registrations loaded through September 2026",
   "snapshotDate": "2026-10-09",
-  "communityUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons",
+  "provider": "PropertyIndex supplied the DLD records (internal note; the site names the Dubai Land Department)",
+  "providerUrl": "https://www.propertyindex.ae/dubai/dubai-creek-harbour-the-lagoons",
   "filters": "Market sales only: related-party transfers and completion re-registrations of the same purchase are left out. Apartments only in the 12-month summaries."
  },
  "window": {
