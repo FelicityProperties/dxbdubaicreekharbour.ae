@@ -53,6 +53,7 @@ export const organizationNode = () => ({
     { "@type": "PropertyValue", propertyID: "RERA ORN", value: SITE.reraOrn },
     { "@type": "PropertyValue", propertyID: "Dubai trade licence", value: SITE.tradeLicence },
   ],
+  ...(SITE.profiles.length ? { sameAs: SITE.profiles } : {}),
   employee: { "@type": "Person", name: SITE.broker, jobTitle: "Real estate broker", identifier: { "@type": "PropertyValue", propertyID: "RERA BRN", value: SITE.brokerBrn } },
 });
 
