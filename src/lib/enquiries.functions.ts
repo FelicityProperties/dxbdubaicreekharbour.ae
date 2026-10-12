@@ -169,24 +169,37 @@ const asObject = <T,>(d: unknown): T => (d && typeof d === "object" ? d : {}) as
 /**
  * Lead alert by email, through Resend's HTTP API (no SDK needed). Switched on
  * by RESEND_API_KEY in Vercel; goes to LEAD_EMAIL, or the site's own address
- * when that is unset. A failure here is logged and never fails the enquiry —
- * the enquiry is already saved and visible on /leads.
+ * when that is unset. The sender is LEAD_FROM, or enquiries@felicitypro.com
+ * (the domain the owner verifies in Resend); until that domain is verified,
+ * Resend refuses it, so the alert falls back to Resend's own test sender,
+ * which delivers only to the Resend account's email address. A failure here
+ * is logged and never fails the enquiry — the enquiry is already saved and
+ * visible on /leads.
  */
+const DEFAULT_FROM = "DXB Creek Harbour <enquiries@felicitypro.com>";
+const TEST_FROM = "DXB Creek Harbour <onboarding@resend.dev>";
 async function emailLeadAlert(lead: Record<string, string | null>): Promise<void> {
   const key = process.env["RESEND_API_KEY"];
   if (!key) return;
   const to = process.env["LEAD_EMAIL"] || SITE.email;
-  const from = process.env["LEAD_FROM"] || "DXB Creek Harbour <onboarding@resend.dev>";
+  const preferred = process.env["LEAD_FROM"] || DEFAULT_FROM;
   const rows = Object.entries(lead).filter(([, v]) => v).map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`);
   const subject = `New enquiry: ${lead["name"]}${lead["project"] && lead["project"] !== ANY_PROJECT ? ` — ${lead["project"]}` : ""}`;
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to: [to], subject, text: `${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) console.error("lead alert not sent:", res.status, (await res.text()).slice(0, 200));
+    for (const from of [preferred, TEST_FROM]) {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to: [to], subject, text: `${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (res.ok) return;
+      const detail = (await res.text()).slice(0, 200);
+      // 403 = sender domain not verified in Resend: try its test sender once; anything else is final.
+      if (res.status === 403 && from !== TEST_FROM) { console.warn("lead alert: sender refused, retrying with Resend's test sender:", detail); continue; }
+      console.error("lead alert not sent:", res.status, detail);
+      return;
+    }
   } catch (err) {
     console.error("lead alert not sent:", err instanceof Error ? err.message : String(err));
   }

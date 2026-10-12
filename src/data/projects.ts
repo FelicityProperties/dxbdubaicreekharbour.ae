@@ -8,7 +8,7 @@ export const SITE = {
   url: "https://dxbdubaicreekharbour.ae",
   whatsapp: "971563520611",
   whatsappDisplay: "+971 56 352 0611",
-  email: "mouhannadnwilati@gmail.com",
+  email: "mouhannad@felicitypro.com",
   // From the DET trade licence, RERA office registration certificate and broker card supplied 12 Oct 2026 (all expire 7 Feb 2027).
   company: "Felicity Properties L.L.C",
   licence: "RERA ORN 33951, broker BRN 59244, Dubai trade licence 1145910",

@@ -1,7 +1,7 @@
 /**
  * Terms of Use and Privacy Notice, as structured sections rendered by
  * src/components/showcase/LegalPage.tsx. {{company}}, {{licence}}, {{broker}},
- * {{address}} and {{noc}} are filled from SITE at render time. Plain English on purpose: a buyer should
+ * {{address}}, {{noc}} and {{email}} are filled from SITE at render time. Plain English on purpose: a buyer should
  * understand every line without a lawyer.
  */
 import type { LegalDoc } from "@/components/showcase/LegalPage";
@@ -78,7 +78,7 @@ export const TERMS: LegalDoc = {
     {
       "heading": "How to contact us",
       "paragraphs": [
-        "For questions about these terms, the site or your details, message us on WhatsApp at +971 56 352 0611 or email mouhannadnwilati@gmail.com."
+        "For questions about these terms, the site or your details, message us on WhatsApp at +971 56 352 0611 or email {{email}}."
       ]
     }
   ]
@@ -175,7 +175,7 @@ export const PRIVACY: LegalDoc = {
       "heading": "Contact",
       "paragraphs": [
         "WhatsApp: +971 56 352 0611",
-        "Email: mouhannadnwilati@gmail.com",
+        "Email: {{email}}",
         "Operator: {{company}} ({{licence}})",
         "Address: {{address}}"
       ]

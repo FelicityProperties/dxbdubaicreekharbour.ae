@@ -69,10 +69,15 @@ by hand.
     (shorter ones are refused, because nothing slows down guessing). Set it
     before the last deployment or redeploy after setting it.
   - `RESEND_API_KEY` — optional. When set, every new enquiry is also emailed
-    to `LEAD_EMAIL` (default: the address in `SITE.email`, currently the
-    owner's Gmail) through Resend; `LEAD_FROM` overrides the sender once a
-    domain is verified there. Without the key, enquiries are only saved to
-    the database and shown on `/leads`.
+    to `LEAD_EMAIL` (default: the address in `SITE.email`,
+    mouhannad@felicitypro.com) through Resend. The sender is `LEAD_FROM`,
+    default `DXB Creek Harbour <enquiries@felicitypro.com>`, which works once
+    felicitypro.com is verified in Resend (Domains → Add domain → paste the
+    DNS records it gives at felicitypro.com's DNS host). Until then Resend
+    refuses that sender and the code falls back to Resend's test sender,
+    which only delivers to the email the Resend account was opened with — so
+    open the Resend account with mouhannad@felicitypro.com. Without the key,
+    enquiries are only saved to the database and shown on `/leads`.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 

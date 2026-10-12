@@ -12,7 +12,8 @@ export function fillOperator(text: string): string {
     .replace(/\{\{licence\}\}/g, SITE.licence || "licence details available on request")
     .replace(/\{\{broker\}\}/g, SITE.broker)
     .replace(/\{\{address\}\}/g, SITE.address)
-    .replace(/\{\{noc\}\}/g, SITE.emaarNoc);
+    .replace(/\{\{noc\}\}/g, SITE.emaarNoc)
+    .replace(/\{\{email\}\}/g, SITE.email);
 }
 
 export function LegalPage({ doc, other }: { doc: LegalDoc; other: { to: "/terms" | "/privacy"; label: string } }) {
