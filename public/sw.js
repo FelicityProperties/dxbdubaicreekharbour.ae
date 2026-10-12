@@ -2,7 +2,7 @@
    Pages are always fetched from the network first (so prices and figures are
    never stale) and only served from cache when offline; images, fonts and
    hashed build assets are cached on first use. Bump VERSION to drop old caches. */
-const VERSION = "2026-10-10a";
+const VERSION = "2026-10-12a";
 const STATIC = `static-${VERSION}`;
 const PAGES = `pages-${VERSION}`;
 
@@ -44,10 +44,14 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) caches.open(PAGES).then((cache) => cache.put(req, res.clone()));
+          if (res.ok) {
+            // Clone before the body is handed to the page, and keep the worker alive until the copy is stored.
+            const copy = res.clone();
+            event.waitUntil(caches.open(PAGES).then((cache) => cache.put(req, copy)).catch(() => {}));
+          }
           return res;
         })
-        .catch(async () => (await caches.match(req)) || (await caches.match("/")) || Response.error()),
+        .catch(async () => (await caches.match(req, { ignoreSearch: true })) || (await caches.match("/")) || Response.error()),
     );
   }
 });

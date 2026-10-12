@@ -20,9 +20,9 @@ export const BENEFITS: Benefit[] = [
     "kind": "emaar"
   },
   {
-    "title": "Developer payment plans, reserved with a booking fee",
-    "body": "On Emaar's online booking page for a Creek Haven apartment, checked on 9 October 2026, the reservation booking fee shown was AED 37,000, and Emaar states that your specialist confirms the payment plan before the balance falls due. Emaar's investor guide adds that phased payment plans on off-plan homes can spread payments across the development period; each project page here shows the dated schedule Emaar publishes.",
-    "sourceUrl": "https://www.emaar.com/en/properties/creek-haven-at-dubai-creek-harbour",
+    "title": "Developer payment plans with a reservation booking fee",
+    "body": "On the Emaar online booking page for a Creek Haven apartment, checked on 9 October 2026, the reservation booking fee shown was AED 37,000, and Emaar states that your specialist confirms the payment plan for that collection before the balance falls due. Emaar's investor guide adds that phased payment plans on off-plan homes can spread payments across the development period.",
+    "sourceUrl": "https://www.emaar.com/en/book-online/DC%20Creek%20Haven%20A-P1-P101",
     "kind": "emaar"
   },
   {

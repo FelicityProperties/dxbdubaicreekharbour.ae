@@ -34,3 +34,15 @@ export function dateRange(from: string, to: string): string {
   const left = a[0] === b[0] ? `${a[2]} ${MONTHS[a[1] - 1]?.slice(0, 3)}` : dateShort(from);
   return `${left} – ${dateShort(to)}`;
 }
+
+/** The brand line to show under a project name, or null when the name already carries it ("Lyvia by Palace" + "by Palace"). */
+export const brandLine = (p: { name: string; brand: string | null }): string | null => {
+  if (!p.brand) return null;
+  const word = p.brand.replace(/^by\s+/i, "").trim();
+  return word && p.name.toLowerCase().includes(word.toLowerCase()) ? null : p.brand;
+};
+/** Full label for selects, titles and summaries: "Lyvia by Palace", "Creek Crest", "Montiva by Vida" — the brand is appended only when the name does not already carry it. */
+export const projectLabel = (p: { name: string; brand: string | null }): string => {
+  const b = brandLine(p);
+  return b?.startsWith("by ") ? `${p.name} ${b}` : p.name;
+};

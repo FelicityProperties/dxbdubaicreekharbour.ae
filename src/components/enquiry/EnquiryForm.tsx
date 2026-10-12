@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
 import { whatsappUrl, mailtoUrl, WhatsAppIcon } from "@/components/showcase/shared";
+import { projectLabel } from "@/lib/format";
 import {
   ANY_PROJECT,
   BEDROOMS,
@@ -23,7 +24,7 @@ import {
 function projectOption(name?: string): string {
   if (!name) return ANY_PROJECT;
   const p = PROJECTS.find((x) => x.name === name);
-  const label = p?.brand?.startsWith("by ") ? `${p.name} ${p.brand}` : (p?.name ?? name);
+  const label = p ? projectLabel(p) : name;
   return PROJECT_OPTIONS.includes(label) ? label : ANY_PROJECT;
 }
 
@@ -196,7 +197,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           required
           className="mt-0.5 size-4 shrink-0 accent-[color:var(--brass)]"
         />
-        <span>You may contact me by phone, WhatsApp or email about this enquiry. We use your details only to answer it — see our <a className="underline underline-offset-4" href="/privacy">Privacy Notice</a>.</span>
+        <span>You may contact me by phone, WhatsApp or email about this enquiry. We use your details to answer it and to follow up about the projects you asked about — see our <a className="underline underline-offset-4" href="/privacy">Privacy Notice</a>.</span>
       </label>
       {state.kind === "invalid" && (
         <div className="rounded-[2px] bg-red-50 px-3 py-2.5 text-[13px] text-red-800" role="alert">

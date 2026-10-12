@@ -45,4 +45,7 @@
   plan-bar proportions come solely from the supplied percentages.
 - Enquiries save to Neon through `src/lib/enquiries.functions.ts` with a
   WhatsApp fallback; the private `/leads` page is password-protected on the
-  server. Nothing is ever emailed from the site.
+  server. Nothing is emailed to visitors; with `RESEND_API_KEY` set, each new
+  enquiry is also emailed to the operator only (`LEAD_EMAIL`, default
+  `SITE.email`) — see `VERCEL-LAYER.md` and the Privacy Notice. A failed
+  alert never fails the enquiry.

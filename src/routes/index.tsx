@@ -8,7 +8,7 @@ import { WhatsApp, ProjectCard, PlanBar, CtaBand, ArrowDown, sharingMeta, Pictur
 import { MarketSnapshot, LatestTransactions, SourceNote } from "@/components/market/Market";
 import { WhyCreekHarbour } from "@/components/showcase/Benefits";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
-import { dateLong } from "@/lib/format";
+import { dateLong, brandLine } from "@/lib/format";
 
 const TITLE = "Dubai Creek Harbour Projects, Prices & Sales Data";
 const DESCRIPTION = `Emaar's Dubai Creek Harbour projects side by side: published prices, payment plans, handover dates, and the sales and rents registered with the Dubai Land Department. Independent broker showcase — enquire on WhatsApp.`;
@@ -48,7 +48,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 
 function ProjectTable({ projects }: { projects: Project[] }) {
   return <div className="table-scroll"><table className="project-table"><thead><tr><th scope="col">Project</th><th scope="col">Status</th><th scope="col">From</th><th scope="col">Bedrooms</th><th scope="col">Sizes</th><th scope="col">Handover</th><th scope="col">Plan</th><th scope="col">Quarter</th></tr></thead>
-    <tbody>{projects.map((p) => { const price = priceSummary(p); return <tr key={p.slug}><td className="name"><Link to="/projects/$slug" params={{ slug: p.slug }}>{p.name}</Link>{p.brand && <div className="card-brand mt-1 mb-0 text-[11px]">{p.brand}</div>}</td><td>{statusLabel(p)}</td><td>{price.main}</td><td>{p.bedrooms}</td><td>{p.sizes ?? "—"}</td><td>{handoverText(p)}</td><td>{p.paymentPlan ? p.paymentPlan.steps.map((s) => s.percent).join(" / ") : "—"}</td><td>{p.district ?? "—"}</td></tr>; })}</tbody></table></div>;
+    <tbody>{projects.map((p) => { const price = priceSummary(p); return <tr key={p.slug}><td className="name"><Link to="/projects/$slug" params={{ slug: p.slug }}>{p.name}</Link>{brandLine(p) && <div className="card-brand mt-1 mb-0 text-[11px]">{brandLine(p)}</div>}</td><td>{statusLabel(p)}</td><td>{price.main}</td><td>{p.bedrooms}</td><td>{p.sizes ?? "—"}</td><td>{handoverText(p)}</td><td>{p.paymentPlan ? p.paymentPlan.steps.map((s) => s.percent).join(" / ") : "—"}</td><td>{p.district ?? "—"}</td></tr>; })}</tbody></table></div>;
 }
 
 function Home() {
@@ -70,7 +70,7 @@ function Home() {
   const hero = DISTRICT.images["hero"];
   const places = DISTRICT.places.slice(0, 3);
   return <main>
-    <section className="hero">{hero && <Picture img={hero} className="hero-image" sizes="100vw" width={1600} priority />}<div className="container hero-content"><span className="eyebrow">Dubai Creek Harbour · an independent broker's showcase</span><h1>Emaar's Dubai Creek Harbour projects,<br /><em>side by side.</em></h1><p className="hero-description">{PROJECTS.length} projects with Emaar's published prices, payment plans and handover dates — plus the sales and rents actually registered with the Dubai Land Department. Independent broker; ask anything on WhatsApp.</p><div className="hero-actions"><Button asChild variant="brass"><Link to="/" hash="projects">View projects <ArrowDown /></Link></Button><WhatsApp variant="heroOutline" /></div></div><div className="container hero-bottom"><span>Dubai Creek Harbour · {PROJECTS.length} projects · prices checked {SITE.pricesCheckedOn}</span><span>{hero?.caption}</span></div></section>
+    <section className="hero">{hero && <Picture img={hero} className="hero-image" sizes="100vw" width={1600} priority />}<div className="container hero-content"><span className="eyebrow">Dubai Creek Harbour · an independent broker's showcase</span><h1>Emaar's Dubai Creek Harbour projects,<br /><em>side by side.</em></h1><p className="hero-description">{PROJECTS.length} projects, with Emaar's published prices, payment plans and handover dates wherever Emaar publishes them — plus the sales and rents actually registered with the Dubai Land Department. Independent broker; ask anything on WhatsApp.</p><div className="hero-actions"><Button asChild variant="brass"><Link to="/" hash="projects">View projects <ArrowDown /></Link></Button><WhatsApp variant="heroOutline" /></div></div><div className="container hero-bottom"><span>Dubai Creek Harbour · {PROJECTS.length} projects · prices checked {SITE.pricesCheckedOn}</span><span>{hero?.caption}</span></div></section>
 
     <section className="snapshot-section" aria-labelledby="snapshot-h"><div className="container"><div className="snapshot-head"><div><span className="eyebrow">Registered with the Dubai Land Department</span><h2 id="snapshot-h">The Creek Harbour market, {TX.window.label}</h2></div><Link to="/market" className="teaser-link">All market data <ArrowRight className="size-3.5" /></Link></div><MarketSnapshot /><SourceNote compact /></div></section>
 

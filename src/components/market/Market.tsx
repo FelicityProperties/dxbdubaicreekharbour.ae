@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
-import { TX, type SaleRow, type RentRow, type Basis } from "@/data/transactions";
+import { TX, LATEST_ROW, type SaleRow, type RentRow, type Basis } from "@/data/transactions";
 import { aed, aedShort, num, dateShort, dateLong, dateRange } from "@/lib/format";
 
 const UNASSIGNED = /not yet named/;
@@ -46,7 +46,7 @@ export function RentalsTable({ rows, initial = 20 }: { rows: RentRow[]; initial?
 }
 
 export function SourceNote({ compact = false }: { compact?: boolean }) {
-  return <p className="source-note">Source: {TX.source.basis}; {TX.source.coverage}. Snapshot taken {dateLong(TX.source.snapshotDate)}.{compact ? "" : ` ${TX.source.filters}`} Figures are as registered with the Dubai Land Department; they are not valuations.</p>;
+  return <p className="source-note">Source: {TX.source.basis}; 12-month summaries {TX.window.label.replace(/^12 months /, "")}, latest rows registered {dateLong(LATEST_ROW)}. Snapshot taken {dateLong(TX.source.snapshotDate)}.{compact ? "" : ` ${TX.source.filters}`} Figures are as registered with the Dubai Land Department; they are not valuations.</p>;
 }
 
 function Stat({ value, label, note }: { value: string; label: string; note?: string | undefined }) {
@@ -60,9 +60,9 @@ export function MarketSnapshot() {
   const one = TX.summary.rentalsByBedroom.find((b) => b.bedrooms === "1 Bed");
   const two = TX.summary.rentalsByBedroom.find((b) => b.bedrooms === "2 Bed");
   return <div className="stat-strip">
-    <Stat value={num(ready?.count)} label="ready-home sales registered" note={`median ${num(ready?.medianPsf)} AED/sq ft · median price ${aedShort(ready?.medianPrice)}`} />
-    <Stat value={num(off?.count)} label="off-plan sales registered" note={`median ${num(off?.medianPsf)} AED/sq ft · median price ${aedShort(off?.medianPrice)}`} />
-    <Stat value={num(rentTotal)} label="tenancy contracts registered" note={`${num(TX.summary.rentalsNewVsRenewal.find((r) => r.newContract)?.count)} new contracts, the rest renewals`} />
+    <Stat value={num(ready?.count)} label="ready apartment sales registered" note={`median ${num(ready?.medianPsf)} AED/sq ft · median price ${aedShort(ready?.medianPrice)}`} />
+    <Stat value={num(off?.count)} label="off-plan apartment sales registered" note={`median ${num(off?.medianPsf)} AED/sq ft · median price ${aedShort(off?.medianPrice)}`} />
+    <Stat value={num(rentTotal)} label="apartment tenancy contracts registered" note={`${num(TX.summary.rentalsNewVsRenewal.find((r) => r.newContract)?.count)} new contracts, the rest renewals`} />
     <Stat value={aed(one?.medianRent)} label="median 1-bed annual rent" note={`2-bed ${aed(two?.medianRent)} · 3-bed ${aed(TX.summary.rentalsByBedroom.find((b) => b.bedrooms === "3 Bed")?.medianRent)}`} />
   </div>;
 }
@@ -107,7 +107,7 @@ export function LatestTransactions({ initial = 10, showKind = true }: { initial?
   ];
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
   return <div>
-    <div className="tabs" role="tablist" aria-label="Latest registered transactions">{tabs.map((t) => <button key={t.id} type="button" role="tab" className="tab-button" aria-selected={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</button>)}</div>
+    <div className="tabs" role="group" aria-label="Latest registered transactions">{tabs.map((t) => <button key={t.id} type="button" className="tab-button" aria-pressed={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</button>)}</div>
     <p className="block-note">{current.note}</p>
     {tab === "ready" && <SalesTable rows={ready} initial={initial} showKind={showKind} />}
     {tab === "offplan" && <SalesTable rows={off} initial={initial} showKind={showKind} />}

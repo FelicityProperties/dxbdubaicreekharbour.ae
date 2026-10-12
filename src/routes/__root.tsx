@@ -11,7 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { Header, Footer, MobileBar, ProjectNotFound } from "@/components/showcase/shared";
+import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/shared";
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: ProjectNotFound,
+  notFoundComponent: PageNotFound,
   errorComponent: ErrorComponent,
 });
 

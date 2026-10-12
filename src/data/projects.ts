@@ -1,6 +1,6 @@
 // Generated on 9 October 2026 by scratchpad/enhance/gen/build.py — do not hand-edit figures.
 // Every price, size, unit count and date comes from Emaar's own pages (emaarUrl) checked on 9 October 2026;
-// construction status comes from Dubai Land Department registration records (DLD registrations loaded through September 2026; snapshot tooling in scratchpad).
+// construction status comes from Dubai Land Department registration records (DLD registrations complete through September 2026; snapshot tooling in scratchpad).
 // Images are Emaar's official renders and photos, self-hosted under /public/img.
 
 export const SITE = {
@@ -13,7 +13,7 @@ export const SITE = {
   licence: "", // RERA ORN / BRN, once supplied
   dldPermit: "", // shown in the footer only once filled in
   pricesCheckedOn: "9 October 2026",
-  constructionSource: "Dubai Land Department records (DLD registrations loaded through September 2026)",
+  constructionSource: "Dubai Land Department records (DLD registrations complete through September 2026)",
 };
 
 export type Status = "Now selling" | "Ready" | "Resale";
@@ -2346,8 +2346,8 @@ export const PROJECTS: Project[] = [
     "unitTypes": [
       "1, 2 & 3 Bedroom Apartments"
     ],
-    "bedrooms": "2–4",
-    "propertyTypes": "Townhouses",
+    "bedrooms": "1–4",
+    "propertyTypes": "Apartments per Emaar's description — Emaar's key-facts block lists 2–4-bedroom townhouses; confirm with us",
     "startingPrice": null,
     "startingPriceAed": null,
     "startingPriceNote": null,
@@ -5435,7 +5435,7 @@ export const FAQ = [
   },
   {
     "q": "Can foreigners buy in Dubai Creek Harbour?",
-    "a": "Yes. Emaar states that all properties in Dubai Creek Harbour are freehold, with full ownership rights for UAE nationals and foreign investors, and that non-residents can buy with a valid passport. Emaar's freehold guide notes that foreign ownership in Dubai is governed by Law No. 7 of 2006 in designated areas.",
+    "a": "Yes. Emaar states that all properties in Dubai Creek Harbour are freehold, with full ownership rights for UAE nationals and foreign investors.",
     "source": "https://www.emaar.com/en/property-for-sale/dubai-creek-harbour"
   },
   {

@@ -26,17 +26,21 @@ const dubaiTime = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
 });
 
+const UAE_RE = /^(0?5\d{8}|0[2-4679]\d{7})$/; // 05X XXXXXXX mobile, 0X XXXXXXX landline
+const UAE_COUNTRY = /\b(uae|u\.a\.e\.?|emirates|dubai|abu dhabi|sharjah|ajman|ras al khaimah|fujairah|umm al quwain)\b/i;
 /**
- * International digits for wa.me and tel: links. UAE numbers arrive as
- * +971…, 00971…, 05… or a bare 5XXXXXXXX; "+44 (0)20…" drops its (0).
+ * International digits for wa.me and tel: links, or null when the number
+ * can't honestly be made international (a national number from abroad).
+ * UAE numbers arrive as +971…, 00971…, 05… or a bare 5XXXXXXXX; "+44 (0)20…"
+ * drops its (0).
  */
-function intl(phone: string): string {
+function intl(phone: string, country: string | null): string | null {
   const d = phone.replace(/\(0\)/g, "").replace(/\D/g, "");
   if (phone.trim().startsWith("+")) return d;
   if (d.startsWith("00")) return d.slice(2);
-  if (d.startsWith("0")) return `971${d.slice(1)}`;
-  if (/^5\d{8}$/.test(d)) return `971${d}`;
-  return d;
+  const abroad = !!country && !UAE_COUNTRY.test(country);
+  if (!abroad && UAE_RE.test(d)) return `971${d.replace(/^0/, "")}`;
+  return null;
 }
 
 function readSaved(): string {
@@ -121,19 +125,27 @@ function LeadsPage() {
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.
           </p>
           <div className="mt-8 grid gap-4">
-            {leads.map((r) => (
+            {leads.map((r) => {
+              const n = intl(r.phone, r.country);
+              return (
               <article key={r.id} className="min-w-0 rounded-[3px] border border-border bg-background p-5 [overflow-wrap:anywhere]">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h2 className="text-[18px] font-medium">{r.name}</h2>
                   <time className="text-[13px] text-muted-foreground">{dubaiTime.format(new Date(r.created_at))}</time>
                 </div>
                 <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-                  <a className="underline underline-offset-4" href={`https://wa.me/${intl(r.phone)}`} target="_blank" rel="noopener noreferrer">
-                    WhatsApp {r.phone}
-                  </a>
-                  <a className="underline underline-offset-4" href={`tel:+${intl(r.phone)}`}>
-                    Call
-                  </a>
+                  {n ? (
+                    <>
+                      <a className="underline underline-offset-4" href={`https://wa.me/${n}`} target="_blank" rel="noopener noreferrer">
+                        WhatsApp {r.phone}
+                      </a>
+                      <a className="underline underline-offset-4" href={`tel:+${n}`}>
+                        Call
+                      </a>
+                    </>
+                  ) : (
+                    <span>{r.phone}</span>
+                  )}
                   {r.email &&
                     (EMAIL_RE.test(r.email) ? (
                       <a className="underline underline-offset-4" href={`mailto:${r.email}`}>
@@ -168,7 +180,8 @@ function LeadsPage() {
                 </div>
                 {r.message && <p className="mt-3 whitespace-pre-wrap text-[14px]">{r.message}</p>}
               </article>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

@@ -8,6 +8,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { PROJECTS, SITE } from "@/data/projects";
+import { projectLabel } from "@/lib/format";
 
 export const BUY_AS = ["A home to live in", "An investment", "Both / not sure"] as const;
 export const BEDROOMS = ["Studio", "1 bedroom", "2 bedrooms", "3 bedrooms", "4+ bedrooms", "Townhouse", "Not sure"] as const;
@@ -17,7 +18,7 @@ export const FUNDING = ["Cash", "Mortgage", "Not sure yet"] as const;
 export const LOOKING_FOR = ["A new launch (off-plan)", "Ready to move in", "Resale while under construction", "Renting", "Not sure yet"] as const;
 export const LANGUAGES = ["English", "Arabic", "Russian", "Chinese", "Hindi / Urdu", "French", "German", "Other"] as const;
 export const ANY_PROJECT = "Any / not sure";
-export const PROJECT_OPTIONS = [ANY_PROJECT, ...PROJECTS.map((p) => (p.brand?.startsWith("by ") ? `${p.name} ${p.brand}` : p.name))];
+export const PROJECT_OPTIONS = [ANY_PROJECT, ...PROJECTS.map(projectLabel)];
 
 export type EnquiryInput = {
   name: string;
@@ -94,8 +95,12 @@ export function normalisePhone(raw: string): string {
     .trim();
 }
 
-/** An email that can't smuggle mailto parameters (?cc=, &body=, %, /, :). */
-export const EMAIL_RE = /^[^\s@?&#%/:]+@[^\s@?&#%/:]+\.[^\s@?&#%/:]+$/;
+/**
+ * Browser-style email check that also keeps out the characters a mailto link
+ * must not carry (?cc=, &body=, %, /, :), so a mistyped address is refused on
+ * the form instead of silently dropping the alert email later.
+ */
+export const EMAIL_RE = /^[A-Za-z0-9.!$'*+=^_`{|}~-]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
 
 /** The Neon driver repeats the connection string, password included, in its errors. */
 function redact(err: unknown, url: string | null): string {

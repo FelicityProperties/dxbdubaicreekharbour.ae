@@ -57,6 +57,8 @@ export type Transactions = {
 };
 
 export const TX = raw as unknown as Transactions;
+/** The latest registration date among the recent-row tables (the 12-month summaries stop at TX.window.to; rows run past it). */
+export const LATEST_ROW = [TX.recent.readySales.to, TX.recent.offplanSales.to, TX.recent.rentals.to].reduce((a, b) => (a > b ? a : b));
 
 export const salesFor = (slug: string) => TX.sales.filter((s) => s.project === slug);
 export const rentalsFor = (slug: string) => TX.rentals.filter((r) => r.project === slug);

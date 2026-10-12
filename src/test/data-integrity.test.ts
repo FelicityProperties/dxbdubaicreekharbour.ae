@@ -3,7 +3,10 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { PROJECTS, DISTRICT } from "@/data/projects";
-import { TX } from "@/data/transactions";
+import { BENEFITS } from "@/data/benefits";
+import { TX, LATEST_ROW } from "@/data/transactions";
+import { projectLabel } from "@/lib/format";
+import sources from "../../design/benefits-sources.json";
 
 const PUBLIC = join(process.cwd(), "public");
 
@@ -28,6 +31,21 @@ describe("Project data", () => {
     expect(TX.source.coverage).toMatch(/\d{4}/);
     expect(TX.source.snapshotDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
+
+  it("never doubles a brand in a project label", () => {
+    for (const p of PROJECTS) expect(projectLabel(p), p.slug).not.toMatch(/\bby (\S+) by \1\b/i);
+    expect(PROJECTS.map(projectLabel)).toContain("Lyvia by Palace");
+  });
+
+  it("keeps every benefit card equal to its recorded source", () => {
+    expect(BENEFITS.length).toBe(sources.benefits.length);
+    BENEFITS.forEach((b, i) => {
+      const s = sources.benefits[i]!;
+      expect(b.title).toBe(s.title);
+      expect(b.body).toBe(s.body);
+      expect(b.sourceUrl).toBe(s.sourceUrl);
+    });
+  });
 });
 
 describe("Registered transactions", () => {
@@ -42,5 +60,19 @@ describe("Registered transactions", () => {
     expect(TX.sales.some((s) => s.basis === "offplan")).toBe(true);
     expect(TX.rentals.length).toBeGreaterThan(0);
     expect(TX.sales.every((s) => s.kind !== "" && /^\d{4}-\d{2}-\d{2}$/.test(s.date))).toBe(true);
+  });
+
+  it("lists each building once per basis in the by-building tables", () => {
+    const k = TX.byBuilding.sales.map((b) => `${b.building}|${b.basis}`);
+    expect(new Set(k).size).toBe(k.length);
+    const r = TX.byBuilding.rentals.map((b) => b.building);
+    expect(new Set(r).size).toBe(r.length);
+  });
+
+  it("dates no row after the latest registration it reports", () => {
+    expect(LATEST_ROW).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    for (const s of TX.sales) expect(s.date <= LATEST_ROW, s.date).toBe(true);
+    for (const r of TX.rentals) expect(r.registered <= LATEST_ROW, r.registered).toBe(true);
+    expect(TX.window.to <= LATEST_ROW).toBe(true);
   });
 });

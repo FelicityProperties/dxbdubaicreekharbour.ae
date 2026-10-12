@@ -1318,16 +1318,6 @@
     "medianPrice": 4500000
    },
    {
-    "building": "Bayshore at Creek Beach Building 2",
-    "project": null,
-    "basis": "ready",
-    "count": 3,
-    "medianPsf": 2491,
-    "p25Psf": 2409,
-    "p75Psf": 2572,
-    "medianPrice": 1730000
-   },
-   {
     "building": "Lotus at Creek Beach Building 1",
     "project": "lotus",
     "basis": "ready",

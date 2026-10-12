@@ -33,7 +33,7 @@
 - [x] Filters by status, quarter, bedrooms and budget; compare table
 - [x] Area page, buying guide with Emaar-sourced costs, fuller FAQ
 - [x] Enquiry form: looking-for, country, language; phone bottom bar; 16px fields on phones
-- [x] Titles, descriptions, canonical links, JSON-LD and a 46-route sitemap
+- [x] Titles, descriptions, canonical links, JSON-LD and a 48-route sitemap
 - [ ] DLD permit number in the footer (SITE.dldPermit) once issued
 - [ ] Refresh both data snapshots monthly
 
