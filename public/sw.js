@@ -2,7 +2,7 @@
    Pages are always fetched from the network first (so prices and figures are
    never stale) and only served from cache when offline; images, fonts and
    hashed build assets are cached on first use. Bump VERSION to drop old caches. */
-const VERSION = "2026-10-12a";
+const VERSION = "2026-10-12b";
 const STATIC = `static-${VERSION}`;
 const PAGES = `pages-${VERSION}`;
 

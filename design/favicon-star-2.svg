@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- DXB Creek Harbour favicon: faceted compass rose, brass and cream, on navy -->
+<rect width="64" height="64" rx="13" fill="#0E2A3B"/>
+<path fill="#B08D57" d="M32.00 6.00 L24.22 25.22 L32.00 33.00Z"/>
+<path fill="#F4EFE6" d="M32.00 6.00 L32.00 33.00 L39.78 25.22Z"/>
+<path fill="#B08D57" d="M54.00 33.00 L39.78 25.22 L32.00 33.00Z"/>
+<path fill="#F4EFE6" d="M54.00 33.00 L32.00 33.00 L39.78 40.78Z"/>
+<path fill="#B08D57" d="M32.00 56.00 L39.78 40.78 L32.00 33.00Z"/>
+<path fill="#F4EFE6" d="M32.00 56.00 L32.00 33.00 L24.22 40.78Z"/>
+<path fill="#B08D57" d="M10.00 33.00 L24.22 40.78 L32.00 33.00Z"/>
+<path fill="#F4EFE6" d="M10.00 33.00 L32.00 33.00 L24.22 25.22Z"/>
+</svg>

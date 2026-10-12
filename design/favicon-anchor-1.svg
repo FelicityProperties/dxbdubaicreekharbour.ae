@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- DXB Creek Harbour favicon: harbour anchor, brass on navy -->
+<rect width="64" height="64" rx="13" fill="#0E2A3B"/>
+<path fill="#B08D57" d="M21.00 17.00 A11 11 0 1 1 43.00 17.00 A11 11 0 1 1 21.00 17.00Z M29.00 17.00 A3 3 0 1 0 35.00 17.00 A3 3 0 1 0 29.00 17.00Z"/>
+<rect x="17.00" y="24" width="30" height="8" rx="2" fill="#B08D57"/>
+<rect x="28.00" y="26" width="8" height="28" fill="#B08D57"/>
+<path fill="#B08D57" d="M12.06 45.30 A22 22 0 0 0 51.94 45.30 L44.69 41.92 A14 14 0 0 1 19.31 41.92Z"/>
+<path fill="#B08D57" d="M12.06 45.30 L12.31 36.36 L21.12 41.07Z"/>
+<path fill="#B08D57" d="M51.94 45.30 L51.69 36.36 L42.88 41.07Z"/>
+</svg>
