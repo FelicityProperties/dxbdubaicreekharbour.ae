@@ -16,7 +16,7 @@ export const SITE = {
   brokerBrn: "59244",
   tradeLicence: "1145910",
   broker: "Muhannad Al Nwilati Al Masri",
-  address: "Office 705, Marwan Zuhair Building, Business Bay, Dubai",
+  address: "Office 705 - Building 12 Marasi Dr - Business Bay - Bay Square - Dubai", // as the owner gave it, 12 Oct 2026
   emaarNoc: "24 December 2024", // Emaar Development's no-objection certificate to market its projects in print and digital media
   dldPermit: "", // Trakheesi advertising permit number — shown in the footer once issued
   googleSiteVerification: "", // Search Console "HTML tag" content value, once the owner supplies it

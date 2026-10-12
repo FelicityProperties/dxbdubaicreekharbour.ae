@@ -47,7 +47,7 @@ export const organizationNode = () => ({
   image: `${SITE.url}/og-image.png`,
   telephone: `+${SITE.whatsapp}`,
   email: SITE.email,
-  address: { "@type": "PostalAddress", streetAddress: SITE.address.replace(/,\s*Dubai$/, ""), addressLocality: "Dubai", addressCountry: "AE" },
+  address: { "@type": "PostalAddress", streetAddress: SITE.address.replace(/\s*[-,]\s*Dubai$/, ""), addressLocality: "Dubai", addressCountry: "AE" },
   areaServed: { "@type": "Place", name: "Dubai Creek Harbour, Dubai" },
   identifier: [
     { "@type": "PropertyValue", propertyID: "RERA ORN", value: SITE.reraOrn },
