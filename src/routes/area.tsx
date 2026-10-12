@@ -4,12 +4,12 @@ import { PROJECTS, DISTRICT, SITE, districtImage } from "@/data/projects";
 import { CtaBand, Picture, sharingMeta, SourceLink, statusLabel } from "@/components/showcase/shared";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
 
-const TITLE = "Dubai Creek Harbour Area Guide: Creek Island, Creek Beach, Green Gate";
-const DESCRIPTION = "Dubai Creek Harbour explained: the three quarters, Creek Beach, the Viewing Point, Creek Marina, Central Park, the Ras Al Khor sanctuary, the Blue Line metro station and drive times — with Emaar's published figures.";
+const TITLE = "Dubai Creek Harbour Area Guide: Quarters, Beach & Metro";
+const DESCRIPTION = "Dubai Creek Harbour quarter by quarter: Creek Island, Creek Beach and Green Gate, the marina, Central Park, Ras Al Khor and the Blue Line metro.";
 
 export const Route = createFileRoute("/area")({
   head: () => ({
-    meta: [{ title: `${TITLE} | DXB Creek Harbour` }, { name: "description", content: DESCRIPTION }, { property: "og:title", content: TITLE }, { property: "og:description", content: DESCRIPTION }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(`${SITE.url}/area`)],
+    meta: [{ title: TITLE }, { name: "description", content: DESCRIPTION }, { property: "og:title", content: TITLE }, { property: "og:description", content: DESCRIPTION }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(`${SITE.url}/area`)],
     links: [{ rel: "canonical", href: `${SITE.url}/area` }],
   }),
   component: AreaPage,
@@ -31,7 +31,7 @@ function AreaPage() {
 
     <section className="section plans-section" id="getting-around"><div className="container two-col"><div><span className="eyebrow">Getting around</span><h2>Drive times<br />and the metro</h2><ul className="drive-list mt-6">{DISTRICT.driveTimes.map((d) => <li key={d.place}><span>{d.place}</span><span>{d.minutes} min</span></li>)}</ul><p className="source-note">{DISTRICT.driveTimesNote} <SourceLink href={DISTRICT.driveTimesSource}>Source: Emaar</SourceLink>. The Emaar Properties metro station on the Blue Line is planned for 2029 (Emaar).</p></div>{map && <figure className="project-cover"><Picture img={map} sizes="(max-width: 1000px) 100vw, 560px" /><figcaption className="image-note">{map.caption}</figcaption></figure>}</div></section>
 
-    <section className="section"><div className="container"><div className="section-heading"><div><span className="eyebrow">Next step</span><h2>Compare the projects</h2></div></div><Link to="/" hash="projects" className="teaser-link">All {PROJECTS.length} projects with filters for status, quarter, bedrooms and budget <ArrowRight className="size-3.5" /></Link></div></section>
+    <section className="section"><div className="container"><div className="section-heading"><div><span className="eyebrow">Next step</span><h2>Compare the projects</h2></div></div><Link to="/projects" className="teaser-link">All {PROJECTS.length} projects with filters for status, quarter, bedrooms and budget <ArrowRight className="size-3.5" /></Link></div></section>
     <EnquirySection />
     <CtaBand />
   </main>;

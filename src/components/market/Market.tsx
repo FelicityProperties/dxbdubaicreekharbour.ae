@@ -109,8 +109,8 @@ export function LatestTransactions({ initial = 10, showKind = true }: { initial?
   return <div>
     <div className="tabs" role="group" aria-label="Latest registered transactions">{tabs.map((t) => <button key={t.id} type="button" className="tab-button" aria-pressed={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</button>)}</div>
     <p className="block-note">{current.note}</p>
-    {tab === "ready" && <SalesTable rows={ready} initial={initial} showKind={showKind} />}
-    {tab === "offplan" && <SalesTable rows={off} initial={initial} showKind={showKind} />}
-    {tab === "rent" && <RentalsTable rows={TX.rentals} initial={initial} />}
+    <div hidden={tab !== "ready"}><SalesTable rows={ready} initial={initial} showKind={showKind} /></div>
+    <div hidden={tab !== "offplan"}><SalesTable rows={off} initial={initial} showKind={showKind} /></div>
+    <div hidden={tab !== "rent"}><RentalsTable rows={TX.rentals} initial={initial} /></div>
   </div>;
 }

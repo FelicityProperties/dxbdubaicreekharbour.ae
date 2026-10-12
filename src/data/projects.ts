@@ -12,10 +12,14 @@ export const SITE = {
   // From the DET trade licence, RERA office registration certificate and broker card supplied 12 Oct 2026 (all expire 7 Feb 2027).
   company: "Felicity Properties L.L.C",
   licence: "RERA ORN 33951, broker BRN 59244, Dubai trade licence 1145910",
+  reraOrn: "33951",
+  brokerBrn: "59244",
+  tradeLicence: "1145910",
   broker: "Muhannad Al Nwilati Al Masri",
   address: "Office 705, Marwan Zuhair Building, Business Bay, Dubai",
   emaarNoc: "24 December 2024", // Emaar Development's no-objection certificate to market its projects in print and digital media
   dldPermit: "", // Trakheesi advertising permit number — shown in the footer once issued
+  googleSiteVerification: "", // Search Console "HTML tag" content value, once the owner supplies it
   pricesCheckedOn: "9 October 2026",
   constructionSource: "Dubai Land Department records (DLD registrations complete through September 2026)",
 };

@@ -14,8 +14,10 @@ import { Route as AreaRouteImport } from './routes/area'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as MarketRouteImport } from './routes/market'
+import { Route as PaymentPlansRouteImport } from './routes/payment-plans'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -43,6 +45,11 @@ const MarketRoute = MarketRouteImport.update({
   path: '/market',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentPlansRoute = PaymentPlansRouteImport.update({
+  id: '/payment-plans',
+  path: '/payment-plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -51,6 +58,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
@@ -65,9 +77,11 @@ export interface FileRoutesByFullPath {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -75,9 +89,11 @@ export interface FileRoutesByTo {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,9 +102,11 @@ export interface FileRoutesById {
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
   '/market': typeof MarketRoute
+  '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/projects/$slug': typeof ProjectsSlugRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,9 +116,11 @@ export interface FileRouteTypes {
     | '/guide'
     | '/leads'
     | '/market'
+    | '/payment-plans'
     | '/privacy'
     | '/terms'
     | '/projects/$slug'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -108,9 +128,11 @@ export interface FileRouteTypes {
     | '/guide'
     | '/leads'
     | '/market'
+    | '/payment-plans'
     | '/privacy'
     | '/terms'
     | '/projects/$slug'
+    | '/projects'
   id:
     | '__root__'
     | '/'
@@ -118,9 +140,11 @@ export interface FileRouteTypes {
     | '/guide'
     | '/leads'
     | '/market'
+    | '/payment-plans'
     | '/privacy'
     | '/terms'
     | '/projects/$slug'
+    | '/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,9 +153,11 @@ export interface RootRouteChildren {
   GuideRoute: typeof GuideRoute
   LeadsRoute: typeof LeadsRoute
   MarketRoute: typeof MarketRoute
+  PaymentPlansRoute: typeof PaymentPlansRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -171,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment-plans': {
+      id: '/payment-plans'
+      path: '/payment-plans'
+      fullPath: '/payment-plans'
+      preLoaderRoute: typeof PaymentPlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -183,6 +216,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/$slug': {
@@ -201,9 +241,11 @@ const rootRouteChildren: RootRouteChildren = {
   GuideRoute: GuideRoute,
   LeadsRoute: LeadsRoute,
   MarketRoute: MarketRoute,
+  PaymentPlansRoute: PaymentPlansRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

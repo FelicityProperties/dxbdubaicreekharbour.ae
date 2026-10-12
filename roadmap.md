@@ -35,6 +35,17 @@
 - [x] Enquiry form: looking-for, country, language; phone bottom bar; 16px fields on phones
 - [x] Titles, descriptions, canonical links, JSON-LD and a 48-route sitemap
 - [ ] Trakheesi advertising permit number in the footer (SITE.dldPermit) once issued
+
+## October 2026: search
+- [x] Real `/projects` page; every Projects link and breadcrumb points to it
+- [x] `/payment-plans`: every Emaar schedule Emaar publishes, instalment by instalment
+- [x] Titles within 60 characters and descriptions within 160 on all pages, with Emaar, price and payment plan in project titles
+- [x] Brokerage structured data (Felicity Properties, ORN, BRN, licence, address), breadcrumbs on project pages
+- [x] Self-hosted fonts, first gallery photo loads early, transactions table out of the main script
+- [x] Generated sitemap with a test that it lists every page
+- [ ] Owner: verify the site in Google Search Console and Bing Webmaster Tools, submit the sitemap
+- [ ] Owner: Google Business Profile for Felicity Properties with this website; portal agency profiles linking here
+- [ ] Next content: per-quarter pages (Creek Island, Creek Beach, Green Gate) once Search Console shows demand
 - [ ] Refresh both data snapshots monthly
 
 ## October 2026: app feel, legal pages, why-buy

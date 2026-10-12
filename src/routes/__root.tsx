@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/shared";
+import { SITE } from "@/data/projects";
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
@@ -66,6 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "DXB Creek Harbour" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#0E2A3B" },
+      ...(SITE.googleSiteVerification ? [{ name: "google-site-verification", content: SITE.googleSiteVerification }] : []),
     ],
     links: [
       {
@@ -77,9 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=dhow" },
       { rel: "manifest", href: "/site.webmanifest" },
 
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" },
+      // Fonts are self-hosted (public/fonts, declared in styles.css); preload the two every page needs first.
+      { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/inter-latin.woff2", crossOrigin: "anonymous" },
+      { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/cormorant-garamond-latin.woff2", crossOrigin: "anonymous" },
     ],
     // Installable on phones: the service worker caches images and build assets; pages always come from the network first.
     scripts: [{ children: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}" }],

@@ -1,0 +1,3 @@
+Inter (Copyright 2016 The Inter Project Authors) and Cormorant Garamond (Copyright 2015 The Cormorant Project Authors)
+are licensed under the SIL Open Font License, Version 1.1: https://openfontlicense.org
+Files: latin and latin-extended subsets as served by Google Fonts on 12 October 2026.

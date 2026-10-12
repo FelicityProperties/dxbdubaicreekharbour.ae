@@ -45,7 +45,7 @@ export const TERMS: LegalDoc = {
     {
       "heading": "Links to other websites",
       "paragraphs": [
-        "Pages link to Emaar's website, its PDF brochures and floor plans, and to Google Maps. The site also loads its fonts from Google Fonts, so Google's servers receive that request. Those services belong to other companies and have their own terms and privacy rules. We do not control them and are not responsible for what they show or how they handle your information."
+        "Pages link to Emaar's website, its PDF brochures and floor plans, and to Google Maps. Those services belong to other companies and have their own terms and privacy rules. We do not control them and are not responsible for what they show or how they handle your information."
       ]
     },
     {
@@ -121,9 +121,9 @@ export const PRIVACY: LegalDoc = {
         "Hosting provider: runs the website and keeps the server logs.",
         "Database provider: a cloud provider stores enquiries in a database on our behalf. Only the operator can see enquiries, behind a password.",
         "Email-delivery provider: when we switch this on, each enquiry is also emailed to the operator through an email-delivery provider.",
-        "Two other companies receive data directly from you or your browser, and handle it under their own terms and privacy rules, which we do not control:",
+        "One other company receives data directly from you, and handles it under its own terms and privacy rules, which we do not control:",
         "WhatsApp (Meta): messages you send on WhatsApp are handled by WhatsApp under WhatsApp's own terms and privacy policy.",
-        "Google Fonts: the site's fonts are loaded from Google Fonts, so Google's servers receive the font request when a page loads."
+        "The site's fonts and images are served from this website itself, so no other company receives a request when a page loads."
       ]
     },
     {
@@ -136,7 +136,7 @@ export const PRIVACY: LegalDoc = {
       "heading": "Cookies and tracking",
       "paragraphs": [
         "At present the site sets no advertising cookies and runs no analytics scripts.",
-        "The only technical data collected when you browse is the hosting provider's server logs and the Google Fonts request described above. If that changes, we will update this notice."
+        "The only technical data collected when you browse is the hosting provider's server logs. If that changes, we will update this notice."
       ]
     },
     {

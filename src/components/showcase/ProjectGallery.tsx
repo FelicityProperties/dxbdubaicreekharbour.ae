@@ -28,7 +28,7 @@ export function ProjectGallery({ project }: { project: Project }) {
     {tiles.length > 0 && <section className="gallery section" aria-label={`${project.name} gallery`}>
       {tiles.map((image, index) => <figure key={image.base} className={index === tiles.length - 1 && tiles.length % 2 === 1 ? "gallery-wide" : undefined}>
         <Button variant="ghost" className="image-open" aria-label={image.caption} onClick={(event) => show(image, event.currentTarget)}>
-          <Picture img={image} sizes="(max-width: 640px) 100vw, (max-width: 1160px) 50vw, 570px" onError={() => fail(image.base)} />
+          <Picture img={image} eager={index === 0} sizes="(max-width: 640px) 100vw, (max-width: 1160px) 50vw, 570px" onError={() => fail(image.base)} />
         </Button><figcaption className="image-note">{image.caption}</figcaption>
       </figure>)}
     </section>}

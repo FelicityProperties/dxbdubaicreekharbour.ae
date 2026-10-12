@@ -8,6 +8,7 @@ import { ProjectGallery } from "@/components/showcase/ProjectGallery";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
 import { SalesTable, RentalsTable, ByBuildingTables, SourceNote, kindHelp } from "@/components/market/Market";
 import { dateLong, num, brandLine, projectLabel } from "@/lib/format";
+import { breadcrumbNode, projectDescription, projectTitle } from "@/lib/seo";
 
 function related(project: Project): Project[] {
   const rest = PROJECTS.filter((p) => p.slug !== project.slug);
@@ -21,17 +22,15 @@ export const Route = createFileRoute("/projects/$slug")({
   head: ({ loaderData: project }) => {
     if (!project) return { meta: [{ title: "Project unavailable | DXB Creek Harbour" }, { name: "description", content: "Explore current Dubai Creek Harbour projects with our independent property showcase." }, { name: "robots", content: "noindex" }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] };
     const fullName = projectLabel(project);
-    const inName = project.name.includes("Dubai Creek Harbour");
-    const title = `${fullName}${inName ? "" : ", Dubai Creek Harbour"} — Prices & Sales Data`;
-    const price = priceSummary(project);
-    const description = `${fullName} by Emaar${inName ? "" : " at Dubai Creek Harbour"}. ${price.main}. ${project.bedrooms.includes("bedroom") ? project.bedrooms : `${project.bedrooms} bedrooms`}. ${handoverText(project)}. Registered sales and rents, payment plan, brochure. Enquire on WhatsApp.`;
+    const title = projectTitle(project);
+    const description = projectDescription(project, handoverText(project));
     const canonicalUrl = `${SITE.url}/projects/${project.slug}`;
     const image = project.ogImage ? `${SITE.url}${project.ogImage}` : `${SITE.url}/og-image.png`;
     const ld = { "@context": "https://schema.org", "@graph": [
       { "@type": "ApartmentComplex", name: fullName, url: canonicalUrl, description: project.overview, image: project.images.slice(0, 3).map((i) => `${SITE.url}${i.base}-960.webp`), address: { "@type": "PostalAddress", addressLocality: "Dubai", streetAddress: `Dubai Creek Harbour${project.district ? `, ${project.district}` : ""}`, addressCountry: "AE" }, ...(project.lat && project.lng ? { geo: { "@type": "GeoCoordinates", latitude: project.lat, longitude: project.lng } } : {}) },
-      { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: SITE.url }, { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE.url}/#projects` }, { "@type": "ListItem", position: 3, name: fullName, item: canonicalUrl }] },
+      breadcrumbNode([["Home", "/"], ["Projects", "/projects"], [fullName, `/projects/${project.slug}`]]),
     ] };
-    return { meta: [{ title: `${title} | DXB Creek Harbour` }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: project.overview }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(canonicalUrl, image)], links: [{ rel: "canonical", href: canonicalUrl }], scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }] };
+    return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: project.overview }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(canonicalUrl, image)], links: [{ rel: "canonical", href: canonicalUrl }], scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }] };
   },
   component: ProjectPage, notFoundComponent: ProjectNotFound,
 });
@@ -46,7 +45,7 @@ function ProjectPage() {
   const bedroomsText = project.unitTypes.length ? project.unitTypes.join(" · ") : project.bedrooms.includes("bedroom") ? project.bedrooms : `${project.bedrooms} bedrooms`;
   // Only call it "expected" when something points forward; a building DLD has no status for is simply not stated.
   const forward = project.construction === "under_construction" || !!project.handover || project.isNewLaunch;
-  return <main><div className="container"><nav className="breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><ChevronRight className="size-3" /><Link to="/" hash="projects">Projects</Link><ChevronRight className="size-3" /><span>{project.name}</span></nav>
+  return <main><div className="container"><nav className="breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><ChevronRight className="size-3" /><Link to="/projects">Projects</Link><ChevronRight className="size-3" /><span>{project.name}</span></nav>
     <header className="detail-heading"><span className="eyebrow">Dubai Creek Harbour{project.district ? ` · ${project.district}` : ""}</span><h1>{project.name}</h1>{brandLine(project) && <p className="brand">{brandLine(project)}</p>}<div className="badge-row"><StatusBadge project={project} /><span className="chip">by Emaar</span>{project.construction && <span className="chip">{project.construction === "completed" ? "Construction completed (DLD records)" : "Construction under way (DLD records)"}</span>}{project.district && <span className="chip brass">{project.district}</span>}</div></header>
     <ProjectGallery key={project.slug} project={project} />
     <div className="detail-layout"><div>

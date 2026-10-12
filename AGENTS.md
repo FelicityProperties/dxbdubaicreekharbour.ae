@@ -32,9 +32,17 @@
   `.dxbch-*` styles, and serve every icon from `public/` wired through the
   root route head.
 - Routes: `/` (home: snapshot, filterable collection, plans, latest
-  transactions, district teaser, guide teaser, enquiry, FAQ), `/projects/$slug`,
-  `/market`, `/area`, `/guide`, `/leads`. Hash links are for sections of the
-  home page.
+  transactions, district teaser, guide teaser, enquiry, FAQ), `/projects`
+  (the same collection as a page of its own), `/projects/$slug`,
+  `/payment-plans`, `/market`, `/area`, `/guide`, `/terms`, `/privacy`,
+  `/leads`. Navigation links to pages, never to `/#section`; hash links are
+  only for jumps within the page you are on.
+- Search: titles stay within 60 characters and descriptions within 160
+  (helpers and the brokerage's structured data in `src/lib/seo.ts`; a test
+  enforces the limits for project pages). Route `head()` code must not import
+  `transactions.json` — it would put the whole snapshot in every page's
+  JavaScript. After adding a page, run `npm run sitemap`; a test fails if the
+  sitemap misses a page or project.
 - Canonical social-image metadata goes through the shared helper in each
   content route's head, never at the root or on missing projects. Project
   pages use their own `og.jpg`.
