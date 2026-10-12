@@ -19,7 +19,7 @@ export const SITE = {
   address: "Office 705 - Building 12 Marasi Dr - Business Bay - Bay Square - Dubai", // as the owner gave it, 12 Oct 2026
   emaarNoc: "24 December 2024", // Emaar Development's no-objection certificate to market its projects in print and digital media
   dldPermit: "", // Trakheesi advertising permit number — shown in the footer once issued
-  googleSiteVerification: "", // Search Console "HTML tag" content value, once the owner supplies it
+  googleSiteVerification: "2X7aLqvslhkq-gByuOoE76ojLYHeIg9SHdz8G4RxkM0", // Search Console code the owner supplied 12 Oct 2026 (also goes in DNS as a TXT record); keep it
   // Public profiles of the brokerage (structured-data sameAs). Only profiles confirmed as Felicity's: the company site
   // and the Property Finder agency page (shows ORN 33951). Add the Google Business Profile link once the owner sends it.
   profiles: ["https://felicitypro.com/", "https://www.propertyfinder.ae/en/broker/felicity-properties-l-l-c-7702"] as string[],
