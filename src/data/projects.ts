@@ -20,9 +20,9 @@ export const SITE = {
   emaarNoc: "24 December 2024", // Emaar Development's no-objection certificate to market its projects in print and digital media
   dldPermit: "", // Trakheesi advertising permit number — shown in the footer once issued
   googleSiteVerification: "2X7aLqvslhkq-gByuOoE76ojLYHeIg9SHdz8G4RxkM0", // Search Console code the owner supplied 12 Oct 2026 (also goes in DNS as a TXT record); keep it
-  // Public profiles of the brokerage (structured-data sameAs). Only profiles confirmed as Felicity's: the company site
-  // and the Property Finder agency page (shows ORN 33951). Add the Google Business Profile link once the owner sends it.
-  profiles: ["https://felicitypro.com/", "https://www.propertyfinder.ae/en/broker/felicity-properties-l-l-c-7702"] as string[],
+  // Public profiles of the brokerage (structured-data sameAs), all confirmed as Felicity's: the company site, the
+  // Google Business Profile (share link the owner sent 12 Oct 2026) and the Property Finder agency page (ORN 33951).
+  profiles: ["https://felicitypro.com/", "https://share.google/cjGDafgxVhGFOKe4y", "https://www.propertyfinder.ae/en/broker/felicity-properties-l-l-c-7702"] as string[],
   pricesCheckedOn: "9 October 2026",
   constructionSource: "Dubai Land Department records (DLD registrations complete through September 2026)",
 };
