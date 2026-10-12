@@ -1,6 +1,6 @@
 # DXB Creek Harbour
 
-An independent broker's showcase of Emaar's Dubai Creek Harbour projects, hosted on Vercel at dxbdubaicreekharbour.ae. See `VERCEL-LAYER.md` for how the repo is put together and how the data is refreshed, and `AGENTS.md` for the rules the content follows.
+Felicity Properties' independent showcase of Emaar's Dubai Creek Harbour projects, hosted on Vercel at dxbdubaicreekharbour.ae. See `VERCEL-LAYER.md` for how the repo is put together and how the data is refreshed, and `AGENTS.md` for the rules the content follows.
 
 The project started in [Lovable](https://lovable.dev); it is now edited here.
 

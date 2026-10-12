@@ -1,7 +1,7 @@
 /**
  * Terms of Use and Privacy Notice, as structured sections rendered by
- * src/components/showcase/LegalPage.tsx. {{company}} and {{licence}} are
- * filled from SITE at render time. Plain English on purpose: a buyer should
+ * src/components/showcase/LegalPage.tsx. {{company}}, {{licence}}, {{broker}},
+ * {{address}} and {{noc}} are filled from SITE at render time. Plain English on purpose: a buyer should
  * understand every line without a lawyer.
  */
 import type { LegalDoc } from "@/components/showcase/LegalPage";
@@ -9,13 +9,13 @@ import type { LegalDoc } from "@/components/showcase/LegalPage";
 export const TERMS: LegalDoc = {
   "title": "Terms of Use",
   "intro": "These terms explain what DXB Creek Harbour is, what you can expect from the information on it, and the ground rules for using it. If anything is unclear, ask us; our contact details are at the end.",
-  "lastUpdated": "2026-10-10",
+  "lastUpdated": "2026-10-12",
   "sections": [
     {
       "heading": "Who runs this site",
       "paragraphs": [
-        "DXB Creek Harbour, at dxbdubaicreekharbour.ae, is an independent property showcase. It is run by {{company}}. Our licence and permit details: {{licence}}. In these terms, \"we\", \"us\" and \"the operator\" all mean that Dubai real-estate broker.",
-        "We are not Emaar. This site is not owned, operated, sponsored or endorsed by Emaar Properties PJSC, the developer of the projects shown here. Emaar has not approved anything on it."
+        "DXB Creek Harbour, at dxbdubaicreekharbour.ae, is an independent property showcase. It is run by {{company}}, a Dubai real-estate brokerage registered with the Real Estate Regulatory Agency ({{licence}}), from {{address}}. The broker responsible for the site is {{broker}}. In these terms, \"we\", \"us\" and \"the operator\" all mean {{company}}.",
+        "We are not Emaar. This site is not owned, operated, sponsored or endorsed by Emaar Properties PJSC, the developer of the projects shown here. Emaar has given {{company}} a no-objection certificate, dated {{noc}}, to market Emaar's projects through print and digital media at the prices Emaar publishes on its own website. Emaar has not reviewed or approved the content of this site; that is ours."
       ]
     },
     {
@@ -87,12 +87,12 @@ export const TERMS: LegalDoc = {
 export const PRIVACY: LegalDoc = {
   "title": "Privacy Notice",
   "intro": "This notice explains what DXB Creek Harbour collects when you use dxbdubaicreekharbour.ae, what we do with it, and how to ask us to see, correct or delete it. If anything is unclear, message us on WhatsApp or by email using the details at the end.",
-  "lastUpdated": "2026-10-10",
+  "lastUpdated": "2026-10-12",
   "sections": [
     {
       "heading": "Who we are",
       "paragraphs": [
-        "DXB Creek Harbour is an independent property showcase. It is run by {{company}} ({{licence}}), and in this notice \"we\", \"us\" and \"the operator\" mean that Dubai real-estate broker.",
+        "DXB Creek Harbour is an independent property showcase. It is run by {{company}} ({{licence}}), a Dubai real-estate brokerage at {{address}}, and in this notice \"we\", \"us\" and \"the operator\" mean {{company}}. The broker responsible for your details is {{broker}}.",
         "We are not Emaar Properties PJSC, the developer of the projects shown on this site. Emaar does not own, operate or endorse this site.",
         "The site shows information about Emaar projects in Dubai Creek Harbour: Emaar's own published figures and registered sales and tenancy contracts from Dubai Land Department registration records. This notice is about the personal details we collect from you, not that market information."
       ]
@@ -176,7 +176,8 @@ export const PRIVACY: LegalDoc = {
       "paragraphs": [
         "WhatsApp: +971 56 352 0611",
         "Email: mouhannadnwilati@gmail.com",
-        "Operator: {{company}} ({{licence}})"
+        "Operator: {{company}} ({{licence}})",
+        "Address: {{address}}"
       ]
     }
   ]

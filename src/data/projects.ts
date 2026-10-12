@@ -9,9 +9,13 @@ export const SITE = {
   whatsapp: "971563520611",
   whatsappDisplay: "+971 56 352 0611",
   email: "mouhannadnwilati@gmail.com",
-  company: "", // licensed trade name, once supplied
-  licence: "", // RERA ORN / BRN, once supplied
-  dldPermit: "", // shown in the footer only once filled in
+  // From the DET trade licence, RERA office registration certificate and broker card supplied 12 Oct 2026 (all expire 7 Feb 2027).
+  company: "Felicity Properties L.L.C",
+  licence: "RERA ORN 33951, broker BRN 59244, Dubai trade licence 1145910",
+  broker: "Muhannad Al Nwilati Al Masri",
+  address: "Office 705, Marwan Zuhair Building, Business Bay, Dubai",
+  emaarNoc: "24 December 2024", // Emaar Development's no-objection certificate to market its projects in print and digital media
+  dldPermit: "", // Trakheesi advertising permit number — shown in the footer once issued
   pricesCheckedOn: "9 October 2026",
   constructionSource: "Dubai Land Department records (DLD registrations complete through September 2026)",
 };
@@ -5423,7 +5427,7 @@ export const COSTS = {
 export const FAQ = [
   {
     "q": "Is this Emaar's website?",
-    "a": "No. DXB Creek Harbour is an independent property showcase run by a Dubai broker. The projects are developed by Emaar Properties; we help buyers compare them, find available units and buy. This site is not owned, operated or endorsed by Emaar."
+    "a": "No. DXB Creek Harbour is an independent property showcase run by Felicity Properties L.L.C, a Dubai brokerage registered with the Real Estate Regulatory Agency (ORN 33951). The projects are developed by Emaar Properties, which has given Felicity Properties a no-objection certificate to market them; we help buyers compare the projects, find available units and buy. This site is not owned, operated or endorsed by Emaar."
   },
   {
     "q": "Are the prices current?",

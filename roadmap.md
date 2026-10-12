@@ -34,7 +34,7 @@
 - [x] Area page, buying guide with Emaar-sourced costs, fuller FAQ
 - [x] Enquiry form: looking-for, country, language; phone bottom bar; 16px fields on phones
 - [x] Titles, descriptions, canonical links, JSON-LD and a 48-route sitemap
-- [ ] DLD permit number in the footer (SITE.dldPermit) once issued
+- [ ] Trakheesi advertising permit number in the footer (SITE.dldPermit) once issued
 - [ ] Refresh both data snapshots monthly
 
 ## October 2026: app feel, legal pages, why-buy
@@ -42,5 +42,6 @@
 - [x] Terms of Use and Privacy Notice in plain English (`/terms`, `/privacy`), linked from footer, phone menu and the form's consent line
 - [x] "Why Dubai Creek Harbour": eight sourced reasons incl. freehold, Golden Residency, payment plans, escrow, no annual property tax, location, lifestyle, registered rental market
 - [x] Registered figures credited to the Dubai Land Department throughout
-- [ ] Licensed company name, ORN/BRN and advertising permit number (SITE.company, SITE.licence, SITE.dldPermit)
+- [x] Licensed company name, ORN, BRN, office address and Emaar NOC on the footer, Terms and Privacy (12 Oct 2026); advertising permit number still to come
+- [ ] Licence, ORN and broker card renew 7 Feb 2027 — check SITE after renewal
 

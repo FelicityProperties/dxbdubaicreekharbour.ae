@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: SITE.url }],
     scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@graph": [
       { "@type": "WebSite", name: SITE.name, url: SITE.url },
-      { "@type": "RealEstateAgent", name: SITE.name, url: SITE.url, telephone: `+${SITE.whatsapp}`, areaServed: "Dubai Creek Harbour, Dubai", address: { "@type": "PostalAddress", addressLocality: "Dubai", addressCountry: "AE" } },
+      { "@type": "RealEstateAgent", name: SITE.name, legalName: SITE.company, url: SITE.url, telephone: `+${SITE.whatsapp}`, email: SITE.email, areaServed: "Dubai Creek Harbour, Dubai", address: { "@type": "PostalAddress", streetAddress: SITE.address, addressLocality: "Dubai", addressCountry: "AE" } },
       { "@type": "ItemList", name: "Dubai Creek Harbour projects", itemListElement: PROJECTS.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: `${SITE.url}/projects/${p.slug}` })) },
     ] }) }],
   }),

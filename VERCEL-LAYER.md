@@ -18,8 +18,13 @@ starting point but is now behind this repo and should not be copied over it.
   the generators). Also generated; `src/data/transactions.ts` types it and
   adds the per-project helpers. Shown as registered, never as valuations.
 - `src/data/legal.ts` — the Terms of Use and Privacy Notice as structured
-  sections (`/terms`, `/privacy`); `{{company}}` and `{{licence}}` are filled
-  from `SITE.company` / `SITE.licence` in `projects.ts` once supplied.
+  sections (`/terms`, `/privacy`); the `{{company}}`, `{{licence}}`,
+  `{{broker}}`, `{{address}}` and `{{noc}}` tokens are filled from `SITE` in
+  `projects.ts` (set in the generator): Felicity Properties L.L.C, RERA ORN
+  33951, BRN 59244, trade licence 1145910, the Business Bay office and the
+  Emaar no-objection certificate of 24 December 2024. Licence, ORN and broker
+  card all expire 7 February 2027 — update `SITE` if the numbers change on
+  renewal. `SITE.dldPermit` (Trakheesi advertising permit) is still empty.
 - `src/data/benefits.ts` — the "Why Dubai Creek Harbour" cards; every card
   cites an Emaar page or the DLD snapshot, with the exact quotes kept in
   `design/benefits-sources.json`.

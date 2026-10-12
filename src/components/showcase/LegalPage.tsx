@@ -9,7 +9,10 @@ export type LegalDoc = { title: string; intro: string; lastUpdated: string; sect
 export function fillOperator(text: string): string {
   return text
     .replace(/\{\{company\}\}/g, SITE.company || "the operator of this website, an independent Dubai real-estate broker")
-    .replace(/\{\{licence\}\}/g, SITE.licence || "licence details available on request");
+    .replace(/\{\{licence\}\}/g, SITE.licence || "licence details available on request")
+    .replace(/\{\{broker\}\}/g, SITE.broker)
+    .replace(/\{\{address\}\}/g, SITE.address)
+    .replace(/\{\{noc\}\}/g, SITE.emaarNoc);
 }
 
 export function LegalPage({ doc, other }: { doc: LegalDoc; other: { to: "/terms" | "/privacy"; label: string } }) {
