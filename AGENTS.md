@@ -22,6 +22,11 @@
   plausible-sounding number is wrong even when it is close.
 - The area page and the buying guide quote Emaar's published figures with a
   source link beside each one. Editorial copy stays qualitative.
+- FelicityBot (the AI assistant) answers only from the knowledge text that
+  `src/lib/felicitybot.knowledge.ts` renders from these same data files. To
+  teach it a fact, change the data file; never type a figure into its rules
+  or knowledge text. Its rules forbid estimates, ranges and yields, and it
+  credits only Emaar and the Dubai Land Department.
 
 ## Showcase architecture
 

@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/shared";
 import { SITE } from "@/data/projects";
+import { FelicityBot } from "@/components/felicitybot/FelicityBot";
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
@@ -116,6 +117,7 @@ function RootComponent() {
       <Outlet />
       <Footer />
       <MobileBar />
+      <FelicityBot />
     </QueryClientProvider>
   );
 }

@@ -55,6 +55,16 @@ starting point but is now behind this repo and should not be copied over it.
 - `src/lib/enquiries.functions.ts` — server side of the form and `/leads`.
   Enquiries go to the Neon database Vercel provides as `DATABASE_URL`; the
   `enquiries` table creates itself (and adds new columns) on first use.
+- FelicityBot, the AI assistant (button bottom right, every page except
+  `/leads`): `src/components/felicitybot/FelicityBot.tsx` is the chat panel;
+  `src/lib/felicitybot.functions.ts` calls the Claude API; and
+  `src/lib/felicitybot.knowledge.ts` holds its rules plus the knowledge it
+  answers from, rendered from `projects.ts`, `transactions.json`, the guide,
+  FAQ, benefits and district text. It has no other source, so refreshing
+  the data refreshes the bot. When a visitor asks to be contacted and agrees,
+  it saves an enquiry through the same code as the form (marked
+  "[Via FelicityBot]" on `/leads`). Conversations stay in the visitor's
+  browser tab; nothing is stored unless they ask to be contacted.
 
 ## Refreshing the data
 
@@ -89,6 +99,17 @@ by hand.
     which only delivers to the email the Resend account was opened with — so
     open the Resend account with mouhannad@felicitypro.com. Without the key,
     enquiries are only saved to the database and shown on `/leads`.
+  - `ANTHROPIC_API_KEY` — switches FelicityBot on. Create it at
+    console.anthropic.com (Settings → API keys) and set a monthly spend
+    limit there (Settings → Limits): that limit is the real cost ceiling.
+    Without the key the chat panel offers WhatsApp instead of answering.
+  - `FELICITYBOT_MODEL` — optional. Default `claude-opus-5-5` (best at
+    sticking to the "only quote the site's figures" rule; $4 / $20 per
+    million input / output tokens, $0.20 for cached input). Set
+    `claude-haiku-5-5` for a much cheaper bot ($0.10 / $0.50). The rules
+    and knowledge (about 100,000 characters) are sent with every question
+    and cached for five minutes, so a visitor's follow-up questions mostly
+    read the cache. Actual spend shows under Usage in the Anthropic console.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 
@@ -104,7 +125,8 @@ by hand.
 - Independent showcase, not Emaar's site; the footer disclaimer says so on
   every page and names the two data sources and their dates.
 - Emaar figures come only from `src/data/projects.ts`; registered figures
-  only from `src/data/transactions.json`. Don't add numbers anywhere else.
+  only from `src/data/transactions.json`. Don't add numbers anywhere else —
+  that includes FelicityBot's rules text.
 - Photos and brochures are Emaar's official files; brochures and floor plans
   link to Emaar's site, images are self-hosted copies with Emaar credited in
   every caption.

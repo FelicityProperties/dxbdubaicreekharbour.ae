@@ -9,7 +9,7 @@ import type { LegalDoc } from "@/components/showcase/LegalPage";
 export const TERMS: LegalDoc = {
   "title": "Terms of Use",
   "intro": "These terms explain what DXB Creek Harbour is, what you can expect from the information on it, and the ground rules for using it. If anything is unclear, ask us; our contact details are at the end.",
-  "lastUpdated": "2026-10-12",
+  "lastUpdated": "2026-10-13",
   "sections": [
     {
       "heading": "Who runs this site",
@@ -57,6 +57,14 @@ export const TERMS: LegalDoc = {
       ]
     },
     {
+      "heading": "FelicityBot, the AI assistant",
+      "paragraphs": [
+        "FelicityBot is an automated assistant powered by an AI model. It writes each answer automatically from the figures and text published on this site: Emaar's published figures and Dubai Land Department registration records, with the dates shown on the site.",
+        "It can make mistakes, misread a question or leave something out. Its answers are general information, not advice, an offer or a promise, and they do not change these terms. Confirm any figure with us or with Emaar before you rely on it.",
+        "Please do not send FelicityBot passport or Emirates ID numbers, payment details or passwords, and do not use it for anything unlawful or abusive. If you ask it to pass your details to us, it saves them as an enquiry, as described in our Privacy Notice."
+      ]
+    },
+    {
       "heading": "What we are responsible for",
       "paragraphs": [
         "We try to keep the site accurate and working, but we cannot promise that it will always be up to date, free of errors or available. We provide it as it is.",
@@ -87,7 +95,7 @@ export const TERMS: LegalDoc = {
 export const PRIVACY: LegalDoc = {
   "title": "Privacy Notice",
   "intro": "This notice explains what DXB Creek Harbour collects when you use dxbdubaicreekharbour.ae, what we do with it, and how to ask us to see, correct or delete it. If anything is unclear, message us on WhatsApp or by email using the details at the end.",
-  "lastUpdated": "2026-10-12",
+  "lastUpdated": "2026-10-13",
   "sections": [
     {
       "heading": "Who we are",
@@ -102,6 +110,7 @@ export const PRIVACY: LegalDoc = {
       "paragraphs": [
         "Enquiry form. When you send an enquiry we ask for your name and your phone or WhatsApp number. You can also give an email address and your country of residence. The form asks which language you prefer, which project interests you, what you are looking for, whether you are buying a home or an investment, how many bedrooms you want, your budget band, your timing, how you plan to pay, and a free-text message. We also record the page you were on and the time you sent the form.",
         "The form has a hidden field that people never see. It exists only to catch automated spam.",
+        "FelicityBot, the AI assistant. When you chat with FelicityBot, the messages in that chat and the address of the page you are on are sent to our AI provider so it can write each answer. We do not save the chat. The conversation stays in your browser tab until you close it or start a new chat. If you ask FelicityBot to pass your details to us, it saves your name, phone number, email if you give one, and a short note of what you asked for, as an enquiry, exactly like the enquiry form.",
         "WhatsApp. If you message us on WhatsApp, we receive your number and whatever you write. WhatsApp (Meta) handles the message under its own terms.",
         "Server logs. The company that hosts the website keeps ordinary server logs, including IP addresses, for security and to keep the site running."
       ]
@@ -117,10 +126,11 @@ export const PRIVACY: LegalDoc = {
     {
       "heading": "Who else handles your data",
       "paragraphs": [
-        "Three companies handle data on our behalf so the site can work: the hosting provider, the database provider and, when we switch it on, the email-delivery provider. Each may use your data only to provide its service to us, and none of them may use it for their own marketing.",
+        "Four companies handle data on our behalf so the site can work: the hosting provider, the database provider, the email-delivery provider and the AI provider. Each may use your data only to provide its service to us, and none of them may use it for their own marketing.",
         "Hosting provider: runs the website and keeps the server logs.",
         "Database provider: a cloud provider stores enquiries in a database on our behalf. Only the operator can see enquiries, behind a password.",
-        "Email-delivery provider: when we switch this on, each enquiry is also emailed to the operator through an email-delivery provider.",
+        "Email-delivery provider: each enquiry is also emailed to the operator through an email-delivery provider.",
+        "AI provider: Anthropic processes the messages you send to FelicityBot, on our behalf and under its commercial terms, to write the answers.",
         "One other company receives data directly from you, and handles it under its own terms and privacy rules, which we do not control:",
         "WhatsApp (Meta): messages you send on WhatsApp are handled by WhatsApp under WhatsApp's own terms and privacy policy.",
         "The site's fonts and images are served from this website itself, so no other company receives a request when a page loads."
@@ -136,7 +146,7 @@ export const PRIVACY: LegalDoc = {
       "heading": "Cookies and tracking",
       "paragraphs": [
         "At present the site sets no advertising cookies and runs no analytics scripts.",
-        "The only technical data collected when you browse is the hosting provider's server logs. If that changes, we will update this notice."
+        "The only technical data collected when you browse is the hosting provider's server logs. FelicityBot keeps your current chat in your browser's session storage, which is cleared when you close the tab; it is not a cookie and is sent to us only as part of your next question. If that changes, we will update this notice."
       ]
     },
     {

@@ -56,3 +56,9 @@
 - [x] Licensed company name, ORN, BRN, office address and Emaar NOC on the footer, Terms and Privacy (12 Oct 2026); advertising permit number still to come
 - [ ] Licence, ORN and broker card renew 7 Feb 2027 — check SITE after renewal
 
+## October 2026: FelicityBot
+- [x] AI assistant on every page (not `/leads`): answers about the 42 projects, prices, payment plans, handovers, registered sales and rents, the area and buying steps, only from the site's own data files
+- [x] Links to the site's pages in its answers; replies in the visitor's language; WhatsApp fallback when it is off or busy
+- [x] Passes a visitor's name and number to the broker as an enquiry, only after they say yes
+- [x] Terms and Privacy updated (AI provider, what the chat keeps)
+- [ ] Owner: Anthropic API key in Vercel (`ANTHROPIC_API_KEY`) with a monthly spend limit, then redeploy

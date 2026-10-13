@@ -205,6 +205,64 @@ async function emailLeadAlert(lead: Record<string, string | null>): Promise<void
   }
 }
 
+/** One enquiry as stored: trimmed strings, null where not given. Shared by the form and FelicityBot. */
+export type EnquiryRecord = {
+  name: string;
+  phone: string;
+  email: string | null;
+  country: string | null;
+  language: string | null;
+  project: string | null;
+  looking_for: string | null;
+  buy_as: string | null;
+  bedrooms: string | null;
+  budget: string | null;
+  timing: string | null;
+  funding: string | null;
+  message: string | null;
+  page: string | null;
+};
+
+/** What is wrong with a record, in words a visitor can act on; null when it can be saved. */
+export function enquiryProblem(row: Pick<EnquiryRecord, "name" | "phone" | "email">): string | null {
+  if (row.name.length < 2) return "Please tell us your name.";
+  if (row.phone.replace(/\D/g, "").length < 7 || !/^[+\d\s()-]+$/.test(row.phone)) return "Please enter a phone number we can call or WhatsApp.";
+  if (row.email && !EMAIL_RE.test(row.email)) return "That email address doesn't look right — or leave it blank.";
+  return null;
+}
+
+/**
+ * Saves an enquiry and sends the alert email. Consent and spam checks belong
+ * to the caller (the form's tick-box and honeypot; FelicityBot's explicit yes).
+ */
+export async function recordEnquiry(row: EnquiryRecord): Promise<{ ok: true } | { ok: false; reason: "invalid"; message: string } | { ok: false; reason: "offline" }> {
+  const problem = enquiryProblem(row);
+  if (problem) return { ok: false, reason: "invalid", message: problem };
+
+  const url = databaseUrl();
+  if (!url) {
+    console.error("enquiry not saved: DATABASE_URL is not set");
+    return { ok: false, reason: "offline" };
+  }
+  try {
+    const sql = await connect(url);
+    await ensureTable(sql);
+    await sql`
+      INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
+      VALUES (
+        ${row.name}, ${row.phone}, ${row.email}, ${row.country}, ${row.language},
+        ${row.project}, ${row.looking_for}, ${row.buy_as}, ${row.bedrooms}, ${row.budget},
+        ${row.timing}, ${row.funding}, ${row.message}, ${row.page}
+      )
+    `;
+  } catch (err) {
+    console.error("enquiry not saved:", redact(err, url));
+    return { ok: false, reason: "offline" };
+  }
+  await emailLeadAlert({ ...row });
+  return { ok: true };
+}
+
 export const submitEnquiry = createServerFn({ method: "POST" })
   .validator((d: unknown) => asObject<EnquiryInput>(d))
   .handler(async ({ data }): Promise<EnquiryResult> => {
@@ -214,51 +272,30 @@ export const submitEnquiry = createServerFn({ method: "POST" })
       return { ok: true, firstName: "" };
     }
 
-    const name = text(data.name, 120);
-    const phone = normalisePhone(text(data.phone, 40));
-    const email = text(data.email, 200);
-    const country = text(data.country, 80);
-    const message = text(data.message, 2000);
-
-    if (name.length < 2) return { ok: false, reason: "invalid", message: "Please tell us your name." };
-    if (phone.replace(/\D/g, "").length < 7 || !/^[+\d\s()-]+$/.test(phone))
-      return { ok: false, reason: "invalid", message: "Please enter a phone number we can call or WhatsApp." };
-    if (email && !EMAIL_RE.test(email))
-      return { ok: false, reason: "invalid", message: "That email address doesn't look right — or leave it blank." };
+    const row: EnquiryRecord = {
+      name: text(data.name, 120),
+      phone: normalisePhone(text(data.phone, 40)),
+      email: text(data.email, 200) || null,
+      country: text(data.country, 80) || null,
+      language: pick(data.language, LANGUAGES),
+      project: pick(data.project, PROJECT_OPTIONS),
+      looking_for: pick(data.looking_for, LOOKING_FOR),
+      buy_as: pick(data.buy_as, BUY_AS),
+      bedrooms: pick(data.bedrooms, BEDROOMS),
+      budget: pick(data.budget, BUDGETS),
+      timing: pick(data.timing, TIMINGS),
+      funding: pick(data.funding, FUNDING),
+      message: text(data.message, 2000) || null,
+      page: text(data.page, 200) || null,
+    };
+    const problem = enquiryProblem(row);
+    if (problem) return { ok: false, reason: "invalid", message: problem };
     if (data.consent !== true)
       return { ok: false, reason: "invalid", message: "Please tick the box so we may contact you about your enquiry." };
 
-    const url = databaseUrl();
-    if (!url) {
-      console.error("enquiry not saved: DATABASE_URL is not set");
-      return { ok: false, reason: "offline" };
-    }
-
-    try {
-      const sql = await connect(url);
-      await ensureTable(sql);
-      await sql`
-        INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
-        VALUES (
-          ${name}, ${phone}, ${email || null}, ${country || null}, ${pick(data.language, LANGUAGES)},
-          ${pick(data.project, PROJECT_OPTIONS)}, ${pick(data.looking_for, LOOKING_FOR)},
-          ${pick(data.buy_as, BUY_AS)}, ${pick(data.bedrooms, BEDROOMS)}, ${pick(data.budget, BUDGETS)},
-          ${pick(data.timing, TIMINGS)}, ${pick(data.funding, FUNDING)}, ${message || null}, ${text(data.page, 200) || null}
-        )
-      `;
-    } catch (err) {
-      console.error("enquiry not saved:", redact(err, url));
-      return { ok: false, reason: "offline" };
-    }
-
-    await emailLeadAlert({
-      name, phone, email: email || null, country: country || null, language: pick(data.language, LANGUAGES),
-      project: pick(data.project, PROJECT_OPTIONS), looking_for: pick(data.looking_for, LOOKING_FOR), buy_as: pick(data.buy_as, BUY_AS),
-      bedrooms: pick(data.bedrooms, BEDROOMS), budget: pick(data.budget, BUDGETS), timing: pick(data.timing, TIMINGS), funding: pick(data.funding, FUNDING),
-      message: message || null, page: text(data.page, 200) || null,
-    });
-
-    return { ok: true, firstName: name.split(/\s+/)[0] ?? "" };
+    const saved = await recordEnquiry(row);
+    if (!saved.ok) return saved;
+    return { ok: true, firstName: row.name.split(/\s+/)[0] ?? "" };
   });
 
 export const getLeads = createServerFn({ method: "POST" })
