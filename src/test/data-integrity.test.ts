@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { PROJECTS, DISTRICT } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
+import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, LATEST_ROW } from "@/data/transactions";
 import { projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
@@ -97,7 +98,13 @@ describe("Search results", () => {
     for (const page of pages) expect(locs, page).toContain(page);
     expect(locs).not.toContain("/leads");
     expect(new Set(locs).size).toBe(locs.length);
-    for (const m of xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) expect(m[1]! >= TX.source.snapshotDate).toBe(true);
+    // data pages are dated no earlier than the snapshot; the legal pages carry their own "last updated" date
+    for (const m of xml.matchAll(/<loc>[^<]+?(\/[a-z0-9/-]*)<\/loc><lastmod>([^<]+)<\/lastmod>/g)) {
+      if (m[1] === "/terms" || m[1] === "/privacy") continue;
+      expect(m[2]! >= TX.source.snapshotDate, m[1]).toBe(true);
+    }
+    expect(xml).toContain(`/terms</loc><lastmod>${TERMS.lastUpdated}</lastmod>`);
+    expect(xml).toContain(`/privacy</loc><lastmod>${PRIVACY.lastUpdated}</lastmod>`);
     // every route file except the root, the private leads page and the dynamic project route has a sitemap entry
     const routes = readdirSync(join(process.cwd(), "src/routes")).filter((f) => f.endsWith(".tsx") && !["__root.tsx", "leads.tsx", "projects.$slug.tsx"].includes(f));
     for (const f of routes) {
