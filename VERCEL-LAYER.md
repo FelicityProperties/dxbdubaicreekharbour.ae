@@ -68,8 +68,9 @@ starting point but is now behind this repo and should not be copied over it.
   reply is signed, so the browser can't pass off made-up bot turns.
   Question counts live in the `site_counters` table: per visitor per day
   (keyed by a scrambled code made from the IP address, not the address),
-  and for the whole site per hour and per day. It creates itself, and rows
-  are deleted after three days. A question turned away by one limit
+  and for the whole site per hour and per day. It creates itself; rows
+  older than three days are deleted at the start of each hour the bot is
+  used and whenever `/leads` is opened. A question turned away by one limit
   doesn't count against the next, so one visitor can't use up the site's
   allowance.
 

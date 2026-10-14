@@ -6,6 +6,7 @@ import { FELICITYBOT_SYSTEM, KNOWLEDGE, SAVE_ENQUIRY_TOOL, supportsFallback, sup
 import { BOT_LIMITS, cleanTurns, clip, historyFor, safeHref, storedTurns } from "@/lib/felicitybot.shared";
 import { normalisePhone, enquiryProblem } from "@/lib/enquiries.functions";
 import { SITE } from "@/data/projects";
+import { bubbleDir } from "@/components/felicitybot/FelicityBot";
 
 describe("FelicityBot knowledge", () => {
   it("covers every project with a working link", () => {
@@ -103,6 +104,17 @@ describe("FelicityBot links", () => {
   });
   it("refuses other sites, including protocol-relative links", () => {
     for (const h of ["//evil.example/x", "///evil.example", "/\\evil.example", "https://evil.example/", "javascript:alert(1)", "https://wa.me/447700900123", `https://wa.me/${SITE.whatsapp}9`, "https://emaar.com.evil.example/"]) expect(ok(h), h).toBeNull();
+  });
+});
+
+describe("Chat bubble direction", () => {
+  it("reads Arabic right to left even when it is full of Latin names and links", () => {
+    expect(bubbleDir("- **Creek Haven**: شقة غرفة واحدة AED 2,722,888، وشقة غرفتين AED 3,100,000.")).toBe("rtl");
+    expect(bubbleDir("المشاريع التالية لديها خطة دفع:\n- [Address Residences Dubai Creek Harbour](/projects/address-residences-dubai-creek-harbour)\n- [Creek Haven](/projects/creek-haven)")).toBe("rtl");
+  });
+  it("keeps English left to right", () => {
+    expect(bubbleDir("**Creek Haven** starts from AED 1.86M. See [the page](/projects/creek-haven).")).toBe("ltr");
+    expect(bubbleDir("2,722,888")).toBe("auto");
   });
 });
 

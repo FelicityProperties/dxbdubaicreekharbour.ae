@@ -54,11 +54,13 @@ function inline(text: string, go: (href: string) => void, key: string): ReactNod
  * Direction for a whole bubble, decided from all of its text: an Arabic answer whose lines start with
  * a Latin project name or "AED" still reads right to left (dir="auto" would look at the first letter only).
  */
-function bubbleDir(text: string): "rtl" | "ltr" | "auto" {
-  const rtl = text.match(/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/g)?.length ?? 0;
-  const latin = text.match(/[A-Za-z]/g)?.length ?? 0;
+export function bubbleDir(text: string): "rtl" | "ltr" | "auto" {
+  const shown = text.replace(/\]\([^)]*\)/g, "]"); // link targets aren't read, only their labels
+  const rtl = shown.match(/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/g)?.length ?? 0;
+  const latin = shown.match(/[A-Za-z]/g)?.length ?? 0;
   if (!rtl && !latin) return "auto";
-  return rtl > 0 && rtl >= 0.3 * (rtl + latin) ? "rtl" : "ltr";
+  // English replies carry no Arabic letters, so a low bar is safe: Arabic text full of Latin project names still reads RTL.
+  return rtl > 0 && rtl >= 0.2 * (rtl + latin) ? "rtl" : "ltr";
 }
 
 function Rich({ text, go }: { text: string; go: (href: string) => void }) {
@@ -99,8 +101,10 @@ export function FelicityBot() {
     setTurns(load());
     // A reload while the phone sheet was open: open it again, so Back still closes it.
     if (window.location.hash !== "#chat") return;
-    if (isPhone()) { setOpen(true); setSheet(true); }
-    else if ((window.history.state?.__TSR_index ?? 0) > 0) router.history.back();
+    // Index 0 is a shared or bookmarked "#chat" link: there is nothing behind it to go back to.
+    const index = window.history.state?.__TSR_index ?? 0;
+    if (index > 0 && isPhone()) { setOpen(true); setSheet(true); }
+    else if (index > 0) router.history.back();
     else void router.navigate({ href: `${window.location.pathname}${window.location.search}`, replace: true, resetScroll: false });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }); }, [turns, busy, open]);
@@ -127,7 +131,13 @@ export function FelicityBot() {
   useEffect(() => {
     if (!open) return;
     const mq = window.matchMedia(PHONE);
-    const onChange = () => { setPhoneNow(mq.matches); if (mq.matches && !sheet) pushChat(); };
+    const onChange = () => {
+      setPhoneNow(mq.matches);
+      if (mq.matches && !sheet) pushChat();
+      // No longer full-screen: drop the "#chat" entry so the floating panel behaves like the desktop one.
+      // (sheet is cleared first, so the Back effect doesn't take this for a close.)
+      else if (!mq.matches && sheet && window.location.hash === "#chat") { setSheet(false); router.history.back(); }
+    };
     onChange();
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -158,8 +168,10 @@ export function FelicityBot() {
     if (window.location.hash === "#chat") return;
     // An entry made by a plain "#enquire" link has no router key, so the scroll position saved for it now
     // couldn't be found on return and the page would jump to the form; give it the router's key first.
-    if (!window.history.state?.__TSR_key) window.history.replaceState({ ...router.state.location.state, __hashScrollIntoViewOptions: false }, "");
-    void router.navigate({ href: `${path}${location.searchStr}#chat`, resetScroll: false, hashScrollIntoView: false });
+    // Such an entry always has one before it, so its index is at least 1 (the header's Back arrow relies on it).
+    const here = router.state.location;
+    if (!window.history.state?.__TSR_key) window.history.replaceState({ ...here.state, __TSR_index: Math.max(1, here.state.__TSR_index ?? 0), __hashScrollIntoViewOptions: false }, "");
+    void router.navigate({ href: `${here.pathname}${here.searchStr}#chat`, resetScroll: false, hashScrollIntoView: false });
   }
   function openPanel() {
     setOpen(true);

@@ -228,6 +228,12 @@ export type EnquiryRecord = {
 };
 
 let countersReady: Promise<unknown> | null = null;
+/** Deletes question counts older than three days; quietly does nothing if the table doesn't exist yet. */
+function cleanCounters(sql: Sql, url: string): Promise<unknown> {
+  return sql`DELETE FROM site_counters WHERE updated_at < now() - interval '3 days'`.catch((err) => {
+    if ((err as { code?: string }).code !== "42P01") console.error("counter cleanup failed:", redact(err, url));
+  });
+}
 /**
  * Counts one use against each limit in turn and stops at the first one that
  * is used up, so a use turned away by an earlier limit doesn't count against
@@ -235,7 +241,9 @@ let countersReady: Promise<unknown> | null = null;
  * room; null when the database is not configured, fails, or takes longer than
  * `timeoutMs` (callers then fall back to their own limits). Shared by every
  * server instance, unlike in-memory counts. Keys are names such as
- * "felicitybot:h:2026-10-14T09"; rows older than three days are deleted.
+ * "felicitybot:h:2026-10-14T09"; rows older than three days are deleted at
+ * the start of each new hour, and whenever /leads is opened (so they go
+ * even while the bot is switched off).
  */
 export async function takeQuota(steps: { key: string; limit: number }[], timeoutMs = 2500): Promise<string | null> {
   const url = databaseUrl();
@@ -259,13 +267,13 @@ export async function takeQuota(steps: { key: string; limit: number }[], timeout
           RETURNING count
         `) as { count: number }[];
         const count = Number(rows[0]?.count ?? 0);
-        fresh ||= count === 1;
+        fresh ||= count === 1 && !key.includes(":v:"); // a new hour or day, not each new visitor
         if (count > limit) return key;
       }
       return "";
     } finally {
-      // A new period has started somewhere: clear out periods older than a few days.
-      if (fresh) await sql`DELETE FROM site_counters WHERE updated_at < now() - interval '3 days'`;
+      // A new period has started: clear out rows older than three days, without holding up the answer.
+      if (fresh) void cleanCounters(sql, url);
     }
   };
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -377,6 +385,7 @@ export const getLeads = createServerFn({ method: "POST" })
         SELECT id::text AS id, created_at, name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page
         FROM enquiries ORDER BY created_at DESC LIMIT 500
       `) as Lead[];
+      await cleanCounters(sql, url);
       return { status: "ok", leads: rows.map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() })) };
     } catch (err) {
       console.error("leads read failed:", redact(err, url));

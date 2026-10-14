@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const table = new Map<string, number>();
 let hang = false;
+let failCleanup = false;
 vi.mock("@neondatabase/serverless", () => ({
   neon: () => async (strings: TemplateStringsArray, ...values: unknown[]) => {
     if (hang) return new Promise(() => {});
@@ -13,6 +14,7 @@ vi.mock("@neondatabase/serverless", () => ({
       table.set(key, (table.get(key) ?? 0) + 1);
       return [{ count: table.get(key) }];
     }
+    if (q.includes("DELETE FROM site_counters") && failCleanup) throw Object.assign(new Error("boom"), { code: "57014" });
     return [];
   },
 }));
@@ -21,7 +23,7 @@ import { takeQuota } from "@/lib/enquiries.functions";
 
 const steps = (v: number, h: number, d: number) => [{ key: "v", limit: v }, { key: "h", limit: h }, { key: "d", limit: d }];
 
-beforeEach(() => { table.clear(); hang = false; process.env["DATABASE_URL"] = "postgresql://u:p@db.example/x"; });
+beforeEach(() => { table.clear(); hang = false; failCleanup = false; process.env["DATABASE_URL"] = "postgresql://u:p@db.example/x"; });
 
 describe("Question allowances", () => {
   it("lets questions through until a limit is used up, and names the limit", async () => {
@@ -33,6 +35,11 @@ describe("Question allowances", () => {
     expect(table.get("v")).toBe(10);
     expect(table.get("h")).toBe(2);
     expect(table.get("d")).toBe(2);
+  });
+  it("keeps a refusal even when the clean-up of old counts fails", async () => {
+    failCleanup = true;
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await takeQuota([{ key: "felicitybot:h:x", limit: 0 }])).toBe("felicitybot:h:x");
   });
   it("gives up quickly on a database that doesn't answer", async () => {
     hang = true;
