@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
-import { isCountingThisDevice, setCountingThisDevice } from "@/components/SiteAnalytics";
+import { STAYED_PATH, isCountingThisDevice, setCountingThisDevice } from "@/components/SiteAnalytics";
 
 export const Route = createFileRoute("/leads")({
   head: () => ({
@@ -57,6 +57,7 @@ function LeadsPage() {
   const [result, setResult] = useState<LeadsResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [counted, setCounted] = useState(true);
+  const [marked, setMarked] = useState<null | "ok" | "blocked">(null);
 
   async function load(pw: string, typed = false) {
     setBusy(true);
@@ -65,7 +66,11 @@ function LeadsPage() {
       setResult(res);
       // Signing in marks this device as the owner's: its visits stay out of the visitor numbers.
       // (Only when the password is typed, so "Count it again" sticks across reloads of this page.)
-      if (res.status === "ok" && typed) { setCountingThisDevice(false); setCounted(false); }
+      if (res.status === "ok" && typed) {
+        const stillCounted = setCountingThisDevice(false);
+        setCounted(stillCounted);
+        if (stillCounted) setMarked("blocked");
+      }
       try {
         if (res.status === "ok") sessionStorage.setItem(KEY, pw);
         else sessionStorage.removeItem(KEY);
@@ -80,6 +85,11 @@ function LeadsPage() {
   }
 
   useEffect(() => {
+    // /leads?me=1 marks a browser without the password (for in-app browsers such as Instagram's).
+    if (new URLSearchParams(window.location.search).has("me")) {
+      const stillCounted = setCountingThisDevice(false);
+      setMarked(stillCounted ? "blocked" : "ok");
+    }
     setCounted(isCountingThisDevice());
     const saved = readSaved();
     if (saved) void load(saved);
@@ -90,6 +100,14 @@ function LeadsPage() {
   return (
     <main className="container min-h-[calc(100svh-90px)] py-12 max-sm:min-h-[calc(100svh-76px)]">
       <h1 className="font-[family-name:var(--font-display)] text-[44px]">Enquiries</h1>
+
+      {marked && (
+        <p className="mt-4 max-w-md text-[14px]">
+          {marked === "ok"
+            ? "Done: this browser is now left out of the visitor numbers."
+            : "This browser blocks saving settings, so visits from it are still counted."}
+        </p>
+      )}
 
       {result?.status !== "ok" && (
         <form
@@ -131,22 +149,36 @@ function LeadsPage() {
             <h2 className="text-[18px] font-medium">Visitor numbers</h2>
             <p className="mt-2">
               In <a className="underline underline-offset-4" href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">Vercel</a>, open this
-              website's project and the <strong>Analytics</strong> tab. <strong>Visitors</strong> is how many different people came (each
-              person once a day), <strong>Page views</strong> how many pages they opened, and <strong>Bounce rate</strong> the share who left
-              after one page; the rest stayed and looked further. The lists below show which pages, where visitors came from, their
-              country and device. Only you can see it.
+              website's project and the <strong>Analytics</strong> tab. Only you can see it.
             </p>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li><strong>Visitors</strong>: how many different people came (each person counted once a day).</li>
+              <li>
+                <strong>Who stayed</strong>: in the list of pages, the line <code>{STAYED_PATH}</code> is how many visits kept the site on screen for
+                at least 30 seconds. <strong>Bounce rate</strong> is the share who left within 30 seconds without opening another page.
+              </li>
+              <li><strong>Page views</strong>: pages opened, plus one for each visit that stayed 30 seconds (that same line).</li>
+              <li>The other lists show which pages people read, where they came from (Google, Instagram…), their country and device.</li>
+            </ul>
             <p className="mt-3">
-              {counted ? "This device's visits are counted." : "This device is not counted: your own visits from it stay out of the numbers."}{" "}
+              {counted ? "Your visits from this browser are counted." : "This browser is not counted: your visits from it stay out of the numbers."}{" "}
               <button
                 type="button"
                 className="underline underline-offset-4"
-                onClick={() => { setCountingThisDevice(!counted); setCounted(!counted); }}
+                onClick={() => {
+                  const now = setCountingThisDevice(!counted);
+                  setCounted(now);
+                  setMarked(now && counted ? "blocked" : null);
+                }}
               >
-                {counted ? "Don't count this device" : "Count it again"}
+                {counted ? "Don't count this browser" : "Count it again"}
               </button>
             </p>
-            <p className="mt-1 text-muted-foreground">Sign in here once on each phone and computer you use, and they are all left out.</p>
+            <p className="mt-1 text-muted-foreground">
+              Sign in here once in each browser you use (Safari, Chrome, on each phone and computer). Where you'd rather not type the password,
+              such as Instagram's or LinkedIn's built-in browser, open <strong>dxbdubaicreekharbour.ae/leads?me=1</strong> there once. Still counted:
+              private windows, and the site's home-screen icon on iPhone.
+            </p>
           </section>
           <p className="mt-6 text-muted-foreground">
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.

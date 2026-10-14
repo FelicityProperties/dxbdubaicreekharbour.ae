@@ -151,7 +151,7 @@ export function FelicityBot() {
     return () => others.forEach((el) => el.removeAttribute("inert"));
   }, [modal]);
 
-  if (path.startsWith("/leads")) return null;
+  if (path.toLowerCase().startsWith("/leads")) return null;
 
   const project = PROJECTS.find((p) => path === `/projects/${p.slug}`);
   const suggestions = [

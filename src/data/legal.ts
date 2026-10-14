@@ -113,7 +113,7 @@ export const PRIVACY: LegalDoc = {
         "FelicityBot, the AI assistant. When you chat with FelicityBot, the messages in that chat and the address of the page you are on are sent to our AI provider so it can write each answer. We do not save the chat. The conversation stays in your browser tab until you close it or start a new chat. To stop misuse, we count how many questions each connection asks per day, using a scrambled code made from its IP address rather than the address itself; these counts are deleted after about three days. If you ask FelicityBot to pass your details to us, it saves your name, phone number, email if you give one, and a short note of what you asked for, as an enquiry, exactly like the enquiry form.",
         "WhatsApp. If you message us on WhatsApp, we receive your number and whatever you write. WhatsApp (Meta) handles the message under its own terms.",
         "Server logs. The company that hosts the website keeps ordinary server logs, including IP addresses, for security and to keep the site running.",
-        "Visit statistics. The hosting provider also counts visits for us with its web-analytics service: which pages are opened, the site you came from, your country, and your browser, operating system and device type. It uses no cookies. It tells visits apart with a code made from your connection that resets every day, so it cannot follow you from one day to the next or across other websites, and we only ever see totals."
+        "Visit statistics. The hosting provider also counts visits for us with its web-analytics service: which pages are opened, the site you came from, your country, your browser, operating system and device type, and whether a visit kept the site on screen for at least 30 seconds. It uses no cookies. It tells visits apart with a code made from your connection that resets every day, so it cannot follow you from one day to the next or across other websites, and we only ever see totals."
       ]
     },
     {
@@ -154,7 +154,7 @@ export const PRIVACY: LegalDoc = {
       "heading": "How long we keep it",
       "paragraphs": [
         "We keep your enquiry while it is open and for up to 24 months after that, so we can follow up if a project you asked about changes. If you ask us to delete your details sooner, we will.",
-        "Messages on WhatsApp are kept under WhatsApp's own terms. Server logs are kept by the hosting provider for its security and operations. Visit statistics are kept only as totals; the daily code that tells visits apart is discarded after a day."
+        "Messages on WhatsApp are kept under WhatsApp's own terms. Server logs are kept by the hosting provider for its security and operations. Visit statistics are kept by the hosting provider under its own terms, and we only see totals; the daily code that tells visits apart is not kept from one day to the next."
       ]
     },
     {

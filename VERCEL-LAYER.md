@@ -120,11 +120,13 @@ by hand.
     read the cache. Actual spend shows under Usage in the Anthropic console.
   - `FELICITYBOT_HOURLY_LIMIT` / `FELICITYBOT_DAILY_LIMIT` — optional, default
     400 and 2,000 questions for the whole site (UTC hours and days);
-    `FELICITYBOT_VISITOR_DAILY_LIMIT`, default 150 per visitor per day (plus
-    a burst brake of 30 per 10 minutes). Past any of them the bot tells the
-    visitor to use WhatsApp. A brake on runaway cost: the daily cap times the
-    cost of a question is the most a bad day can cost; the monthly limit in
-    the Anthropic console is the hard ceiling.
+    `FELICITYBOT_VISITOR_DAILY_LIMIT`, default 150 per visitor per day. Past
+    any of these the bot tells the visitor to use WhatsApp. A separate burst
+    brake (30 questions per 10 minutes from one connection, per server)
+    asks the visitor to try again later. The daily cap times the cost of a
+    question bounds a normal bad day; if the database is unreachable the
+    caps are skipped, so the monthly limit in the Anthropic console is the
+    only hard ceiling.
   - The bot's answers may take up to 60 seconds: `vite.config.ts` sets the
     function's `maxDuration` to 60, the most every Vercel plan allows. The
     bot keeps its own deadline (45 s for model calls, and a lead is only
@@ -133,13 +135,20 @@ by hand.
   package `@vercel/analytics`). Switch it on once in Vercel: the project →
   **Analytics** tab → **Enable**, then redeploy. Hobby includes 50,000 events
   a month (one per page view) and a one-month window. No cookies; one page
-  view per path, never for "#..." jumps such as the chat's "#chat". Devices
-  where the owner signs in on `/leads` are left out (a "dxbch-dont-count"
-  flag in that browser; the panel on `/leads` can switch it back), and
-  `/leads` itself is never counted. Exact time-on-site needs custom events
-  (Vercel Pro) or a separate store; it is deliberately not written to the
-  Neon database, whose free plan suspends when its monthly compute runs out
-  and would then stop saving enquiries.
+  view per path, never for "#..." jumps such as the chat's "#chat".
+  - "Who stayed": the free plan has no time on site, so a visit that keeps
+    the site on screen for 30 seconds in total sends one extra page view,
+    `/stayed-30-seconds`. Its count is the visits that stayed; the bounce
+    rate becomes the share who left within 30 seconds without opening
+    another page; page views include that extra one.
+  - The owner's own visits: a browser where the password is typed on
+    `/leads`, or where `/leads?me=1` is opened, gets a "dxbch-dont-count"
+    flag and sends nothing (per browser and app, not per device; private
+    windows and the iPhone home-screen icon can't be marked). `/leads`
+    itself is never counted.
+  - Deliberately not written to the Neon database: page-view writes would
+    keep the free compute awake, and when its monthly allowance runs out
+    Neon suspends the database, which would stop enquiries being saved.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 
