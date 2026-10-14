@@ -119,14 +119,27 @@ by hand.
     and cached for five minutes, so a visitor's follow-up questions mostly
     read the cache. Actual spend shows under Usage in the Anthropic console.
   - `FELICITYBOT_HOURLY_LIMIT` / `FELICITYBOT_DAILY_LIMIT` — optional, default
-    120 and 600 questions for the whole site (UTC hours and days);
-    `FELICITYBOT_VISITOR_DAILY_LIMIT`, default 60 per visitor per day. Past
-    any of them the bot tells the visitor to use WhatsApp. A brake on
-    runaway cost; raise them if real traffic needs it.
+    400 and 2,000 questions for the whole site (UTC hours and days);
+    `FELICITYBOT_VISITOR_DAILY_LIMIT`, default 150 per visitor per day (plus
+    a burst brake of 30 per 10 minutes). Past any of them the bot tells the
+    visitor to use WhatsApp. A brake on runaway cost: the daily cap times the
+    cost of a question is the most a bad day can cost; the monthly limit in
+    the Anthropic console is the hard ceiling.
   - The bot's answers may take up to 60 seconds: `vite.config.ts` sets the
     function's `maxDuration` to 60, the most every Vercel plan allows. The
     bot keeps its own deadline (45 s for model calls, and a lead is only
     saved with time left to confirm it) inside that.
+- Visitor numbers: Vercel Web Analytics (`src/components/SiteAnalytics.tsx`,
+  package `@vercel/analytics`). Switch it on once in Vercel: the project →
+  **Analytics** tab → **Enable**, then redeploy. Hobby includes 50,000 events
+  a month (one per page view) and a one-month window. No cookies; one page
+  view per path, never for "#..." jumps such as the chat's "#chat". Devices
+  where the owner signs in on `/leads` are left out (a "dxbch-dont-count"
+  flag in that browser; the panel on `/leads` can switch it back), and
+  `/leads` itself is never counted. Exact time-on-site needs custom events
+  (Vercel Pro) or a separate store; it is deliberately not written to the
+  Neon database, whose free plan suspends when its monthly compute runs out
+  and would then stop saving enquiries.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 

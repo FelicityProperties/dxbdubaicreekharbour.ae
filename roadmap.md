@@ -62,3 +62,9 @@
 - [x] Passes a visitor's name and number to the broker as an enquiry, only after they say yes
 - [x] Terms and Privacy updated (AI provider, what the chat keeps)
 - [ ] Owner: Anthropic API key in Vercel (`ANTHROPIC_API_KEY`) with a monthly spend limit, then redeploy
+
+## October 2026: visitor numbers
+- [x] Vercel Web Analytics: visitors, page views, bounce rate, pages, sources, countries, devices; no cookies
+- [x] Owner's devices left out (sign in on /leads), /leads never counted, "#chat" not counted as a page
+- [ ] Owner: Vercel → project → Analytics → Enable, then redeploy; sign in on /leads on each device
+- [ ] Optional: time on site (needs Vercel Pro custom events, or a small Redis store)

@@ -7,6 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
+import { isCountingThisDevice, setCountingThisDevice } from "@/components/SiteAnalytics";
 
 export const Route = createFileRoute("/leads")({
   head: () => ({
@@ -55,12 +56,16 @@ function LeadsPage() {
   const [password, setPassword] = useState("");
   const [result, setResult] = useState<LeadsResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [counted, setCounted] = useState(true);
 
-  async function load(pw: string) {
+  async function load(pw: string, typed = false) {
     setBusy(true);
     try {
       const res = await getLeads({ data: { password: pw } });
       setResult(res);
+      // Signing in marks this device as the owner's: its visits stay out of the visitor numbers.
+      // (Only when the password is typed, so "Count it again" sticks across reloads of this page.)
+      if (res.status === "ok" && typed) { setCountingThisDevice(false); setCounted(false); }
       try {
         if (res.status === "ok") sessionStorage.setItem(KEY, pw);
         else sessionStorage.removeItem(KEY);
@@ -75,6 +80,7 @@ function LeadsPage() {
   }
 
   useEffect(() => {
+    setCounted(isCountingThisDevice());
     const saved = readSaved();
     if (saved) void load(saved);
   }, []);
@@ -90,7 +96,7 @@ function LeadsPage() {
           className="mt-6 flex max-w-md flex-wrap items-end gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            void load(password);
+            void load(password, true);
           }}
         >
           <label className="grid flex-1 gap-1.5 text-[12px] font-medium uppercase tracking-[1px] text-muted-foreground">
@@ -121,7 +127,28 @@ function LeadsPage() {
 
       {result?.status === "ok" && (
         <>
-          <p className="mt-2 text-muted-foreground">
+          <section className="mt-6 max-w-3xl rounded-[3px] border border-border bg-background p-5 text-[14px] leading-relaxed">
+            <h2 className="text-[18px] font-medium">Visitor numbers</h2>
+            <p className="mt-2">
+              In <a className="underline underline-offset-4" href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">Vercel</a>, open this
+              website's project and the <strong>Analytics</strong> tab. <strong>Visitors</strong> is how many different people came (each
+              person once a day), <strong>Page views</strong> how many pages they opened, and <strong>Bounce rate</strong> the share who left
+              after one page; the rest stayed and looked further. The lists below show which pages, where visitors came from, their
+              country and device. Only you can see it.
+            </p>
+            <p className="mt-3">
+              {counted ? "This device's visits are counted." : "This device is not counted: your own visits from it stay out of the numbers."}{" "}
+              <button
+                type="button"
+                className="underline underline-offset-4"
+                onClick={() => { setCountingThisDevice(!counted); setCounted(!counted); }}
+              >
+                {counted ? "Don't count this device" : "Count it again"}
+              </button>
+            </p>
+            <p className="mt-1 text-muted-foreground">Sign in here once on each phone and computer you use, and they are all left out.</p>
+          </section>
+          <p className="mt-6 text-muted-foreground">
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.
           </p>
           <div className="mt-8 grid gap-4">

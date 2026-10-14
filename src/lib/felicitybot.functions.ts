@@ -43,7 +43,7 @@ const MAX_ROUNDS = 3;
    and the site-wide hourly and daily caps, so they hold across instances and no single visitor can
    use up the site's allowance. The hard ceiling on spend is the monthly limit in the Anthropic console. */
 const WINDOW_MS = 10 * 60_000;
-const PER_IP = 20;
+const PER_IP = 30;
 const SAVES_PER_IP = 3;
 const hits = new Map<string, number[]>();
 const saves = new Map<string, number[]>();
@@ -62,9 +62,9 @@ const envLimit = (name: string, fallback: number) => {
 async function quotaRefusal(now: Date, visitor: string | null): Promise<"visitor" | "site" | null> {
   const day = now.toISOString().slice(0, 10);
   const steps = [
-    ...(visitor ? [{ key: `felicitybot:v:${visitor}:${day}`, limit: envLimit("FELICITYBOT_VISITOR_DAILY_LIMIT", 60) }] : []),
-    { key: `felicitybot:h:${now.toISOString().slice(0, 13)}`, limit: envLimit("FELICITYBOT_HOURLY_LIMIT", 120) },
-    { key: `felicitybot:d:${day}`, limit: envLimit("FELICITYBOT_DAILY_LIMIT", 600) },
+    ...(visitor ? [{ key: `felicitybot:v:${visitor}:${day}`, limit: envLimit("FELICITYBOT_VISITOR_DAILY_LIMIT", 150) }] : []),
+    { key: `felicitybot:h:${now.toISOString().slice(0, 13)}`, limit: envLimit("FELICITYBOT_HOURLY_LIMIT", 400) },
+    { key: `felicitybot:d:${day}`, limit: envLimit("FELICITYBOT_DAILY_LIMIT", 2000) },
   ];
   const refusedBy = await takeQuota(steps); // null: no database or too slow; the burst brake and console limit still apply
   if (!refusedBy) return null;
