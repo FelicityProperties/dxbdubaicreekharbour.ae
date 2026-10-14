@@ -6,7 +6,7 @@ import { PROJECTS, DISTRICT } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
 import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, LATEST_ROW } from "@/data/transactions";
-import { num, projectLabel } from "@/lib/format";
+import { aed, num, projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
 import { handoverText } from "@/components/showcase/shared";
 import sources from "../../design/benefits-sources.json";
@@ -45,15 +45,19 @@ describe("Project data", () => {
     BENEFITS.forEach((b, i) => {
       const s = sources.benefits[i]!;
       expect(b.title).toBe(s.title);
+      expect(b.body).toBe(s.body);
       expect(b.sourceUrl).toBe(s.sourceUrl);
-      // Emaar cards are pinned to the recorded quote; the DLD card is written from the snapshot.
-      if (b.kind === "emaar") expect(b.body).toBe(s.body);
-      else {
-        expect(b.body).toContain(TX.window.label);
-        expect(b.body).toContain(num(TX.summary.sales.find((x) => x.basis === "ready")!.count));
-        expect(b.body).not.toContain("—");
-      }
     });
+  });
+
+  it("keeps the registered-market card's figures equal to the DLD snapshot", () => {
+    // Fails after a data refresh that moves these figures: update the card in benefits.ts and benefits-sources.json.
+    const fresh = TX.summary.rentalsNewVsRenewal.find((r) => r.newContract)!;
+    const renewed = TX.summary.rentalsNewVsRenewal.find((r) => !r.newContract)!;
+    const oneBed = TX.summary.rentalsByBedroom.find((r) => r.bedrooms === "1 Bed")!;
+    const ready = TX.summary.sales.find((x) => x.basis === "ready")!;
+    const card = BENEFITS.find((b) => b.kind === "dld-snapshot")!;
+    expect(card.body).toBe(`Dubai Land Department records for the ${TX.window.label} show ${num(fresh.count)} new tenancy contracts and ${num(renewed.count)} renewals registered for apartments in Dubai Creek Harbour, with a median rent of ${aed(oneBed.medianRent)} across ${num(oneBed.count)} one-bedroom contracts. The same records show ${num(ready.count)} ready-apartment sales registered in that window; these are registered contracts and sales, not valuations or forecasts.`);
   });
 });
 

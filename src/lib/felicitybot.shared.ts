@@ -2,8 +2,9 @@
 /** `sig` is the server's signature on one of its own replies; the browser keeps it with the turn and sends it back. */
 export type BotTurn = { role: "user" | "assistant"; text: string; sig?: string };
 export type BotInput = { turns: BotTurn[]; page: string; hp?: string };
-/** "expired": the replies' signatures no longer check out (new server key); start a fresh chat. */
-export type BotResult = { ok: true; reply: string; sig: string; saved: boolean } | { ok: false; reason: "offline" | "busy" | "invalid" | "expired" };
+/** "expired": the replies' signatures no longer check out (new server key); start a fresh chat.
+    "limit": this visitor's or the site's allowance of questions is used up for now. */
+export type BotResult = { ok: true; reply: string; sig: string; saved: boolean } | { ok: false; reason: "offline" | "busy" | "invalid" | "expired" | "limit" };
 
 /* Sized for two-to-six-sentence answers and a few rounds of follow-ups. Smaller bodies also cap what one
    request can cost; the chat window trims older turns to stay inside these limits. */

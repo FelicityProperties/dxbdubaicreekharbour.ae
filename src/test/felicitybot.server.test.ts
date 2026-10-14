@@ -17,13 +17,14 @@ vi.mock("@tanstack/react-start", () => ({
 }));
 vi.mock("@tanstack/react-start/server", () => ({ getRequestIP: () => ip }));
 const saved: unknown[] = [];
-let counters: Record<string, number> | null = null;
+let refusedBy: string | null = null;
+let quotaSteps: { key: string; limit: number }[] = [];
 vi.mock("@/lib/enquiries.functions", async (orig) => {
   const real = await orig<typeof import("@/lib/enquiries.functions")>();
   return {
     ...real,
     recordEnquiry: async (row: unknown) => { saved.push(row); return { ok: true }; },
-    bumpCounters: async (keys: string[]) => (counters ? Object.fromEntries(keys.map((k) => [k, counters![k.split(":")[1]!] ?? 1])) : null),
+    takeQuota: async (steps: { key: string; limit: number }[]) => { quotaSteps = steps; return refusedBy; },
   };
 });
 
@@ -43,7 +44,7 @@ const lead = { name: "Ali Hassan", phone: "+971 50 123 4567", email: "", project
 const ask = (turns: BotTurn[], page = "/projects/creek-haven") => (askFelicityBot as unknown as (o: { data: unknown }) => Promise<BotResult>)({ data: { turns, page } });
 
 beforeEach(() => {
-  sent = []; replies = []; saved.length = 0; counters = null;
+  sent = []; replies = []; saved.length = 0; refusedBy = null; quotaSteps = [];
   ip = `203.0.113.${Math.floor(Math.random() * 250) + 1}`;
   process.env["ANTHROPIC_API_KEY"] = "sk-ant-test";
   delete process.env["FELICITYBOT_MODEL"];
@@ -140,10 +141,23 @@ describe("FelicityBot server", () => {
     expect(refused.ok && refused.reply).toContain("I can't help with that here");
   });
 
-  it("stops at the site-wide hourly limit", async () => {
-    counters = { h: 121, d: 121 };
-    expect(await ask([{ role: "user", text: "Hi" }])).toEqual({ ok: false, reason: "busy" });
-    expect(sent).toHaveLength(0);
+  it("checks the visitor's allowance before the site's, and stops when one is used up", async () => {
+    await ask([{ role: "user", text: "Hi" }]);
+    expect(quotaSteps.map((q) => q.key.split(":")[1])).toEqual(["v", "h", "d"]);
+    expect(quotaSteps[0]!.key).not.toContain(ip); // a scrambled code, not the address
+    refusedBy = quotaSteps[1]!.key;
+    expect(await ask([{ role: "user", text: "Hi" }])).toEqual({ ok: false, reason: "limit" });
+    expect(sent).toHaveLength(1);
+  });
+
+  it("never claims a cut-off save went through, and keeps the cut-short note", async () => {
+    replies = [msg([text("Thank you Ali, I am passing your details to the broker now. ".repeat(5)), call("t", lead)], "max_tokens")];
+    const res = await ask([{ role: "user", text: "Ali, +971 50 123 4567, yes" }]);
+    expect(res.ok && res.reply).toContain("couldn't pass your details on");
+    expect(saved).toHaveLength(0);
+    replies = [msg([text("Creek Haven has a payment plan. ".repeat(400))], "max_tokens")];
+    const long = await ask([{ role: "user", text: "Everything please" }]);
+    expect(long.ok && long.reply.endsWith("Ask me about one part of it for more.)")).toBe(true);
   });
 
   it("is off without a key", async () => {

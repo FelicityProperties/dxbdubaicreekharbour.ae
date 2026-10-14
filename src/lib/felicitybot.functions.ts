@@ -22,7 +22,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP } from "@tanstack/react-start/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { FELICITYBOT_SYSTEM, SAVE_ENQUIRY_TOOL, supportsFallback, supportsSystemMessages } from "@/lib/felicitybot.knowledge";
-import { PROJECT_OPTIONS, bumpCounters, enquiryProblem, normalisePhone, recordEnquiry, type EnquiryRecord } from "@/lib/enquiries.functions";
+import { PROJECT_OPTIONS, enquiryProblem, normalisePhone, recordEnquiry, takeQuota, type EnquiryRecord } from "@/lib/enquiries.functions";
 import { PROJECTS, SITE } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
 import { BOT_LIMITS, cleanTurns, clip, type BotInput, type BotResult, type BotTurn } from "@/lib/felicitybot.shared";
@@ -30,15 +30,18 @@ import { BOT_LIMITS, cleanTurns, clip, type BotInput, type BotResult, type BotTu
 export type { BotTurn, BotInput, BotResult } from "@/lib/felicitybot.shared";
 
 const DEFAULT_MODEL = "claude-opus-5-5";
-/* Vercel stops the function at 60 s (vite.config.ts); model calls must finish well inside that,
-   leaving room for saving an enquiry and answering. */
-const DEADLINE_MS = 50_000;
+/* Vercel stops the function at 60 s (vite.config.ts). Model calls end by the deadline; an enquiry is
+   only saved with enough time left for the database insert and the alert email (up to ~10 s), so
+   a saved lead is always reported back to the visitor. */
+const DEADLINE_MS = 45_000;
 const MIN_CALL_MS = 8_000;
+const MIN_SAVE_MS = 12_000;
 const MAX_ROUNDS = 3;
 
-/* Brakes. The per-visitor count lives in this server instance's memory; the site-wide hourly and
-   daily counts live in the database so they hold across instances. The hard ceiling on spend is
-   the monthly limit set in the Anthropic console. */
+/* Brakes. A short burst limit per visitor lives in this server instance's memory. The database holds
+   a per-visitor daily allowance (keyed by a scrambled code made from the IP address, not the address)
+   and the site-wide hourly and daily caps, so they hold across instances and no single visitor can
+   use up the site's allowance. The hard ceiling on spend is the monthly limit in the Anthropic console. */
 const WINDOW_MS = 10 * 60_000;
 const PER_IP = 20;
 const SAVES_PER_IP = 3;
@@ -55,14 +58,19 @@ const envLimit = (name: string, fallback: number) => {
   const n = Number(process.env[name]);
   return Number.isFinite(n) && n > 0 ? n : fallback;
 };
-async function withinSiteLimits(now: Date): Promise<boolean> {
-  const hour = `felicitybot:h:${now.toISOString().slice(0, 13)}`;
-  const day = `felicitybot:d:${now.toISOString().slice(0, 10)}`;
-  const counts = await bumpCounters([hour, day]);
-  if (!counts) return true; // no database: the per-visitor brake and the console limit still apply
-  const ok = (counts[hour] ?? 0) <= envLimit("FELICITYBOT_HOURLY_LIMIT", 120) && (counts[day] ?? 0) <= envLimit("FELICITYBOT_DAILY_LIMIT", 600);
-  if (!ok) console.warn("FelicityBot: site-wide question limit reached", counts);
-  return ok;
+/** null when the question may go ahead; otherwise which allowance is used up. */
+async function quotaRefusal(now: Date, visitor: string | null): Promise<"visitor" | "site" | null> {
+  const day = now.toISOString().slice(0, 10);
+  const steps = [
+    ...(visitor ? [{ key: `felicitybot:v:${visitor}:${day}`, limit: envLimit("FELICITYBOT_VISITOR_DAILY_LIMIT", 60) }] : []),
+    { key: `felicitybot:h:${now.toISOString().slice(0, 13)}`, limit: envLimit("FELICITYBOT_HOURLY_LIMIT", 120) },
+    { key: `felicitybot:d:${day}`, limit: envLimit("FELICITYBOT_DAILY_LIMIT", 600) },
+  ];
+  const refusedBy = await takeQuota(steps); // null: no database or too slow; the burst brake and console limit still apply
+  if (!refusedBy) return null;
+  if (refusedBy.startsWith("felicitybot:v:")) return "visitor";
+  console.warn("FelicityBot: site-wide question limit reached:", refusedBy);
+  return "site";
 }
 
 /* Replies are signed with a key derived from the API key, so they verify across instances
@@ -118,6 +126,8 @@ async function runSaveEnquiry(input: SaveInput, page: string, ip: string): Promi
 const FALLBACK_REPLY = `I can't help with that here. Ask me about Dubai Creek Harbour, or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
 const SAVED_REPLY = `Thank you, your details are with ${SITE.broker} at ${SITE.company}, who will be in touch. You can also WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`;
 const TOO_LONG_REPLY = `That needs a longer answer than I can give here. Could you narrow it down, for example to one project or one budget? Or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
+const CUT_NOTE = "(That answer was cut short. Ask me about one part of it for more.)";
+const NOT_PASSED_REPLY = `I couldn't pass your details on just then. Please send your name and number again, or WhatsApp ${SITE.whatsappDisplay}.`;
 const STOPPED_REPLY = `I couldn't finish that one. Please ask again, or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
 
 /**
@@ -148,7 +158,8 @@ export const askFelicityBot = createServerFn({ method: "POST" })
     let ip = "unknown";
     try { ip = getRequestIP({ xForwardedFor: true }) ?? "unknown"; } catch { /* not behind a request */ }
     if (!allow(hits, ip, PER_IP, started)) return { ok: false, reason: "busy" };
-    if (!(await withinSiteLimits(new Date(started)))) return { ok: false, reason: "busy" };
+    const visitor = ip === "unknown" ? null : createHmac("sha256", key).update(`visitor:${ip}`).digest("base64url").slice(0, 16);
+    if (await quotaRefusal(new Date(started), visitor)) return { ok: false, reason: "limit" };
 
     const model = process.env["FELICITYBOT_MODEL"] || DEFAULT_MODEL;
     const client = new Anthropic({ apiKey, maxRetries: 1 });
@@ -187,16 +198,21 @@ export const askFelicityBot = createServerFn({ method: "POST" })
           console.warn("FelicityBot: refused", response.stop_details?.category ?? "");
           return answer(saved ? SAVED_REPLY : FALLBACK_REPLY);
         }
-        if (response.stop_reason === "max_tokens") {
-          // Thinking counts toward max_tokens; a cut-off tool call is never run.
-          console.warn("FelicityBot: hit max_tokens", response.usage.output_tokens);
-          if (saved) return answer(SAVED_REPLY);
-          return answer(text.length > 200 ? `${text}…\n\n(That answer was cut short. Ask me about one part of it for more.)` : TOO_LONG_REPLY);
-        }
         // Tool calls after the last fallback marker are the ones being sent back, so those are the ones to answer.
         const calls = response.content.slice(response.content.map((b) => b.type).lastIndexOf("fallback") + 1).filter((b): b is Anthropic.Beta.BetaToolUseBlock => b.type === "tool_use");
+        const wantsSave = calls.some((c) => c.name === "save_enquiry");
+        if (response.stop_reason === "max_tokens") {
+          // Thinking counts toward max_tokens; a cut-off tool call is never run, and the visitor is told so.
+          console.warn("FelicityBot: hit max_tokens", response.usage.output_tokens);
+          if (saved) return answer(SAVED_REPLY);
+          if (wantsSave) return answer(NOT_PASSED_REPLY);
+          if (text.length <= 200) return answer(TOO_LONG_REPLY);
+          const body = clip(text, BOT_LIMITS.maxAssistantChars - CUT_NOTE.length - 3);
+          return answer(`${body.endsWith("…") ? body : `${body}…`}\n\n${CUT_NOTE}`);
+        }
         if (response.stop_reason === "tool_use" && calls.length) {
-          if (round === MAX_ROUNDS - 1) { console.warn("FelicityBot: tool round limit reached"); return answer(saved ? SAVED_REPLY : STOPPED_REPLY); }
+          const stopNow = round === MAX_ROUNDS - 1 ? "tool round limit reached" : DEADLINE_MS - (Date.now() - started) < MIN_SAVE_MS ? "no time left to run the tool" : null;
+          if (stopNow) { console.warn("FelicityBot:", stopNow); return answer(saved ? SAVED_REPLY : wantsSave ? NOT_PASSED_REPLY : STOPPED_REPLY); }
           messages.push({ role: "assistant", content: echoable(response.content) });
           const results: Anthropic.Beta.BetaToolResultBlockParam[] = [];
           for (const block of calls) {

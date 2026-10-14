@@ -65,10 +65,13 @@ starting point but is now behind this repo and should not be copied over it.
   it saves an enquiry through the same code as the form (marked
   "[Via FelicityBot]" on `/leads`). Conversations stay in the visitor's
   browser tab; nothing is stored unless they ask to be contacted. Each
-  reply is signed, so the browser can't pass off made-up bot turns. A
-  site-wide count of questions per hour and per day is kept in the
-  `site_counters` table (no visitor data; it creates itself, old rows are
-  deleted after three days).
+  reply is signed, so the browser can't pass off made-up bot turns.
+  Question counts live in the `site_counters` table: per visitor per day
+  (keyed by a scrambled code made from the IP address, not the address),
+  and for the whole site per hour and per day. It creates itself, and rows
+  are deleted after three days. A question turned away by one limit
+  doesn't count against the next, so one visitor can't use up the site's
+  allowance.
 
 ## Refreshing the data
 
@@ -115,11 +118,14 @@ by hand.
     and cached for five minutes, so a visitor's follow-up questions mostly
     read the cache. Actual spend shows under Usage in the Anthropic console.
   - `FELICITYBOT_HOURLY_LIMIT` / `FELICITYBOT_DAILY_LIMIT` — optional, default
-    120 and 600 questions for the whole site. Past either, the bot asks
-    visitors to use WhatsApp until the next hour/day. A brake on runaway
-    cost; raise them if real traffic needs it.
+    120 and 600 questions for the whole site (UTC hours and days);
+    `FELICITYBOT_VISITOR_DAILY_LIMIT`, default 60 per visitor per day. Past
+    any of them the bot tells the visitor to use WhatsApp. A brake on
+    runaway cost; raise them if real traffic needs it.
   - The bot's answers may take up to 60 seconds: `vite.config.ts` sets the
-    function's `maxDuration` to 60, the most every Vercel plan allows.
+    function's `maxDuration` to 60, the most every Vercel plan allows. The
+    bot keeps its own deadline (45 s for model calls, and a lead is only
+    saved with time left to confirm it) inside that.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 

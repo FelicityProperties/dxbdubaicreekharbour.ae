@@ -62,7 +62,7 @@ function projectBlock(p: Project): string {
   // What a buyer can pay today comes first (the same order as the site's cards and budget filter).
   const listed = p.pricesFrom && `cheapest unit Emaar listed on ${SITE.pricesCheckedOn}: ${p.pricesFrom}${p.unitsListed ? ` (${count(p.unitsListed, "unit", "units")} listed)` : ""}`;
   const advertised = p.startingPrice && (p.pricesFrom
-    ? `Emaar's advertised project starting price ${p.startingPrice}${p.startingPriceAed != null && p.pricesFromAed != null && p.startingPriceAed < p.pricesFromAed ? " (the units listed now cost more)" : ""}`
+    ? `Emaar's advertised project starting price ${p.startingPrice}${p.startingPriceAed != null && p.pricesFromAed != null && p.pricesFromAed - p.startingPriceAed >= 10_000 ? (p.unitsListed === 1 ? " (the one unit Emaar listed that day costs more)" : " (every unit Emaar listed that day costs more)") : ""}`
     : `Emaar's advertised starting price ${p.startingPrice}${p.status === "Now selling" ? `, checked ${SITE.pricesCheckedOn}` : " at launch (resale prices on request)"}`);
   const prices = [listed, advertised].filter(Boolean).join("; ");
   return join(

@@ -50,18 +50,28 @@ function inline(text: string, go: (href: string) => void, key: string): ReactNod
   return out;
 }
 
-/* dir="auto" on every block: an Arabic answer with Latin names and AED figures inside still reads right to left. */
+/**
+ * Direction for a whole bubble, decided from all of its text: an Arabic answer whose lines start with
+ * a Latin project name or "AED" still reads right to left (dir="auto" would look at the first letter only).
+ */
+function bubbleDir(text: string): "rtl" | "ltr" | "auto" {
+  const rtl = text.match(/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/g)?.length ?? 0;
+  const latin = text.match(/[A-Za-z]/g)?.length ?? 0;
+  if (!rtl && !latin) return "auto";
+  return rtl > 0 && rtl >= 0.3 * (rtl + latin) ? "rtl" : "ltr";
+}
+
 function Rich({ text, go }: { text: string; go: (href: string) => void }) {
   const blocks = text.split(/\n{2,}/);
   return <>{blocks.map((block, b) => {
     const lines = block.split("\n").filter((l) => l.trim());
     if (lines.length && lines.every((l) => /^\s*[-•*]\s+/.test(l)))
-      return <ul key={b} dir="auto">{lines.map((l, i) => <li key={i}>{inline(l.replace(/^\s*[-•*]\s+/, ""), go, `${b}-${i}`)}</li>)}</ul>;
-    return <p key={b} dir="auto">{lines.map((l, i) => <span key={i}>{i > 0 && <br />}{inline(l, go, `${b}-${i}`)}</span>)}</p>;
+      return <ul key={b}>{lines.map((l, i) => <li key={i}>{inline(l.replace(/^\s*[-•*]\s+/, ""), go, `${b}-${i}`)}</li>)}</ul>;
+    return <p key={b}>{lines.map((l, i) => <span key={i}>{i > 0 && <br />}{inline(l, go, `${b}-${i}`)}</span>)}</p>;
   })}</>;
 }
 
-type Problem = "offline" | "busy" | "invalid";
+type Problem = "offline" | "busy" | "invalid" | "limit";
 
 export function FelicityBot() {
   const location = useRouterState({ select: (s) => s.location });
@@ -69,7 +79,8 @@ export function FelicityBot() {
   const hash = location.hash;
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [sheet, setSheet] = useState(false); // opened as the phone's full-screen sheet
+  const [sheet, setSheet] = useState(false); // a "#chat" history entry was added for the phone's full-screen sheet
+  const [phoneNow, setPhoneNow] = useState(false); // the phone layout applies right now (it follows rotation)
   const [turns, setTurns] = useState<BotTurn[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -80,12 +91,17 @@ export function FelicityBot() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const prevHash = useRef(hash);
+  const refocus = useRef(false);
   const chatRun = useRef(0); // bumped by "New chat", so a reply to the old chat is dropped
+  const modal = open && sheet && phoneNow;
 
   useEffect(() => {
     setTurns(load());
-    // A reload while the sheet was open leaves "#chat" in the address; tidy it away.
-    if (window.location.hash === "#chat") void router.navigate({ href: `${window.location.pathname}${window.location.search}`, replace: true, resetScroll: false });
+    // A reload while the phone sheet was open: open it again, so Back still closes it.
+    if (window.location.hash !== "#chat") return;
+    if (isPhone()) { setOpen(true); setSheet(true); }
+    else if ((window.history.state?.__TSR_index ?? 0) > 0) router.history.back();
+    else void router.navigate({ href: `${window.location.pathname}${window.location.search}`, replace: true, resetScroll: false });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }); }, [turns, busy, open]);
   useEffect(() => {
@@ -101,19 +117,29 @@ export function FelicityBot() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   });
-  // Phone Back: leaving the "#chat" entry closes the sheet.
+  // Phone Back: leaving the "#chat" entry closes the sheet, and focus goes back to the launcher.
   useEffect(() => {
-    if (prevHash.current === "chat" && hash !== "chat" && open && sheet) { setOpen(false); setSheet(false); }
+    if (prevHash.current === "chat" && hash !== "chat" && open && sheet) { refocus.current = true; setOpen(false); setSheet(false); }
     prevHash.current = hash;
   }, [hash, open, sheet]);
+  useEffect(() => { if (!open && refocus.current) { refocus.current = false; launcherRef.current?.focus(); } }, [open]);
+  // Follow the layout while open: turning a phone upright makes the panel full-screen, so it gets its Back entry then.
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia(PHONE);
+    const onChange = () => { setPhoneNow(mq.matches); if (mq.matches && !sheet) pushChat(); };
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [open, sheet]); // eslint-disable-line react-hooks/exhaustive-deps
   // The full-screen sheet is modal: the page behind it is inert (screen readers and keyboards stay in the chat).
   useEffect(() => {
     const panel = panelRef.current;
-    if (!open || !sheet || !panel?.parentElement) return;
+    if (!modal || !panel?.parentElement) return;
     const others = [...panel.parentElement.children].filter((el) => el !== panel && !el.hasAttribute("inert"));
     others.forEach((el) => el.setAttribute("inert", ""));
     return () => others.forEach((el) => el.removeAttribute("inert"));
-  }, [open, sheet]);
+  }, [modal]);
 
   if (path.startsWith("/leads")) return null;
 
@@ -126,10 +152,18 @@ export function FelicityBot() {
     "What can I buy from under AED 2M?",
   ].slice(0, 4);
 
+  /** Adds the "#chat" entry that Back removes. */
+  function pushChat() {
+    setSheet(true);
+    if (window.location.hash === "#chat") return;
+    // An entry made by a plain "#enquire" link has no router key, so the scroll position saved for it now
+    // couldn't be found on return and the page would jump to the form; give it the router's key first.
+    if (!window.history.state?.__TSR_key) window.history.replaceState({ ...router.state.location.state, __hashScrollIntoViewOptions: false }, "");
+    void router.navigate({ href: `${path}${location.searchStr}#chat`, resetScroll: false, hashScrollIntoView: false });
+  }
   function openPanel() {
-    const phone = isPhone();
-    setOpen(true); setSheet(phone);
-    if (phone && hash !== "chat") void router.navigate({ href: `${path}${location.searchStr}#chat`, resetScroll: false, hashScrollIntoView: false });
+    setOpen(true);
+    if (isPhone()) pushChat();
   }
   function close() {
     setOpen(false); setSheet(false);
@@ -181,7 +215,7 @@ export function FelicityBot() {
 
   return <>
     {!open && <button ref={launcherRef} type="button" className="bot-launcher" onClick={openPanel} aria-haspopup="dialog" aria-label="Ask FelicityBot, our AI assistant"><Sparkles aria-hidden="true" /><span>Ask FelicityBot</span></button>}
-    {open && <div ref={panelRef} tabIndex={-1} className="bot-panel" role="dialog" aria-modal={sheet} aria-label="FelicityBot, AI assistant">
+    {open && <div ref={panelRef} tabIndex={-1} className="bot-panel" role="dialog" aria-modal={modal} aria-label="FelicityBot, AI assistant">
       <div className="bot-head">
         <img src="/favicon.svg?v=dhow" alt="" width={34} height={34} />
         <div><p className="bot-name">FelicityBot</p><p className="bot-sub">AI assistant · {SITE.company}</p></div>
@@ -189,10 +223,10 @@ export function FelicityBot() {
       </div>
       <div className="bot-list" ref={listRef} aria-live="polite">
         <div className="bot-msg bot-assistant"><p>{GREETING}</p></div>
-        {turns.map((t, i) => <div key={i} className={`bot-msg ${t.role === "user" ? "bot-user" : "bot-assistant"}`}>{t.role === "user" ? <p dir="auto">{t.text}</p> : <Rich text={t.text} go={go} />}</div>)}
+        {turns.map((t, i) => <div key={i} dir={bubbleDir(t.text)} className={`bot-msg ${t.role === "user" ? "bot-user" : "bot-assistant"}`}>{t.role === "user" ? <p>{t.text}</p> : <Rich text={t.text} go={go} />}</div>)}
         {busy && <div className="bot-msg bot-assistant bot-typing" aria-label="FelicityBot is typing"><span /><span /><span /></div>}
         {problem && <div className="bot-problem" role="alert">
-          {problem === "busy" ? "FelicityBot is getting a lot of questions right now. Please try again in a minute, or ask the broker directly." : problem === "invalid" ? "That chat can't be continued. Please start a new one, or ask the broker directly." : "FelicityBot isn't available right now. The broker can answer you directly."}
+          {problem === "busy" ? "FelicityBot is getting a lot of questions right now. Please try again in a minute, or ask the broker directly." : problem === "limit" ? "FelicityBot has answered all the questions it can for now. The broker can answer you directly on WhatsApp." : problem === "invalid" ? "That chat can't be continued. Please start a new one, or ask the broker directly." : "FelicityBot isn't available right now. The broker can answer you directly."}
           {problem === "invalid" && <button type="button" className="bot-restart" onClick={newChat}>Start a new chat</button>}
           <a href={whatsappUrl(waMessage)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon />WhatsApp {SITE.whatsappDisplay}</a>
         </div>}

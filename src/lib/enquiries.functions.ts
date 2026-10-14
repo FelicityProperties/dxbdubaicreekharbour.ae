@@ -229,15 +229,18 @@ export type EnquiryRecord = {
 
 let countersReady: Promise<unknown> | null = null;
 /**
- * Adds one to each named counter and returns the new totals, or null when the
- * database is not configured or not answering (callers then fall back to their
- * own limits). Shared by every server instance, unlike in-memory counts. Holds
- * no visitor data: the keys are names like "felicitybot:h:2026-10-14T09".
+ * Counts one use against each limit in turn and stops at the first one that
+ * is used up, so a use turned away by an earlier limit doesn't count against
+ * the later ones. Returns the key that refused, or "" when every limit had
+ * room; null when the database is not configured, fails, or takes longer than
+ * `timeoutMs` (callers then fall back to their own limits). Shared by every
+ * server instance, unlike in-memory counts. Keys are names such as
+ * "felicitybot:h:2026-10-14T09"; rows older than three days are deleted.
  */
-export async function bumpCounters(keys: string[]): Promise<Record<string, number> | null> {
+export async function takeQuota(steps: { key: string; limit: number }[], timeoutMs = 2500): Promise<string | null> {
   const url = databaseUrl();
-  if (!url || !keys.length) return null;
-  try {
+  if (!url || !steps.length) return null;
+  const run = async (): Promise<string | null> => {
     const sql = await connect(url);
     if (!countersReady) {
       countersReady = sql`CREATE TABLE IF NOT EXISTS site_counters (
@@ -247,17 +250,32 @@ export async function bumpCounters(keys: string[]): Promise<Record<string, numbe
       )`.catch((err) => { countersReady = null; throw err; });
     }
     await countersReady;
-    const rows = (await sql`
-      INSERT INTO site_counters (key, count) SELECT k, 1 FROM unnest(${keys}::text[]) AS k
-      ON CONFLICT (key) DO UPDATE SET count = site_counters.count + 1, updated_at = now()
-      RETURNING key, count
-    `) as { key: string; count: number }[];
-    // The first count of a new period clears out periods older than a few days.
-    if (rows.some((r) => r.count === 1)) await sql`DELETE FROM site_counters WHERE updated_at < now() - interval '3 days'`;
-    return Object.fromEntries(rows.map((r) => [r.key, Number(r.count)]));
+    let fresh = false;
+    try {
+      for (const { key, limit } of steps) {
+        const rows = (await sql`
+          INSERT INTO site_counters (key, count) VALUES (${key}, 1)
+          ON CONFLICT (key) DO UPDATE SET count = site_counters.count + 1, updated_at = now()
+          RETURNING count
+        `) as { count: number }[];
+        const count = Number(rows[0]?.count ?? 0);
+        fresh ||= count === 1;
+        if (count > limit) return key;
+      }
+      return "";
+    } finally {
+      // A new period has started somewhere: clear out periods older than a few days.
+      if (fresh) await sql`DELETE FROM site_counters WHERE updated_at < now() - interval '3 days'`;
+    }
+  };
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([run(), new Promise<null>((resolve) => { timer = setTimeout(() => resolve(null), timeoutMs); })]);
   } catch (err) {
     console.error("counter not updated:", redact(err, url));
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 

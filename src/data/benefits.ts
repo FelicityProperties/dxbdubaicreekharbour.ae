@@ -1,25 +1,13 @@
 /**
  * "Why Dubai Creek Harbour" — each entry rests on a sentence Emaar published
  * (sourceUrl) or on a figure in the DLD snapshot (src/data/transactions.json).
- * The exact source quotes are kept in design/benefits-sources.json; the DLD
- * card's figures are written from transactions.json itself. Never add a
- * reason that cannot be traced to one of those two.
+ * The exact source quotes are kept in design/benefits-sources.json. The DLD
+ * card is plain text (so pages that show it don't load the whole snapshot);
+ * a test checks its figures against transactions.json, so a data refresh
+ * that changes them fails until the card is updated. Never add a reason that
+ * cannot be traced to one of those two.
  */
-import { TX } from "@/data/transactions";
-import { aed, num } from "@/lib/format";
-
 export type Benefit = { title: string; body: string; sourceUrl: string; kind: "emaar" | "dld-snapshot" };
-
-/** The registered-market card, written from the current snapshot so a data refresh updates it too. */
-function registeredMarket(): string {
-  const fresh = TX.summary.rentalsNewVsRenewal.find((r) => r.newContract);
-  const renewed = TX.summary.rentalsNewVsRenewal.find((r) => !r.newContract);
-  const oneBed = TX.summary.rentalsByBedroom.find((r) => r.bedrooms === "1 Bed");
-  const ready = TX.summary.sales.find((s) => s.basis === "ready");
-  const rents = fresh && renewed ? ` show ${num(fresh.count)} new tenancy contracts and ${num(renewed.count)} renewals registered for apartments in Dubai Creek Harbour${oneBed?.medianRent ? `, with a median rent of ${aed(oneBed.medianRent)} across ${num(oneBed.count)} one-bedroom contracts` : ""}.` : " cover apartments in Dubai Creek Harbour.";
-  const sales = ready ? ` The same records show ${num(ready.count)} ready-apartment sales registered in that window;` : " The figures";
-  return `Dubai Land Department records for the ${TX.window.label}${rents}${sales} these are registered contracts and sales, not valuations or forecasts.`;
-}
 
 export const BENEFITS: Benefit[] = [
   {
@@ -60,7 +48,7 @@ export const BENEFITS: Benefit[] = [
   },
   {
     "title": "A registered rental and resale market",
-    "body": registeredMarket(),
+    "body": "Dubai Land Department records for the 12 months to 30 September 2026 show 3,963 new tenancy contracts and 2,465 renewals registered for apartments in Dubai Creek Harbour, with a median rent of AED 96,000 across 2,611 one-bedroom contracts. The same records show 987 ready-apartment sales registered in that window; these are registered contracts and sales, not valuations or forecasts.",
     "sourceUrl": "dld-snapshot",
     "kind": "dld-snapshot"
   },
