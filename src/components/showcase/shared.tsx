@@ -117,6 +117,16 @@ export function handoverText(p: Project): string {
   if (p.construction === "under_construction") return "Under construction";
   return p.isNewLaunch ? "New launch" : "Construction status on request";
 }
+/** How a project without a published Emaar instalment plan is paid, by status (project page and FelicityBot). */
+export function noPlanText(p: Project): string {
+  if (p.status === "Now selling") {
+    if (p.construction === "completed") return "This is a completed building: Emaar's listed units are paid in full on transfer, with a mortgage if you need one. Ask us for today's terms on the unit you like.";
+    if (p.construction === "under_construction" || p.isNewLaunch) return "Emaar publishes the dated instalment schedule when you reserve a unit. Ask us for the current schedule and the next instalment dates.";
+    return "Ask us for today's terms on the unit you like — DLD records do not state this building's construction status.";
+  }
+  if (p.status === "Resale") return "On a resale you reimburse the seller's paid instalments, agree any premium, and take over the remaining schedule with Emaar. We confirm the exact figures with Emaar before you commit.";
+  return "This is a completed building: you pay the full price on transfer, with a mortgage if you need one — UAE banks lend to residents and non-residents on completed homes.";
+}
 /** What a buyer can actually pay today: the lowest listed unit when Emaar lists units, else the advertised starting price. */
 export function minPriceAed(p: Project): number | null {
   return p.pricesFromAed ?? p.startingPriceAed ?? null;

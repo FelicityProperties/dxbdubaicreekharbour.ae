@@ -84,10 +84,14 @@ export const MIN_LEADS_PASSWORD = 20;
 
 /**
  * Phone as typed, made checkable: Arabic-Indic and Persian digits become
- * 0-9 and dots become spaces, so "٠٥٠١٢٣٤٥٦٧" and "050.123.4567" pass.
+ * 0-9, dots become spaces, Unicode dashes become "-", and the invisible
+ * direction marks WhatsApp and contact apps add when copying are dropped, so
+ * "٠٥٠١٢٣٤٥٦٧", "050.123.4567" and a pasted "\u202a+971 50 123 4567\u202c" pass.
  */
 export function normalisePhone(raw: string): string {
   return raw
+    .replace(/\p{Cf}/gu, "")
+    .replace(/[\u2010-\u2015\u2212]/g, "-")
     .replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x660))
     .replace(/[۰-۹]/g, (c) => String(c.charCodeAt(0) - 0x6f0))
     .replace(/\./g, " ")
@@ -222,6 +226,40 @@ export type EnquiryRecord = {
   message: string | null;
   page: string | null;
 };
+
+let countersReady: Promise<unknown> | null = null;
+/**
+ * Adds one to each named counter and returns the new totals, or null when the
+ * database is not configured or not answering (callers then fall back to their
+ * own limits). Shared by every server instance, unlike in-memory counts. Holds
+ * no visitor data: the keys are names like "felicitybot:h:2026-10-14T09".
+ */
+export async function bumpCounters(keys: string[]): Promise<Record<string, number> | null> {
+  const url = databaseUrl();
+  if (!url || !keys.length) return null;
+  try {
+    const sql = await connect(url);
+    if (!countersReady) {
+      countersReady = sql`CREATE TABLE IF NOT EXISTS site_counters (
+        key TEXT PRIMARY KEY,
+        count INTEGER NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )`.catch((err) => { countersReady = null; throw err; });
+    }
+    await countersReady;
+    const rows = (await sql`
+      INSERT INTO site_counters (key, count) SELECT k, 1 FROM unnest(${keys}::text[]) AS k
+      ON CONFLICT (key) DO UPDATE SET count = site_counters.count + 1, updated_at = now()
+      RETURNING key, count
+    `) as { key: string; count: number }[];
+    // The first count of a new period clears out periods older than a few days.
+    if (rows.some((r) => r.count === 1)) await sql`DELETE FROM site_counters WHERE updated_at < now() - interval '3 days'`;
+    return Object.fromEntries(rows.map((r) => [r.key, Number(r.count)]));
+  } catch (err) {
+    console.error("counter not updated:", redact(err, url));
+    return null;
+  }
+}
 
 /** What is wrong with a record, in words a visitor can act on; null when it can be saved. */
 export function enquiryProblem(row: Pick<EnquiryRecord, "name" | "phone" | "email">): string | null {

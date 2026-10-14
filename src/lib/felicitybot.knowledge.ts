@@ -11,12 +11,13 @@ import { PROJECTS, DISTRICT, GUIDE, COSTS, FAQ, SITE, type Project } from "@/dat
 import { BENEFITS } from "@/data/benefits";
 import { TX, LATEST_ROW, buildingsFor } from "@/data/transactions";
 import { aed, num, dateLong, projectLabel } from "@/lib/format";
-import { statusLabel, handoverText } from "@/components/showcase/shared";
+import { statusLabel, handoverText, noPlanText } from "@/components/showcase/shared";
 
 const RULES = `You are FelicityBot, the AI assistant on dxbdubaicreekharbour.ae ("DXB Creek Harbour"), an independent showcase of Emaar's residential projects in Dubai Creek Harbour run by ${SITE.company}, a Dubai real-estate brokerage (RERA ORN ${SITE.reraOrn}). The broker behind the site is ${SITE.broker}. You help visitors understand the projects, prices, payment plans, handover dates, the registered sales and rents, the area, and how buying works, and you help interested visitors reach the broker.
 
 How you answer
-- Use only the facts in the KNOWLEDGE section below. Quote figures exactly as written there, with their source and date (for example "Emaar's advertised starting price, checked ${SITE.pricesCheckedOn}" or "registered with the Dubai Land Department, ${TX.window.label}"). Never estimate, round into ranges, average, forecast, or work out yields, returns, rental income, price per square foot for a unit, or future prices. Never describe a price as "around" or "about" a number. If a figure is not in the KNOWLEDGE, say it isn't published on this site and offer to get it from the broker.
+- Use only the facts in the KNOWLEDGE section below. Quote figures exactly as written there, with their source and date (for example "the cheapest unit Emaar listed on ${SITE.pricesCheckedOn}" or "registered with the Dubai Land Department, ${TX.window.label}"). Never estimate, round into ranges, average, forecast, or work out yields, returns, rental income, price per square foot for a unit, or future prices. Never describe a price as "around" or "about" a number. If a figure is not in the KNOWLEDGE, say you don't have it here, point to the project page or [market data](/market) where the site may show more detail, and offer to get it from the broker.
+- For a budget question ("under AED 2M"), compare against the cheapest unit Emaar listed wherever Emaar lists units; use the advertised starting price only for projects with no listed units, and say which of the two you are quoting.
 - Prices, availability and handover dates are Emaar's published figures on the date shown and can change; say so when you give one. Registered sales and rents are what was registered, not valuations.
 - Credit registered sales, rents and construction status to the Dubai Land Department only. Credit project figures to Emaar. Do not name any other data source.
 - This site is not Emaar's and is not endorsed by Emaar. Never claim to speak for Emaar or to know about units, discounts or launches beyond the KNOWLEDGE.
@@ -46,35 +47,41 @@ function planText(p: Project): string | null {
   return `${split}.${sched} (${plan.note})`;
 }
 
+const count = (n: number, one: string, many: string) => `${num(n)} ${n === 1 ? one : many}`;
+const middle = (lo: number | null, hi: number | null, fmt: (n: number) => string) => (lo != null && hi != null && lo !== hi ? ` (middle half ${fmt(lo)}–${fmt(hi)})` : "");
+
 function registered(p: Project): string | null {
   const b = buildingsFor(p.slug);
   if (!b.sales.length && !b.rentals.length) return p.isNewLaunch ? "No rows of its own yet: new-launch registrations appear in the register before they are assigned to a building." : `No registered market sales or tenancy contracts in the ${TX.window.label} window.`;
-  const sales = b.sales.map((s) => `${s.building} (${s.basis === "ready" ? "ready" : "off-plan"}): ${num(s.count)} sales, median ${num(s.medianPsf)} AED/sq ft, median price ${aed(s.medianPrice)}`);
-  const rents = b.rentals.map((r) => `${r.building}: ${num(r.count)} tenancy contracts, median annual rent ${aed(r.medianRent)}${r.medianRentPsf != null ? `, median ${num(r.medianRentPsf)} AED/sq ft/yr` : ""}`);
+  const sales = b.sales.map((s) => `${s.building} (${s.basis === "ready" ? "ready" : "off-plan"}): ${count(s.count, "sale", "sales")}, median ${num(s.medianPsf)} AED/sq ft${middle(s.p25Psf, s.p75Psf, num)}, median price ${aed(s.medianPrice)}`);
+  const rents = b.rentals.map((r) => `${r.building}: ${count(r.count, "tenancy contract", "tenancy contracts")}, median annual rent ${aed(r.medianRent)}${middle(r.p25Rent, r.p75Rent, aed)}${r.medianRentPsf != null ? `, median ${num(r.medianRentPsf)} AED/sq ft/yr` : ""}`);
   return join(sales.length ? `Sales (${TX.window.label}): ${sales.join("; ")}` : null, rents.length ? `Rents (${TX.window.label}): ${rents.join("; ")}` : null);
 }
 
 function projectBlock(p: Project): string {
-  const prices = [
-    p.startingPrice && `Emaar's advertised starting price ${p.startingPrice}${p.status === "Now selling" ? "" : " (at launch; resale prices on request)"}, checked ${SITE.pricesCheckedOn}`,
-    p.pricesFrom && `cheapest unit Emaar listed: ${p.pricesFrom}${p.unitsListed ? ` (${p.unitsListed} unit${p.unitsListed === 1 ? "" : "s"} listed on ${SITE.pricesCheckedOn})` : ""}`,
-  ].filter(Boolean).join("; ");
+  // What a buyer can pay today comes first (the same order as the site's cards and budget filter).
+  const listed = p.pricesFrom && `cheapest unit Emaar listed on ${SITE.pricesCheckedOn}: ${p.pricesFrom}${p.unitsListed ? ` (${count(p.unitsListed, "unit", "units")} listed)` : ""}`;
+  const advertised = p.startingPrice && (p.pricesFrom
+    ? `Emaar's advertised project starting price ${p.startingPrice}${p.startingPriceAed != null && p.pricesFromAed != null && p.startingPriceAed < p.pricesFromAed ? " (the units listed now cost more)" : ""}`
+    : `Emaar's advertised starting price ${p.startingPrice}${p.status === "Now selling" ? `, checked ${SITE.pricesCheckedOn}` : " at launch (resale prices on request)"}`);
+  const prices = [listed, advertised].filter(Boolean).join("; ");
   return join(
     `### ${projectLabel(p)} — /projects/${p.slug}`,
     line("Quarter", p.district),
-    line("Status", `${statusLabel(p)} — ${p.statusNote}`),
-    line("Homes", p.unitTypes.length ? p.unitTypes.join(" · ") : p.bedrooms),
+    line("Status", p.statusNote.startsWith(statusLabel(p)) ? p.statusNote : `${statusLabel(p)} — ${p.statusNote}`),
+    line("Homes", p.unitTypes.length > 0 && p.unitTypes.join(" · ")),
     line("Bedrooms", p.bedrooms),
     line("Note", p.propertyTypes),
     line("Price", prices || "on request"),
     line("Sizes", p.sizes && `${p.sizes}${p.sizesNote ? ` (${p.sizesNote})` : ""}`),
     line("Handover", p.handover ? `estimated ${dateLong(p.handover.text)} (${p.handover.note}; Emaar's estimate, can change)` : handoverText(p)),
-    line("Payment plan", planText(p) ?? "Emaar's schedule on request"),
+    line("Payment plan", planText(p) ?? `No published Emaar instalment plan. ${noPlanText(p)}`),
     line("Overview", p.overview),
     line("Highlights", p.highlights.join("; ")),
     line("Amenities (as listed by Emaar)", p.amenities.slice(0, 12).join(", ")),
     line("Nearby", p.nearby?.join(", ")),
     line("Brochure", p.brochureUrl),
+    line("Floor plans", p.floorPlanUrl),
     line("Emaar's page", p.emaarUrl),
     line("Dubai Land Department registrations", registered(p)),
   );
@@ -87,12 +94,12 @@ function marketBlock(): string {
   return join(
     "## Registered sales and rents (Dubai Land Department) — /market",
     `Source: ${TX.source.basis}. 12-month summaries cover ${TX.window.label}; the latest individual rows were registered up to ${dateLong(LATEST_ROW)}; snapshot taken ${dateLong(TX.source.snapshotDate)}. ${TX.source.filters}`,
-    `Sales, ${TX.window.label}: ${TX.summary.sales.map((s) => `${by(s)}: ${num(s.count)} sales, median ${num(s.medianPsf)} AED/sq ft (middle half ${num(s.p25Psf)}–${num(s.p75Psf)}), median price ${aed(s.medianPrice)}`).join("; ")}.`,
-    `Sales by bedroom: ${TX.summary.salesByBedroom.map((s) => `${by(s)} ${s.bedrooms}: ${num(s.count)} sales, median price ${aed(s.medianPrice)} (middle half ${aed(s.p25Price)}–${aed(s.p75Price)}), median ${num(s.medianPsf)} AED/sq ft, median size ${num(s.medianSizeSqft)} sq ft`).join("; ")}.`,
-    `Rents by bedroom (annual): ${TX.summary.rentalsByBedroom.map((r) => `${r.bedrooms}: ${num(r.count)} contracts, median ${aed(r.medianRent)} (middle half ${aed(r.p25Rent)}–${aed(r.p75Rent)}), median ${num(r.medianRentPsf)} AED/sq ft/yr, median size ${num(r.medianSizeSqft)} sq ft`).join("; ")}.`,
-    `New contracts vs renewals: ${TX.summary.rentalsNewVsRenewal.map((r) => `${r.newContract ? "new" : "renewals"}: ${num(r.count)} contracts, median ${aed(r.medianRent)}`).join("; ")}.`,
-    other.length ? `Other buildings (not on a project page), sales: ${other.map((b) => `${b.building} (${b.basis === "ready" ? "ready" : "off-plan"}): ${num(b.count)} sales, median ${num(b.medianPsf)} AED/sq ft, median price ${aed(b.medianPrice)}`).join("; ")}.` : null,
-    otherRent.length ? `Other buildings, rents: ${otherRent.map((b) => `${b.building}: ${num(b.count)} contracts, median ${aed(b.medianRent)}`).join("; ")}.` : null,
+    `Sales, ${TX.window.label}: ${TX.summary.sales.map((s) => `${by(s)}: ${count(s.count, "sale", "sales")}, median ${num(s.medianPsf)} AED/sq ft (middle half ${num(s.p25Psf)}–${num(s.p75Psf)}), median price ${aed(s.medianPrice)}`).join("; ")}.`,
+    `Sales by bedroom: ${TX.summary.salesByBedroom.map((s) => `${by(s)} ${s.bedrooms}: ${count(s.count, "sale", "sales")}, median price ${aed(s.medianPrice)} (middle half ${aed(s.p25Price)}–${aed(s.p75Price)}), median ${num(s.medianPsf)} AED/sq ft, median size ${num(s.medianSizeSqft)} sq ft`).join("; ")}.`,
+    `Rents by bedroom (annual): ${TX.summary.rentalsByBedroom.map((r) => `${r.bedrooms}: ${count(r.count, "contract", "contracts")}, median ${aed(r.medianRent)} (middle half ${aed(r.p25Rent)}–${aed(r.p75Rent)}), median ${num(r.medianRentPsf)} AED/sq ft/yr, median size ${num(r.medianSizeSqft)} sq ft`).join("; ")}.`,
+    `New contracts vs renewals: ${TX.summary.rentalsNewVsRenewal.map((r) => `${r.newContract ? "new" : "renewals"}: ${count(r.count, "contract", "contracts")}, median ${aed(r.medianRent)}`).join("; ")}.`,
+    other.length ? `Other buildings (not on a project page), sales: ${other.map((b) => `${b.building} (${b.basis === "ready" ? "ready" : "off-plan"}): ${count(b.count, "sale", "sales")}, median ${num(b.medianPsf)} AED/sq ft, median price ${aed(b.medianPrice)}`).join("; ")}.` : null,
+    otherRent.length ? `Other buildings, rents: ${otherRent.map((b) => `${b.building}: ${count(b.count, "contract", "contracts")}, median ${aed(b.medianRent)}`).join("; ")}.` : null,
     "For the individual latest sales and tenancy contracts, link to /market.",
   );
 }

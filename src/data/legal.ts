@@ -95,7 +95,7 @@ export const TERMS: LegalDoc = {
 export const PRIVACY: LegalDoc = {
   "title": "Privacy Notice",
   "intro": "This notice explains what DXB Creek Harbour collects when you use dxbdubaicreekharbour.ae, what we do with it, and how to ask us to see, correct or delete it. If anything is unclear, message us on WhatsApp or by email using the details at the end.",
-  "lastUpdated": "2026-10-13",
+  "lastUpdated": "2026-10-14",
   "sections": [
     {
       "heading": "Who we are",
@@ -172,7 +172,7 @@ export const PRIVACY: LegalDoc = {
     {
       "heading": "Changes to this notice",
       "paragraphs": [
-        "We may update this notice when the site changes, for example if we add email delivery, analytics or a new provider. The date at the top shows when it was last changed."
+        "We may update this notice when the site changes, for example if we add analytics or a new provider. The date at the top shows when it was last changed."
       ]
     },
     {

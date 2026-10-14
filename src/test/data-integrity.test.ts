@@ -6,7 +6,7 @@ import { PROJECTS, DISTRICT } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
 import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, LATEST_ROW } from "@/data/transactions";
-import { projectLabel } from "@/lib/format";
+import { num, projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
 import { handoverText } from "@/components/showcase/shared";
 import sources from "../../design/benefits-sources.json";
@@ -45,8 +45,14 @@ describe("Project data", () => {
     BENEFITS.forEach((b, i) => {
       const s = sources.benefits[i]!;
       expect(b.title).toBe(s.title);
-      expect(b.body).toBe(s.body);
       expect(b.sourceUrl).toBe(s.sourceUrl);
+      // Emaar cards are pinned to the recorded quote; the DLD card is written from the snapshot.
+      if (b.kind === "emaar") expect(b.body).toBe(s.body);
+      else {
+        expect(b.body).toContain(TX.window.label);
+        expect(b.body).toContain(num(TX.summary.sales.find((x) => x.basis === "ready")!.count));
+        expect(b.body).not.toContain("—");
+      }
     });
   });
 });

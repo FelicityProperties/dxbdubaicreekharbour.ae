@@ -284,7 +284,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .bot-list {flex:1;overflow-y:auto;overscroll-behavior:contain;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--muted);}
 .bot-msg {max-width:88%;padding:10px 13px;border-radius:12px;font-size:14px;line-height:1.55;overflow-wrap:anywhere;}
 .bot-msg p + p,.bot-msg p + ul,.bot-msg ul + p {margin-top:8px;}
-.bot-msg ul {margin:0;padding-left:18px;list-style:disc;}
+.bot-msg ul {margin:0;padding-inline-start:18px;list-style:disc;}
 .bot-msg li + li {margin-top:3px;}
 .bot-msg a {color:var(--brass-text);text-decoration:underline;text-underline-offset:3px;}
 .bot-assistant {align-self:flex-start;background:var(--background);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--foreground);}
@@ -309,12 +309,15 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .bot-hp {position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
 .bot-note {padding:0 14px 10px;background:var(--background);font-size:10.5px;line-height:1.5;color:var(--muted-foreground);}
 .bot-note a,.bot-note button {padding:0;border:0;background:none;color:inherit;font:inherit;text-decoration:underline;cursor:pointer;}
+.bot-panel:focus {outline:none;}
+.bot-restart {justify-self:start;padding:7px 12px;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit;font:600 13px/1.2 var(--font-sans);cursor:pointer;}
+@media (pointer: coarse) {.bot-form textarea {font-size:16px;}}
 @media(max-width:640px) {
  .bot-launcher {right:14px;bottom:calc(74px + env(safe-area-inset-bottom));width:50px;height:50px;padding:0;justify-content:center;border-radius:50%;}
  .bot-launcher span {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
  .bot-launcher svg {width:22px;height:22px;}
  .bot-panel {inset:0;width:100%;height:100dvh;border:0;border-radius:0;z-index:60;}
  .bot-head {padding-top:calc(12px + env(safe-area-inset-top));}
- .bot-form {padding-bottom:calc(10px + env(safe-area-inset-bottom));}
+ .bot-note {padding-bottom:calc(10px + env(safe-area-inset-bottom));}
  .bot-form textarea {font-size:16px;}
 }
