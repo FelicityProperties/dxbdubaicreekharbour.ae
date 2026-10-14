@@ -351,8 +351,10 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .viz-tip {position:absolute;top:0;transform:translateX(-50%);min-width:140px;padding:9px 11px;border:1px solid var(--border);border-radius:6px;background:var(--viz-surface);box-shadow:0 6px 20px oklch(.194 .026 245 / .14);font-size:12px;line-height:1.5;color:var(--viz-muted);pointer-events:none;white-space:nowrap;z-index:2;}
 .viz-tip strong {color:var(--viz-text);font-size:13px;}
 .viz-tip-day {color:var(--viz-text);font-weight:600;margin-bottom:2px;}
-.viz-xaxis {display:flex;margin:6px 0 0 34px;font-size:11px;color:var(--viz-muted);}
-.viz-xaxis span {flex:1 1 0;min-width:0;white-space:nowrap;overflow:visible;}
+.viz-xaxis {position:relative;height:16px;margin:6px 0 0 34px;font-size:11px;line-height:16px;color:var(--viz-muted);}
+.viz-xaxis span {position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;}
+.viz-xaxis span.at-start {transform:translateX(-30%);}
+.viz-xaxis span.at-end {transform:translateX(-70%);}
 .viz-table-wrap {max-height:340px;overflow:auto;}
 .viz-table {width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
 .viz-table th,.viz-table td {padding:7px 10px;border-bottom:1px solid var(--border);text-align:right;}
@@ -366,9 +368,11 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .viz-list-bar {display:block;height:8px;min-width:2px;border-radius:0 4px 4px 0;background:var(--viz-series);}
 .viz-list-value {font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
 .viz-foot {margin-top:18px;font-size:12px;line-height:1.6;color:var(--viz-muted);}
+.viz-card .viz-foot {margin-top:12px;}
+.viz-warn {margin-top:14px;max-width:760px;padding:10px 14px;border-radius:3px;background:#fdf6e7;border:1px solid #ecd9a8;color:#5c4813;font-size:13px;line-height:1.5;}
 .viz-tabs {display:flex;gap:4px;margin-top:22px;border-bottom:1px solid var(--border);}
 .viz-tabs button {min-height:44px;padding:0 14px;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;color:var(--viz-muted, var(--muted-foreground));font:500 14px/1 var(--font-sans);cursor:pointer;}
-.viz-tabs button[aria-selected="true"] {color:var(--foreground);border-bottom-color:var(--primary);}
+.viz-tabs button[aria-pressed="true"] {color:var(--foreground);border-bottom-color:var(--primary);}
 .viz-tabs button:focus-visible {outline:2px solid var(--brass);outline-offset:-2px;}
 .viz-tip.at-start {transform:none;}
 .viz-tip.at-end {transform:translateX(-100%);}

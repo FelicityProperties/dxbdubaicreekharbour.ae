@@ -145,12 +145,20 @@ by hand.
     `/leads?me=1`, marks that browser ("dxbch-dont-count") and it sends
     nothing; `/leads` itself is never counted.
   - Neon's free plan pauses the database for the rest of the month if its
-    compute allowance runs out. So enquiries no longer depend on the
-    database alone: if the insert fails, the lead email still goes out
-    (marked "not on the /leads page") and the visitor sees success. If the
-    site gets busy enough to worry about that, create a second free Neon
-    database and set `ANALYTICS_DATABASE_URL` to it: the visit numbers then
-    live there and can never affect the enquiries' database.
+    compute allowance runs out (about 100 CU-hours: roughly 13 hours a day
+    awake at the smallest size; every write keeps it awake 5 minutes). So
+    enquiries no longer depend on the database alone: if the insert fails or
+    takes over 5 s, the lead email still goes out (marked "not on the /leads
+    page") and the visitor sees success. /leads warns when lead emails
+    aren't set up, and when the site averages more than 120 visits a day:
+    then create a second free Neon project and set `ANALYTICS_DATABASE_URL`
+    to it, so visit numbers can never use up the enquiries' allowance.
+  - Comparisons ("▲ 12% on the 7 days before") use the same stretch of time
+    cut at the same clock time, and only once counting covered it.
+    "Visitors" over several days adds up each day's visitors. Referring
+    sites or campaign tags from fewer than two visitors in the period are
+    grouped as "Other sites". The visitor code's key is derived with scrypt
+    from `ANALYTICS_SECRET` (or `LEADS_PASSWORD`).
   - Vercel Web Analytics is no longer used; it can be switched off in the
     project's Analytics tab.
 - Node.js 22.x (set in `package.json` → `engines`).

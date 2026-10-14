@@ -8,6 +8,7 @@ export type VisitReport = {
   seconds: number;   // time the site was on screen and in use
   ref: string;       // the referring site's address when the visit began ("" if none)
   src: string;       // the utm_source tag of the first page, if any
+  touch?: boolean;   // a touch screen (tells iPads, which describe themselves as Macs, from computers)
 };
 
 export const VISIT_LIMITS = { maxPages: 40, maxViews: 500, maxSeconds: 4 * 3600 } as const;
@@ -25,15 +26,18 @@ export type VisitStats = {
   pageViews: number;
   stayed: number;          // visits of STAYED_SECONDS or more
   medianSeconds: number;   // typical visit length
-  enquiries: number;
-  previous: { visitors: number; visits: number }; // the same number of days just before
+  enquiries: number | null; // null when they couldn't be read
+  previous: { visitors: number; visits: number } | null; // the same stretch of time just before; null before tracking covered it
   daily: { day: string; visitors: number; visits: number; stayed: number }[];
   pages: Ranked[];
   sources: Ranked[];
   countries: Ranked[];
   devices: Ranked[];
 };
-export type VisitStatsResult = { status: "ok"; stats: VisitStats } | { status: "not-configured" | "wrong-password" | "offline" };
+export type VisitStatsResult = { status: "ok"; stats: VisitStats; emailAlerts: boolean } | { status: "not-configured" | "wrong-password" | "offline" };
+
+/** Average visits a day above which the shared free database's monthly allowance gets tight (see VERCEL-LAYER.md). */
+export const BUSY_VISITS_PER_DAY = 120;
 
 const VISIT_ID = /^[A-Za-z0-9-]{16,40}$/;
 const clampInt = (v: unknown, max: number) => (typeof v === "number" && Number.isFinite(v) ? Math.max(0, Math.min(max, Math.round(v))) : 0);
@@ -56,6 +60,7 @@ export function cleanReport(raw: unknown, isPage: (path: unknown) => string | nu
     seconds: clampInt(r["seconds"], VISIT_LIMITS.maxSeconds),
     ref: typeof r["ref"] === "string" ? r["ref"].slice(0, 300) : "",
     src: typeof r["src"] === "string" ? r["src"].toLowerCase().replace(/[^a-z0-9 ._-]/g, "").slice(0, 40) : "",
+    touch: r["touch"] === true,
   };
 }
 
@@ -67,21 +72,29 @@ const SOURCES: [RegExp, string][] = [
   [/(^|\.)bayut\.com$/, "Bayut"], [/(^|\.)dubizzle\./, "Dubizzle"], [/(^|\.)(chatgpt\.com|openai\.com)$/, "ChatGPT"],
   [/(^|\.)perplexity\.ai$/, "Perplexity"], [/(^|\.)felicitypro\.com$/, "felicitypro.com"],
 ];
-const TAGS: Record<string, string> = { ig: "Instagram", instagram: "Instagram", fb: "Facebook", facebook: "Facebook", meta: "Facebook", google: "Google", linkedin: "LinkedIn", whatsapp: "WhatsApp", wa: "WhatsApp", tiktok: "TikTok", youtube: "YouTube", email: "Email", newsletter: "Email" };
+const TAGS: Record<string, string> = {
+  ig: "Instagram", instagram: "Instagram", "instagram.com": "Instagram", fb: "Facebook", facebook: "Facebook", "facebook.com": "Facebook", meta: "Facebook",
+  google: "Google", linkedin: "LinkedIn", "linkedin.com": "LinkedIn", whatsapp: "WhatsApp", wa: "WhatsApp", tiktok: "TikTok", youtube: "YouTube",
+  email: "Email", newsletter: "Email", chatgpt: "ChatGPT", "chatgpt.com": "ChatGPT", openai: "ChatGPT", perplexity: "Perplexity", "perplexity.ai": "Perplexity",
+  propertyfinder: "Property Finder", bayut: "Bayut",
+};
+/** Android apps that report themselves as the referrer ("android-app://com.whatsapp/"). */
+const APPS: Record<string, string> = { "com.whatsapp": "WhatsApp", "com.whatsapp.w4b": "WhatsApp", "com.instagram.android": "Instagram", "com.facebook.katana": "Facebook", "com.linkedin.android": "LinkedIn", "com.google.android.gm": "Email", "com.google.android.googlequicksearchbox": "Google" };
 
 /** Where a visit came from, in words: a campaign tag wins over the referring site. */
 export function sourceName(ref: string, src: string, ownHost: string): string {
-  if (src) return TAGS[src] ?? src.charAt(0).toUpperCase() + src.slice(1);
+  if (src) return Object.hasOwn(TAGS, src) ? TAGS[src]! : src.charAt(0).toUpperCase() + src.slice(1);
   let host = "";
   try { host = new URL(ref).hostname.toLowerCase().replace(/^www\./, ""); } catch { return "Direct"; }
+  if (ref.startsWith("android-app://")) return Object.hasOwn(APPS, host) ? APPS[host]! : "Other app";
   if (!host || host === ownHost || host.endsWith(`.${ownHost}`)) return "Direct";
   for (const [re, name] of SOURCES) if (re.test(host)) return name;
   return host;
 }
 
-/** Phone, tablet or computer, from the browser's description of itself. */
-export function deviceName(userAgent: string): string {
-  if (/iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(userAgent)) return "Tablet";
+/** Phone, tablet or computer, from the browser's description of itself (an iPad says "Macintosh" but has a touch screen). */
+export function deviceName(userAgent: string, touch = false): string {
+  if (/iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(userAgent) || (touch && /Macintosh/.test(userAgent))) return "Tablet";
   if (/Mobi|iPhone|iPod|Android/i.test(userAgent)) return "Phone";
   return "Computer";
 }

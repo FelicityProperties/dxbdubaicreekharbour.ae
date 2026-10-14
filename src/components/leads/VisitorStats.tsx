@@ -3,9 +3,9 @@
  * day, and where visitors went, came from, live and browse on. Data from
  * getVisitStats (src/lib/visits.functions.ts), behind the /leads password.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { getVisitStats } from "@/lib/visits.functions";
-import { STAYED_SECONDS, type Ranked, type VisitStats } from "@/lib/visits.shared";
+import { BUSY_VISITS_PER_DAY, STAYED_SECONDS, type Ranked, type VisitStats } from "@/lib/visits.shared";
 import { isCountingThisDevice, setCountingThisDevice } from "@/components/SiteAnalytics";
 
 const RANGES = [{ days: 1, label: "Today" }, { days: 7, label: "7 days" }, { days: 30, label: "30 days" }, { days: 90, label: "90 days" }] as const;
@@ -15,10 +15,11 @@ const pct = (part: number, whole: number) => (whole ? `${Math.round((part / whol
 const duration = (s: number) => (s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")} s`);
 const dayLabel = (iso: string, long = false) => new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", day: "numeric", month: "short", ...(long ? { weekday: "short" } : {}) }).format(new Date(`${iso}T00:00:00Z`));
 
-function change(now: number, before: number, days: number): string | null {
+/** Change on the same stretch of time just before, cut at the same clock time (null: nothing to compare with yet). */
+function change(now: number, before: number | undefined, days: number): string | null {
   if (!before) return null;
   const d = Math.round(((now - before) / before) * 100);
-  const span = days === 1 ? "yesterday" : `the ${days} days before`;
+  const span = days === 1 ? "yesterday by this time" : `the ${days} days before`;
   return d === 0 ? `Same as ${span}` : `${d > 0 ? "▲" : "▼"} ${Math.abs(d)}% on ${span}`;
 }
 
@@ -44,10 +45,34 @@ function axis(max: number): number[] {
 function DailyChart({ daily }: { daily: VisitStats["daily"] }) {
   const [active, setActive] = useState<number | null>(null);
   const [asTable, setAsTable] = useState(false);
+  const [width, setWidth] = useState(600);
+  const plot = useRef<HTMLDivElement>(null);
+  const cols = useRef<(HTMLButtonElement | null)[]>([]);
+  useEffect(() => {
+    const el = plot.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([e]) => setWidth(e!.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [asTable]);
+
   const ticks = axis(Math.max(...daily.map((d) => d.visits), 0));
   const top = ticks[ticks.length - 1]!;
-  const every = Math.ceil(daily.length / 7); // about seven date labels whatever the range
+  // As many date labels as fit (about 56px each), evenly spaced, each centred under its bar.
+  const every = Math.max(1, Math.ceil(daily.length / Math.max(2, Math.floor(width / 56))));
+  const labelled = daily.map((_, i) => i % every === 0);
   const point = active === null ? null : daily[active]!;
+  const at = (i: number) => ((i + 0.5) / daily.length) * 100;
+  const focusCol = (i: number) => { setActive(i); cols.current[i]?.focus(); };
+  const onKey = (e: KeyboardEvent) => {
+    const i = active ?? daily.length - 1;
+    const next = e.key === "ArrowLeft" ? i - 1 : e.key === "ArrowRight" ? i + 1 : e.key === "Home" ? 0 : e.key === "End" ? daily.length - 1 : null;
+    if (next === null) return;
+    e.preventDefault();
+    focusCol(Math.max(0, Math.min(daily.length - 1, next)));
+  };
+  const roving = active ?? daily.length - 1; // one tab stop for the whole chart; arrow keys move between days
+
   return (
     <figure className="viz-card">
       <figcaption className="viz-head">
@@ -62,30 +87,28 @@ function DailyChart({ daily }: { daily: VisitStats["daily"] }) {
           </table>
         </div>
       ) : (
-        <div className="viz-chart" onPointerLeave={() => setActive(null)}>
-          <div className="viz-plot">
+        <div className="viz-chart" onPointerLeave={(e) => { if (e.pointerType !== "touch") setActive(null); }}>
+          <div className="viz-plot" ref={plot}>
             {ticks.map((t) => <div key={t} className="viz-grid" style={{ bottom: `${(t / top) * 100}%` }}><span>{n(t)}</span></div>)}
-            <div className="viz-cols" style={{ gap: daily.length > 45 ? 1 : 2 }}>
+            <div className="viz-cols" style={{ gap: daily.length > 45 ? 1 : 2 }} onKeyDown={onKey}>
               {daily.map((d, i) => (
                 <button
                   key={d.day}
+                  ref={(el) => { cols.current[i] = el; }}
                   type="button"
+                  tabIndex={i === roving ? 0 : -1}
                   className={`viz-col${active === i ? " is-active" : ""}`}
                   aria-label={`${dayLabel(d.day, true)}: ${d.visits} visits, ${d.visitors} visitors, ${d.stayed} stayed ${STAYED_SECONDS} seconds or more`}
-                  onPointerEnter={() => setActive(i)}
+                  onPointerEnter={(e) => { if (e.pointerType !== "touch") setActive(i); }}
+                  onClick={() => setActive(i)}
                   onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
                 >
                   {d.visits > 0 && <span className="viz-bar" style={{ height: `${(d.visits / top) * 100}%` }} />}
                 </button>
               ))}
             </div>
             {point && (
-              <div
-                className={`viz-tip${(active! + 0.5) / daily.length < 0.15 ? " at-start" : (active! + 0.5) / daily.length > 0.85 ? " at-end" : ""}`}
-                style={{ left: `${((active! + 0.5) / daily.length) * 100}%` }}
-                role="status"
-              >
+              <div className={`viz-tip${at(active!) < 15 ? " at-start" : at(active!) > 85 ? " at-end" : ""}`} style={{ left: `${at(active!)}%` }} aria-hidden="true">
                 <p className="viz-tip-day">{dayLabel(point.day, true)}</p>
                 <p><strong>{n(point.visits)}</strong> visits</p>
                 <p><strong>{n(point.visitors)}</strong> visitors</p>
@@ -93,8 +116,10 @@ function DailyChart({ daily }: { daily: VisitStats["daily"] }) {
               </div>
             )}
           </div>
-          <div className="viz-xaxis">
-            {daily.map((d, i) => <span key={d.day}>{i % every === 0 || i === daily.length - 1 ? dayLabel(d.day) : ""}</span>)}
+          <div className="viz-xaxis" aria-hidden="true">
+            {daily.map((d, i) => labelled[i] && (
+              <span key={d.day} className={at(i) < 6 ? "at-start" : at(i) > 94 ? "at-end" : undefined} style={{ left: `${at(i)}%` }}>{dayLabel(d.day)}</span>
+            ))}
           </div>
         </div>
       )}
@@ -102,11 +127,11 @@ function DailyChart({ daily }: { daily: VisitStats["daily"] }) {
   );
 }
 
-function List({ title, rows, total, empty }: { title: string; rows: Ranked[]; total: number; empty: string }) {
+function List({ title, rows, total, empty, note }: { title: string; rows: Ranked[]; total: number; empty: string; note?: string }) {
   const max = Math.max(...rows.map((r) => r.visits), 1);
   return (
     <section className="viz-card">
-      <h3 className="viz-head"><strong>{title}</strong></h3>
+      <h2 className="viz-head"><strong>{title}</strong></h2>
       {rows.length === 0 ? <p className="viz-muted">{empty}</p> : (
         <ol className="viz-list">
           {rows.map((r) => (
@@ -118,33 +143,40 @@ function List({ title, rows, total, empty }: { title: string; rows: Ranked[]; to
           ))}
         </ol>
       )}
+      {note && rows.length > 0 && <p className="viz-foot mt-3">{note}</p>}
     </section>
   );
 }
 
-export function VisitorStats({ password }: { password: string }) {
+export function VisitorStats({ password, onSignedOut, onCountingChange }: { password: string; onSignedOut: () => void; onCountingChange?: () => void }) {
   const [days, setDays] = useState<number>(7);
   const [stats, setStats] = useState<VisitStats | null>(null);
+  const [emailAlerts, setEmailAlerts] = useState(true);
   const [problem, setProblem] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [counted, setCounted] = useState(true);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => { setCounted(isCountingThisDevice()); }, []);
   useEffect(() => {
+    if (!password) return;
     let live = true;
     setLoading(true);
     getVisitStats({ data: { password, days } })
       .then((res) => {
         if (!live) return;
-        if (res.status === "ok") { setStats(res.stats); setProblem(null); }
-        else setProblem(res.status === "offline" ? "Couldn't read the visitor numbers from the database. Try again in a minute." : "Please sign in again.");
+        if (res.status === "ok") { setStats(res.stats); setEmailAlerts(res.emailAlerts); setProblem(null); return; }
+        setStats(null); // never leave another period's numbers under this period's button
+        if (res.status === "offline") setProblem("Couldn't read the visitor numbers from the database.");
+        else onSignedOut();
       })
-      .catch(() => live && setProblem("Couldn't load the visitor numbers. Check your connection and try again."))
-      .finally(() => live && setLoading(false));
+      .catch(() => { if (live) { setStats(null); setProblem("Couldn't load the visitor numbers. Check your connection."); } })
+      .finally(() => { if (live) setLoading(false); });
     return () => { live = false; };
-  }, [password, days]);
+  }, [password, days, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const s = stats;
+  const perDay = s ? s.visits / s.days : 0;
   return (
     <div className="viz-root">
       <div className="viz-ranges" role="group" aria-label="Period">
@@ -152,29 +184,50 @@ export function VisitorStats({ password }: { password: string }) {
           <button key={r.days} type="button" aria-pressed={days === r.days} className={days === r.days ? "is-on" : ""} onClick={() => setDays(r.days)}>{r.label}</button>
         ))}
       </div>
-      {problem && <p className="mt-4 text-red-800">{problem}</p>}
+      {problem && (
+        <p className="mt-4 text-red-800">
+          {problem}{" "}
+          <button type="button" className="viz-link" onClick={() => setAttempt((a) => a + 1)}>Try again</button>
+        </p>
+      )}
+      {s && !emailAlerts && (
+        <p className="viz-warn">Lead emails aren't set up (RESEND_API_KEY in Vercel). They are the backup copy of every enquiry if the database is ever down.</p>
+      )}
+      {s && perDay > BUSY_VISITS_PER_DAY && (
+        <p className="viz-warn">Your site is getting busy (about {n(Math.round(perDay))} visits a day). Ask for the visitor numbers to move to their own free database, so they can never use up the enquiries database's monthly allowance.</p>
+      )}
       {s && (
         <div className={loading ? "viz-loading" : undefined} aria-busy={loading}>
           <div className="viz-tiles">
-            <Tile label="Visitors" value={n(s.visitors)} note={change(s.visitors, s.previous.visitors, s.days) ?? "Different people, each counted once a day"} />
-            <Tile label="Visits" value={n(s.visits)} note={change(s.visits, s.previous.visits, s.days) ?? `${n(s.pageViews)} pages opened`} />
+            <Tile label="Visitors" value={n(s.visitors)} note={[change(s.visitors, s.previous?.visitors, s.days), s.days > 1 ? "each person counted once a day" : "different people"].filter(Boolean).join(" · ")} />
+            <Tile label="Visits" value={n(s.visits)} note={change(s.visits, s.previous?.visits, s.days) ?? `${n(s.pageViews)} pages opened`} />
             <Tile label={`Stayed ${STAYED_SECONDS} seconds or more`} value={pct(s.stayed, s.visits)} note={`${n(s.stayed)} of ${n(s.visits)} visits`} />
             <Tile label="Typical visit" value={s.visits ? duration(s.medianSeconds) : "–"} note="Half of visits were shorter, half longer" />
-            <Tile label="Enquiries" value={n(s.enquiries)} note={s.enquiries && s.visits ? `1 for every ${n(Math.round(s.visits / s.enquiries))} visits` : "Form and FelicityBot"} />
+            <Tile
+              label="Enquiries"
+              value={s.enquiries === null ? "–" : n(s.enquiries)}
+              note={s.enquiries === null ? "Couldn't read the enquiries" : s.enquiries && s.visits >= 2 * s.enquiries ? `1 for every ${n(Math.round(s.visits / s.enquiries))} visits` : "Form and FelicityBot"}
+            />
           </div>
           {s.days > 1 && <DailyChart daily={s.daily} />}
           <div className="viz-lists">
             <List title="Pages they opened" rows={s.pages} total={s.visits} empty="No visits yet in this period." />
-            <List title="Where they came from" rows={s.sources} total={s.visits} empty="No visits yet in this period." />
+            <List title="Where they came from" rows={s.sources} total={s.visits} empty="No visits yet in this period." note="Direct: typed in, bookmarked, or opened from an app that doesn't say where from (WhatsApp often doesn't)." />
             <List title="Countries" rows={s.countries} total={s.visits} empty="No visits yet in this period." />
             <List title="Devices" rows={s.devices} total={s.visits} empty="No visits yet in this period." />
           </div>
           <p className="viz-foot">
-            Time counts only while the site is on screen and in use. A visit ends after half an hour away. No cookies are used.{" "}
+            Time counts only while the site is on screen and in use; half an hour without use ends a visit. Visits show here once the
+            visitor leaves or switches away. No cookies are used.
+          </p>
+          <p className="viz-foot">
             {counted ? "Your visits from this browser are counted." : "Your own visits from this browser are not counted."}{" "}
-            <button type="button" className="viz-link" onClick={() => setCounted(setCountingThisDevice(!counted))}>
+            <button type="button" className="viz-link" onClick={() => { setCounted(setCountingThisDevice(!counted)); onCountingChange?.(); }}>
               {counted ? "Don't count this browser" : "Count it again"}
             </button>
+            <br />
+            Sign in here once in each browser you use. For Instagram's or WhatsApp's built-in browser, open
+            dxbdubaicreekharbour.ae/leads?me=1 there once. Private windows and the site's home-screen icon on iPhone are still counted.
           </p>
         </div>
       )}

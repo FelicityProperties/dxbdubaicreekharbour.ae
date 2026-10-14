@@ -13,5 +13,6 @@ export const getVisitStats = createServerFn({ method: "POST" })
     const stats = await visitStats(days);
     if (!stats) return { status: "offline" };
     const enquiries = await countEnquiries(stats.from, stats.to);
-    return { status: "ok", stats: { ...stats, enquiries: enquiries ?? 0 } };
+    // The lead email is the backup when the database is down, so say so if it isn't set up.
+    return { status: "ok", stats: { ...stats, enquiries }, emailAlerts: !!process.env["RESEND_API_KEY"] };
   });

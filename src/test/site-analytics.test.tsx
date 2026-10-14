@@ -52,4 +52,27 @@ describe("Visit counting in the browser", () => {
     hide();
     expect(sent).toHaveLength(0);
   });
+  it("starts a new visit when an open tab is used again after half an hour", async () => {
+    const view = render(<SiteAnalytics />);
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(20_000); });
+    hide();
+    act(() => { vi.advanceTimersByTime(3 * 3600_000); });
+    show(); document.dispatchEvent(new Event("visibilitychange"));
+    path = "/market"; view.rerender(<SiteAnalytics />);
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(10_000); });
+    hide();
+    vi.useRealTimers();
+    const first = JSON.parse(await read(sent[0]!)) as { id: string; seconds: number };
+    const second = JSON.parse(await read(sent.at(-1)!)) as { id: string; pages: string[]; seconds: number };
+    expect(second.id).not.toBe(first.id);
+    expect(first.seconds).toBe(20);
+    expect(second.pages).toEqual(["/projects/creek-haven", "/market"]);
+    expect(second.seconds).toBe(10);
+  });
+  it("doesn't report a tab that was never looked at", () => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    render(<SiteAnalytics />);
+    window.dispatchEvent(new Event("pagehide"));
+    expect(sent).toHaveLength(0);
+  });
 });

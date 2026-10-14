@@ -7,6 +7,7 @@
  * needs no setup.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { withTimeout } from "@/lib/with-timeout";
 import { PROJECTS, SITE } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
 
@@ -194,7 +195,7 @@ async function emailLeadAlert(lead: Record<string, string | null>, note = ""): P
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: [to], subject, text: `${note}${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
+        body: JSON.stringify({ from, to: [to], subject, text: `${note}${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads?tab=enquiries`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
         signal: AbortSignal.timeout(8000),
       });
       if (res.ok) return true;
@@ -311,16 +312,20 @@ export async function recordEnquiry(row: EnquiryRecord): Promise<{ ok: true } | 
   if (!url) console.error("enquiry not saved: DATABASE_URL is not set");
   else {
     try {
-      const sql = await connect(url);
-      await ensureTable(sql);
-      await sql`
-        INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
-        VALUES (
-          ${row.name}, ${row.phone}, ${row.email}, ${row.country}, ${row.language},
-          ${row.project}, ${row.looking_for}, ${row.buy_as}, ${row.bedrooms}, ${row.budget},
-          ${row.timing}, ${row.funding}, ${row.message}, ${row.page}
-        )
-      `;
+      // A database that hangs rather than refusing must not keep the email from going out (FelicityBot saves
+      // with about 12 s to spare, the alert takes up to 8 s), so the database gets 5 s.
+      await withTimeout((async () => {
+        const sql = await connect(url);
+        await ensureTable(sql);
+        await sql`
+          INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
+          VALUES (
+            ${row.name}, ${row.phone}, ${row.email}, ${row.country}, ${row.language},
+            ${row.project}, ${row.looking_for}, ${row.buy_as}, ${row.bedrooms}, ${row.budget},
+            ${row.timing}, ${row.funding}, ${row.message}, ${row.page}
+          )
+        `;
+      })(), 5000);
       stored = true;
     } catch (err) {
       console.error("enquiry not saved:", redact(err, url));

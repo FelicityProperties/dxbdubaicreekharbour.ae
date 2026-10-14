@@ -16,7 +16,7 @@ vi.mock("@/lib/enquiries.functions", async (orig) => ({
   getLeads: async () => ({ status: "ok", leads: [] }),
 }));
 vi.mock("@/lib/visits.functions", () => ({
-  getVisitStats: async (o: { data: unknown }) => { asked.push(o.data); return { status: "ok", stats }; },
+  getVisitStats: async (o: { data: unknown }) => { asked.push(o.data); return { status: "ok", stats, emailAlerts: true }; },
 }));
 
 import { Route } from "@/routes/leads";
@@ -30,10 +30,11 @@ describe("/leads", () => {
   it("shows the visitor numbers and stops counting this browser once the password is typed in", async () => {
     render(<Page />);
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "x".repeat(24) } });
-    fireEvent.click(screen.getByRole("button", { name: /show enquiries/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
     await screen.findByText("42");
     expect(screen.getByText("54%")).toBeTruthy(); // 31 of 57 stayed 30 s+
     expect(screen.getByText("1 min 14 s")).toBeTruthy();
+    expect(screen.getByText(/▲ 40% on the 7 days before · each person counted once a day/)).toBeTruthy();
     expect(asked[0]).toEqual({ password: "x".repeat(24), days: 7 });
     expect(isCountingThisDevice()).toBe(false);
     await screen.findByText(/Your own visits from this browser are not counted/);
@@ -47,6 +48,14 @@ describe("/leads", () => {
     render(<Page />);
     await screen.findByText(/Your visits from this browser are counted/);
     expect(isCountingThisDevice()).toBe(true);
+  });
+  it("opens on the enquiries from the lead email's link", async () => {
+    window.history.replaceState(null, "", "/leads?tab=enquiries");
+    sessionStorage.setItem("dxbch-leads-password", "x".repeat(24));
+    render(<Page />);
+    await screen.findByText(/0 enquiries, newest first/);
+    expect(screen.getByRole("button", { name: /^enquiries/i }).getAttribute("aria-pressed")).toBe("true");
+    window.history.replaceState(null, "", "/");
   });
   it("marks a browser from the /leads?me=1 link, without the password", async () => {
     window.history.replaceState(null, "", "/leads?me=1");

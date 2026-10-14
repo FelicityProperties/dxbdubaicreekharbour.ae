@@ -20,7 +20,10 @@ beforeEach(() => { writes.length = 0; process.env["DATABASE_URL"] = "postgresql:
 
 describe("Visit reports", () => {
   it("keeps only the site's own pages, once each, and sane totals", () => {
-    expect(cleanReport(report, sitePath)).toEqual({ ...report, pages: ["/", "/projects/creek-haven"], src: "" });
+    expect(cleanReport(report, sitePath)).toEqual({ ...report, pages: ["/", "/projects/creek-haven"], src: "", touch: false });
+    // Names every object has are not pages (they once crashed /leads).
+    for (const fake of ["__proto__", "constructor", "toString", "hasOwnProperty"]) expect(sitePath(fake), fake).toBeNull();
+    expect(cleanReport({ ...report, pages: ["__proto__", "constructor"] }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, id: "x" }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, pages: ["/leads"] }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, seconds: 1e9, views: -5 }, sitePath)).toMatchObject({ seconds: 4 * 3600, views: 2 });
@@ -32,11 +35,17 @@ describe("Visit reports", () => {
     expect(sourceName("", "", "dxbdubaicreekharbour.ae")).toBe("Direct");
     expect(sourceName("https://www.google.com/", "ig", "dxbdubaicreekharbour.ae")).toBe("Instagram");
     expect(sourceName("https://news.example.org/a", "", "dxbdubaicreekharbour.ae")).toBe("news.example.org");
+    expect(sourceName("https://chatgpt.com/", "chatgpt.com", "dxbdubaicreekharbour.ae")).toBe("ChatGPT");
+    expect(sourceName("android-app://com.whatsapp/", "", "dxbdubaicreekharbour.ae")).toBe("WhatsApp");
+    expect(sourceName("", "constructor", "dxbdubaicreekharbour.ae")).toBe("Constructor");
   });
   it("tells phones, tablets and computers apart, and robots from people", () => {
     expect(deviceName(PHONE)).toBe("Phone");
     expect(deviceName("Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X)")).toBe("Tablet");
     expect(deviceName("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130.0")).toBe("Computer");
+    const mac = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
+    expect(deviceName(mac)).toBe("Computer");
+    expect(deviceName(mac, true)).toBe("Tablet"); // an iPad
     expect(isRobot("Googlebot/2.1")).toBe(true);
     expect(isRobot("Mozilla/5.0 HeadlessChrome/130")).toBe(true);
     expect(isRobot(PHONE)).toBe(false);

@@ -12,8 +12,9 @@ const NAMES: Record<string, string> = {
 export function sitePath(raw: unknown): string | null {
   if (typeof raw !== "string" || raw.length > 200) return null;
   const path = raw.length > 1 ? raw.replace(/\/+$/, "") : raw;
-  return path in NAMES ? path : null;
+  // Own keys only: "constructor", "__proto__" and friends are not pages.
+  return path.startsWith("/") && Object.hasOwn(NAMES, path) ? path : null;
 }
 
 /** A page's name for people ("Creek Haven", "Payment plans"). */
-export const pageName = (path: string) => NAMES[path] ?? path;
+export const pageName = (path: string): string => (Object.hasOwn(NAMES, path) ? NAMES[path]! : String(path));

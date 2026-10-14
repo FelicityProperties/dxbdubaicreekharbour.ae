@@ -92,7 +92,10 @@ function LeadsPage() {
       const stillCounted = setCountingThisDevice(false);
       setMarked(stillCounted ? "blocked" : "ok");
     }
-    try { if (localStorage.getItem(TAB) === "enquiries") setTab("enquiries"); } catch { /* default tab */ }
+    // The lead email links to ?tab=enquiries; otherwise the tab last used here.
+    const wanted = new URLSearchParams(window.location.search).get("tab");
+    if (wanted === "enquiries" || wanted === "visitors") setTab(wanted);
+    else try { if (localStorage.getItem(TAB) === "enquiries") setTab("enquiries"); } catch { /* default tab */ }
     const saved = readSaved();
     if (saved) void load(saved);
   }, []);
@@ -130,7 +133,7 @@ function LeadsPage() {
             />
           </label>
           <Button type="submit" disabled={busy || !password} className="min-h-11">
-            {busy ? "Checking…" : "Show enquiries"}
+            {busy ? "Checking…" : "Sign in"}
           </Button>
         </form>
       )}
@@ -147,7 +150,7 @@ function LeadsPage() {
 
       {result?.status === "ok" && (
         <>
-          <div className="viz-tabs" role="tablist" aria-label="Show">
+          <div className="viz-tabs" role="group" aria-label="Show">
             {(
               [
                 ["visitors", "Visitors"],
@@ -157,8 +160,7 @@ function LeadsPage() {
               <button
                 key={id}
                 type="button"
-                role="tab"
-                aria-selected={tab === id}
+                aria-pressed={tab === id}
                 onClick={() => {
                   setTab(id);
                   try { localStorage.setItem(TAB, id); } catch { /* remembered for this visit only */ }
@@ -168,8 +170,18 @@ function LeadsPage() {
               </button>
             ))}
           </div>
-          {tab === "visitors" && <VisitorStats password={signedIn} />}
-          {tab === "enquiries" && (<>
+          <div hidden={tab !== "visitors"}>
+            <VisitorStats
+              password={signedIn}
+              onCountingChange={() => setMarked(null)}
+              onSignedOut={() => {
+                try { sessionStorage.removeItem(KEY); } catch { /* ignore */ }
+                setSignedIn("");
+                setResult({ status: "wrong-password" });
+              }}
+            />
+          </div>
+          <div hidden={tab !== "enquiries"}>
           <p className="mt-6 text-muted-foreground">
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.
           </p>
@@ -232,7 +244,7 @@ function LeadsPage() {
               );
             })}
           </div>
-          </>)}
+          </div>
         </>
       )}
     </main>
