@@ -64,8 +64,8 @@
 - [ ] Owner: Anthropic API key in Vercel (`ANTHROPIC_API_KEY`) with a monthly spend limit, then redeploy
 
 ## October 2026: visitor numbers
-- [x] Vercel Web Analytics: visitors, page views, bounce rate, pages, sources, countries, devices; no cookies
-- [x] Owner's browsers left out (sign in on /leads, or /leads?me=1), /leads never counted, "#chat" not counted as a page
-- [x] "Who stayed": visits on screen 30 seconds or more, as the /stayed-30-seconds line
-- [ ] Owner: Vercel → project → Analytics → Enable, then redeploy; sign in on /leads in each browser
-- [ ] Optional: exact time on site (needs Vercel Pro custom events, or a small Redis store)
+- [x] Own visitor numbers on /leads (Visitors tab): visitors, visits, stayed 30 s+, typical visit length, enquiries, visits per day, pages, sources, countries, devices
+- [x] No cookies, no outside service, no IP stored; one database row per visit
+- [x] Owner's browsers left out (sign in on /leads, or /leads?me=1); /leads never counted
+- [x] Enquiries still emailed when the database is down
+- [ ] If traffic grows: separate free database for visit numbers (ANALYTICS_DATABASE_URL)

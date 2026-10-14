@@ -113,7 +113,7 @@ export const PRIVACY: LegalDoc = {
         "FelicityBot, the AI assistant. When you chat with FelicityBot, the messages in that chat and the address of the page you are on are sent to our AI provider so it can write each answer. We do not save the chat. The conversation stays in your browser tab until you close it or start a new chat. To stop misuse, we count how many questions each connection asks per day, using a scrambled code made from its IP address rather than the address itself; these counts are deleted after about three days. If you ask FelicityBot to pass your details to us, it saves your name, phone number, email if you give one, and a short note of what you asked for, as an enquiry, exactly like the enquiry form.",
         "WhatsApp. If you message us on WhatsApp, we receive your number and whatever you write. WhatsApp (Meta) handles the message under its own terms.",
         "Server logs. The company that hosts the website keeps ordinary server logs, including IP addresses, for security and to keep the site running.",
-        "Visit statistics. The hosting provider also counts visits for us with its web-analytics service: which pages are opened, the site you came from, your country, your browser, operating system and device type, and whether a visit kept the site on screen for at least 30 seconds. It uses no cookies. It tells visits apart with a code made from your connection that resets every day, so it cannot follow you from one day to the next or across other websites, and we only ever see totals."
+        "Visit statistics. The site counts its own visits, without cookies and without any outside analytics service. For each visit it records the pages you open, how long the site is on your screen and in use, the site or campaign you came from, your country (as our hosting provider reports it from your connection) and whether you use a phone, tablet or computer. A random code kept only in your browser tab ties one visit's pages together. To count people rather than visits, it also stores a code made from your connection and browser that changes every day, so it cannot follow you from one day to the next; your IP address itself is not stored. Only the operator sees the numbers, as totals."
       ]
     },
     {
@@ -128,8 +128,8 @@ export const PRIVACY: LegalDoc = {
       "heading": "Who else handles your data",
       "paragraphs": [
         "Four companies handle data on our behalf so the site can work: the hosting provider, the database provider, the email-delivery provider and the AI provider. Each may use your data only to provide its service to us, and none of them may use it for their own marketing.",
-        "Hosting provider: runs the website, keeps the server logs and counts visits (the visit statistics above).",
-        "Database provider: a cloud provider stores enquiries in a database on our behalf. Only the operator can see enquiries, behind a password.",
+        "Hosting provider: runs the website and keeps the server logs.",
+        "Database provider: a cloud provider stores enquiries and the visit statistics in a database on our behalf. Only the operator can see them, behind a password.",
         "Email-delivery provider: each enquiry is also emailed to the operator through an email-delivery provider.",
         "AI provider: Anthropic processes the messages you send to FelicityBot, on our behalf and under its commercial terms, to write the answers.",
         "One other company receives data directly from you, and handles it under its own terms and privacy rules, which we do not control:",
@@ -146,7 +146,7 @@ export const PRIVACY: LegalDoc = {
     {
       "heading": "Cookies and tracking",
       "paragraphs": [
-        "The site sets no advertising cookies, and its visit statistics work without cookies.",
+        "The site sets no cookies for advertising or tracking. Its visit statistics use your browser's session storage, which is cleared when you close the tab, instead of cookies.",
         "Apart from the visit statistics and FelicityBot's question counts described above, the only technical data collected when you browse is the hosting provider's server logs. FelicityBot keeps your current chat in your browser's session storage, which is cleared when you close the tab; it is not a cookie and is sent to us only as part of your next question. If that changes, we will update this notice."
       ]
     },
@@ -154,7 +154,7 @@ export const PRIVACY: LegalDoc = {
       "heading": "How long we keep it",
       "paragraphs": [
         "We keep your enquiry while it is open and for up to 24 months after that, so we can follow up if a project you asked about changes. If you ask us to delete your details sooner, we will.",
-        "Messages on WhatsApp are kept under WhatsApp's own terms. Server logs are kept by the hosting provider for its security and operations. Visit statistics are kept by the hosting provider under its own terms, and we only see totals; the daily code that tells visits apart is not kept from one day to the next."
+        "Messages on WhatsApp are kept under WhatsApp's own terms. Server logs are kept by the hosting provider for its security and operations. Visit statistics are deleted after 13 months."
       ]
     },
     {

@@ -1,13 +1,16 @@
 /**
- * Private list of website enquiries (see src/lib/enquiries.functions.ts).
- * The password is LEADS_PASSWORD in Vercel; it is checked on the server and
- * no enquiry leaves the server without it.
+ * The owner's private page: website enquiries (src/lib/enquiries.functions.ts)
+ * and visitor numbers (src/components/leads/VisitorStats.tsx). The password is
+ * LEADS_PASSWORD in Vercel; it is checked on the server and nothing leaves the
+ * server without it. Typing it here also stops this browser's visits being
+ * counted.
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
-import { STAYED_PATH, isCountingThisDevice, setCountingThisDevice } from "@/components/SiteAnalytics";
+import { setCountingThisDevice } from "@/components/SiteAnalytics";
+import { VisitorStats } from "@/components/leads/VisitorStats";
 
 export const Route = createFileRoute("/leads")({
   head: () => ({
@@ -17,6 +20,7 @@ export const Route = createFileRoute("/leads")({
 });
 
 const KEY = "dxbch-leads-password";
+const TAB = "dxbch-leads-tab";
 
 const dubaiTime = new Intl.DateTimeFormat("en-GB", {
   timeZone: "Asia/Dubai",
@@ -56,21 +60,19 @@ function LeadsPage() {
   const [password, setPassword] = useState("");
   const [result, setResult] = useState<LeadsResult | null>(null);
   const [busy, setBusy] = useState(false);
-  const [counted, setCounted] = useState(true);
   const [marked, setMarked] = useState<null | "ok" | "blocked">(null);
+  const [signedIn, setSignedIn] = useState(""); // the password that worked, for the visitor numbers
+  const [tab, setTab] = useState<"visitors" | "enquiries">("visitors");
 
   async function load(pw: string, typed = false) {
     setBusy(true);
     try {
       const res = await getLeads({ data: { password: pw } });
       setResult(res);
-      // Signing in marks this device as the owner's: its visits stay out of the visitor numbers.
+      if (res.status === "ok") setSignedIn(pw);
+      // Signing in marks this browser as the owner's: its visits stay out of the visitor numbers.
       // (Only when the password is typed, so "Count it again" sticks across reloads of this page.)
-      if (res.status === "ok" && typed) {
-        const stillCounted = setCountingThisDevice(false);
-        setCounted(stillCounted);
-        if (stillCounted) setMarked("blocked");
-      }
+      if (res.status === "ok" && typed && setCountingThisDevice(false)) setMarked("blocked");
       try {
         if (res.status === "ok") sessionStorage.setItem(KEY, pw);
         else sessionStorage.removeItem(KEY);
@@ -90,7 +92,7 @@ function LeadsPage() {
       const stillCounted = setCountingThisDevice(false);
       setMarked(stillCounted ? "blocked" : "ok");
     }
-    setCounted(isCountingThisDevice());
+    try { if (localStorage.getItem(TAB) === "enquiries") setTab("enquiries"); } catch { /* default tab */ }
     const saved = readSaved();
     if (saved) void load(saved);
   }, []);
@@ -99,7 +101,7 @@ function LeadsPage() {
 
   return (
     <main className="container min-h-[calc(100svh-90px)] py-12 max-sm:min-h-[calc(100svh-76px)]">
-      <h1 className="font-[family-name:var(--font-display)] text-[44px]">Enquiries</h1>
+      <h1 className="font-[family-name:var(--font-display)] text-[44px]">{result?.status === "ok" ? "Your website" : "Enquiries"}</h1>
 
       {marked && (
         <p className="mt-4 max-w-md text-[14px]">
@@ -145,41 +147,29 @@ function LeadsPage() {
 
       {result?.status === "ok" && (
         <>
-          <section className="mt-6 max-w-3xl rounded-[3px] border border-border bg-background p-5 text-[14px] leading-relaxed">
-            <h2 className="text-[18px] font-medium">Visitor numbers</h2>
-            <p className="mt-2">
-              In <a className="underline underline-offset-4" href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">Vercel</a>, open this
-              website's project and the <strong>Analytics</strong> tab. Only you can see it.
-            </p>
-            <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li><strong>Visitors</strong>: how many different people came (each person counted once a day).</li>
-              <li>
-                <strong>Who stayed</strong>: in the list of pages, the line <code>{STAYED_PATH}</code> is how many visits kept the site on screen for
-                at least 30 seconds. <strong>Bounce rate</strong> is the share who left within 30 seconds without opening another page.
-              </li>
-              <li><strong>Page views</strong>: pages opened, plus one for each visit that stayed 30 seconds (that same line).</li>
-              <li>The other lists show which pages people read, where they came from (Google, Instagram…), their country and device.</li>
-            </ul>
-            <p className="mt-3">
-              {counted ? "Your visits from this browser are counted." : "This browser is not counted: your visits from it stay out of the numbers."}{" "}
+          <div className="viz-tabs" role="tablist" aria-label="Show">
+            {(
+              [
+                ["visitors", "Visitors"],
+                ["enquiries", `Enquiries (${leads.length})`],
+              ] as const
+            ).map(([id, label]) => (
               <button
+                key={id}
                 type="button"
-                className="underline underline-offset-4"
+                role="tab"
+                aria-selected={tab === id}
                 onClick={() => {
-                  const now = setCountingThisDevice(!counted);
-                  setCounted(now);
-                  setMarked(now && counted ? "blocked" : null);
+                  setTab(id);
+                  try { localStorage.setItem(TAB, id); } catch { /* remembered for this visit only */ }
                 }}
               >
-                {counted ? "Don't count this browser" : "Count it again"}
+                {label}
               </button>
-            </p>
-            <p className="mt-1 text-muted-foreground">
-              Sign in here once in each browser you use (Safari, Chrome, on each phone and computer). Where you'd rather not type the password,
-              such as Instagram's or LinkedIn's built-in browser, open <strong>dxbdubaicreekharbour.ae/leads?me=1</strong> there once. Still counted:
-              private windows, and the site's home-screen icon on iPhone.
-            </p>
-          </section>
+            ))}
+          </div>
+          {tab === "visitors" && <VisitorStats password={signedIn} />}
+          {tab === "enquiries" && (<>
           <p className="mt-6 text-muted-foreground">
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.
           </p>
@@ -242,6 +232,7 @@ function LeadsPage() {
               );
             })}
           </div>
+          </>)}
         </>
       )}
     </main>

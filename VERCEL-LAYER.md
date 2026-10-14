@@ -131,24 +131,28 @@ by hand.
     function's `maxDuration` to 60, the most every Vercel plan allows. The
     bot keeps its own deadline (45 s for model calls, and a lead is only
     saved with time left to confirm it) inside that.
-- Visitor numbers: Vercel Web Analytics (`src/components/SiteAnalytics.tsx`,
-  package `@vercel/analytics`). Switch it on once in Vercel: the project →
-  **Analytics** tab → **Enable**, then redeploy. Hobby includes 50,000 events
-  a month (one per page view) and a one-month window. No cookies; one page
-  view per path, never for "#..." jumps such as the chat's "#chat".
-  - "Who stayed": the free plan has no time on site, so a visit that keeps
-    the site on screen for 30 seconds in total sends one extra page view,
-    `/stayed-30-seconds`. Its count is the visits that stayed; the bounce
-    rate becomes the share who left within 30 seconds without opening
-    another page; page views include that extra one.
-  - The owner's own visits: a browser where the password is typed on
-    `/leads`, or where `/leads?me=1` is opened, gets a "dxbch-dont-count"
-    flag and sends nothing (per browser and app, not per device; private
-    windows and the iPhone home-screen icon can't be marked). `/leads`
-    itself is never counted.
-  - Deliberately not written to the Neon database: page-view writes would
-    keep the free compute awake, and when its monthly allowance runs out
-    Neon suspends the database, which would stop enquiries being saved.
+- Visitor numbers: the site's own, shown on `/leads` (Visitors tab) behind
+  `LEADS_PASSWORD`; nothing to switch on. `src/components/SiteAnalytics.tsx`
+  keeps one visit per browser tab (sessionStorage, no cookies: pages opened,
+  seconds on screen and in use) and reports it to `POST /api/visit`
+  (`src/routes/api.visit.ts` → `src/lib/visits.server.ts`) when the visitor
+  leaves or switches away. One row per visit in `site_visits` (creates
+  itself; rows older than 13 months are deleted), so the database is woken
+  about once per visit, never per page. No IP address is stored: "visitor"
+  is a code from IP + browser that changes daily. `/leads` reads it through
+  `getVisitStats` (`src/lib/visits.functions.ts`).
+  - The owner's own visits: typing the password on `/leads`, or opening
+    `/leads?me=1`, marks that browser ("dxbch-dont-count") and it sends
+    nothing; `/leads` itself is never counted.
+  - Neon's free plan pauses the database for the rest of the month if its
+    compute allowance runs out. So enquiries no longer depend on the
+    database alone: if the insert fails, the lead email still goes out
+    (marked "not on the /leads page") and the visitor sees success. If the
+    site gets busy enough to worry about that, create a second free Neon
+    database and set `ANALYTICS_DATABASE_URL` to it: the visit numbers then
+    live there and can never affect the enquiries' database.
+  - Vercel Web Analytics is no longer used; it can be switched off in the
+    project's Analytics tab.
 - Node.js 22.x (set in `package.json` → `engines`).
 - Both the domain and the two variables must be on the same Vercel project.
 

@@ -75,7 +75,7 @@ const pick = (v: unknown, options: readonly string[]) => {
   return options.includes(s) ? s : null;
 };
 
-function databaseUrl(): string | null {
+export function databaseUrl(): string | null {
   return process.env["DATABASE_URL"] || process.env["POSTGRES_URL"] || null;
 }
 
@@ -107,14 +107,14 @@ export function normalisePhone(raw: string): string {
 export const EMAIL_RE = /^[A-Za-z0-9.!$'*+=^_`{|}~-]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
 
 /** The Neon driver repeats the connection string, password included, in its errors. */
-function redact(err: unknown, url: string | null): string {
+export function redact(err: unknown, url: string | null): string {
   let msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
   if (url) msg = msg.split(url).join("<DATABASE_URL>");
   return msg.replace(/\/\/[^\s'"@/]*@/g, "//<credentials>@");
 }
 
-type Sql = Awaited<ReturnType<typeof connect>>;
-async function connect(url: string) {
+export type Sql = Awaited<ReturnType<typeof connect>>;
+export async function connect(url: string) {
   const { neon } = await import("@neondatabase/serverless");
   return neon(url);
 }
@@ -182,9 +182,9 @@ const asObject = <T,>(d: unknown): T => (d && typeof d === "object" ? d : {}) as
  */
 const DEFAULT_FROM = "DXB Creek Harbour <enquiries@felicitypro.com>";
 const TEST_FROM = "DXB Creek Harbour <onboarding@resend.dev>";
-async function emailLeadAlert(lead: Record<string, string | null>): Promise<void> {
+async function emailLeadAlert(lead: Record<string, string | null>, note = ""): Promise<boolean> {
   const key = process.env["RESEND_API_KEY"];
-  if (!key) return;
+  if (!key) return false;
   const to = process.env["LEAD_EMAIL"] || SITE.email;
   const preferred = process.env["LEAD_FROM"] || DEFAULT_FROM;
   const rows = Object.entries(lead).filter(([, v]) => v).map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`);
@@ -194,19 +194,20 @@ async function emailLeadAlert(lead: Record<string, string | null>): Promise<void
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: [to], subject, text: `${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
+        body: JSON.stringify({ from, to: [to], subject, text: `${note}${rows.join("\n")}\n\nAll enquiries: ${SITE.url}/leads`, ...(lead["email"] && EMAIL_RE.test(lead["email"]) ? { reply_to: lead["email"] } : {}) }),
         signal: AbortSignal.timeout(8000),
       });
-      if (res.ok) return;
+      if (res.ok) return true;
       const detail = (await res.text()).slice(0, 200);
       // 403 = sender domain not verified in Resend: try its test sender once; anything else is final.
       if (res.status === 403 && from !== TEST_FROM) { console.warn("lead alert: sender refused, retrying with Resend's test sender:", detail); continue; }
       console.error("lead alert not sent:", res.status, detail);
-      return;
+      return false;
     }
   } catch (err) {
     console.error("lead alert not sent:", err instanceof Error ? err.message : String(err));
   }
+  return false;
 }
 
 /** One enquiry as stored: trimmed strings, null where not given. Shared by the form and FelicityBot. */
@@ -303,28 +304,30 @@ export async function recordEnquiry(row: EnquiryRecord): Promise<{ ok: true } | 
   const problem = enquiryProblem(row);
   if (problem) return { ok: false, reason: "invalid", message: problem };
 
+  // Saved to the database for /leads and emailed to the broker. Either one is enough: if the database
+  // is down (or its free monthly allowance is used up), the email still delivers the lead.
   const url = databaseUrl();
-  if (!url) {
-    console.error("enquiry not saved: DATABASE_URL is not set");
-    return { ok: false, reason: "offline" };
+  let stored = false;
+  if (!url) console.error("enquiry not saved: DATABASE_URL is not set");
+  else {
+    try {
+      const sql = await connect(url);
+      await ensureTable(sql);
+      await sql`
+        INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
+        VALUES (
+          ${row.name}, ${row.phone}, ${row.email}, ${row.country}, ${row.language},
+          ${row.project}, ${row.looking_for}, ${row.buy_as}, ${row.bedrooms}, ${row.budget},
+          ${row.timing}, ${row.funding}, ${row.message}, ${row.page}
+        )
+      `;
+      stored = true;
+    } catch (err) {
+      console.error("enquiry not saved:", redact(err, url));
+    }
   }
-  try {
-    const sql = await connect(url);
-    await ensureTable(sql);
-    await sql`
-      INSERT INTO enquiries (name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page)
-      VALUES (
-        ${row.name}, ${row.phone}, ${row.email}, ${row.country}, ${row.language},
-        ${row.project}, ${row.looking_for}, ${row.buy_as}, ${row.bedrooms}, ${row.budget},
-        ${row.timing}, ${row.funding}, ${row.message}, ${row.page}
-      )
-    `;
-  } catch (err) {
-    console.error("enquiry not saved:", redact(err, url));
-    return { ok: false, reason: "offline" };
-  }
-  await emailLeadAlert({ ...row });
-  return { ok: true };
+  const emailed = await emailLeadAlert({ ...row }, stored ? "" : "NOT ON THE /leads PAGE: the database didn't answer, so this email is the only copy. Keep it.\n\n");
+  return stored || emailed ? { ok: true } : { ok: false, reason: "offline" };
 }
 
 export const submitEnquiry = createServerFn({ method: "POST" })
@@ -362,19 +365,39 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     return { ok: true, firstName: row.name.split(/\s+/)[0] ?? "" };
   });
 
+/** Enquiries received between two Dubai dates (inclusive); null if the database can't be read. */
+export async function countEnquiries(from: string, to: string): Promise<number | null> {
+  const url = databaseUrl();
+  if (!url) return null;
+  try {
+    const sql = await connect(url);
+    await ensureTable(sql);
+    const rows = (await sql`SELECT count(*) AS n FROM enquiries WHERE (created_at AT TIME ZONE 'Asia/Dubai')::date BETWEEN ${from}::date AND ${to}::date`) as { n: number | string }[];
+    return Number(rows[0]?.n ?? 0);
+  } catch (err) {
+    console.error("enquiries not counted:", redact(err, url));
+    return null;
+  }
+}
+
+/** The /leads password check, shared by the enquiries list and the visitor numbers. */
+export async function checkLeadsPassword(password: unknown): Promise<"ok" | "not-configured" | "wrong-password"> {
+  // A short password could be guessed by brute force (there's no lockout on
+  // serverless), so anything under MIN_LEADS_PASSWORD counts as not set up.
+  const expected = process.env["LEADS_PASSWORD"];
+  if (!expected || expected.length < MIN_LEADS_PASSWORD) return "not-configured";
+  const { createHash, timingSafeEqual } = await import("node:crypto");
+  // Hash both sides so the comparison is constant-time whatever the lengths.
+  const a = createHash("sha256").update(String(password ?? "")).digest();
+  const b = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(a, b) ? "ok" : "wrong-password";
+}
+
 export const getLeads = createServerFn({ method: "POST" })
   .validator((d: unknown) => asObject<{ password: string }>(d))
   .handler(async ({ data }): Promise<LeadsResult> => {
-    // A short password could be guessed by brute force (there's no lockout on
-    // serverless), so anything under MIN_LEADS_PASSWORD counts as not set up.
-    const expected = process.env["LEADS_PASSWORD"];
-    if (!expected || expected.length < MIN_LEADS_PASSWORD) return { status: "not-configured" };
-
-    const { createHash, timingSafeEqual } = await import("node:crypto");
-    // Hash both sides so the comparison is constant-time whatever the lengths.
-    const a = createHash("sha256").update(String(data.password ?? "")).digest();
-    const b = createHash("sha256").update(expected).digest();
-    if (!timingSafeEqual(a, b)) return { status: "wrong-password" };
+    const access = await checkLeadsPassword(data.password);
+    if (access !== "ok") return { status: access };
 
     const url = databaseUrl();
     if (!url) return { status: "offline" };

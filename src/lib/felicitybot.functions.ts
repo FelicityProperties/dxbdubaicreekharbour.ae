@@ -25,6 +25,7 @@ import { FELICITYBOT_SYSTEM, SAVE_ENQUIRY_TOOL, supportsFallback, supportsSystem
 import { PROJECT_OPTIONS, enquiryProblem, normalisePhone, recordEnquiry, takeQuota, type EnquiryRecord } from "@/lib/enquiries.functions";
 import { PROJECTS, SITE } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
+import { sitePath } from "@/lib/site-pages";
 import { BOT_LIMITS, cleanTurns, clip, type BotInput, type BotResult, type BotTurn } from "@/lib/felicitybot.shared";
 
 export type { BotTurn, BotInput, BotResult } from "@/lib/felicitybot.shared";
@@ -87,12 +88,7 @@ function signedHistory(turns: BotTurn[], key: Buffer): boolean {
 }
 
 /** Pages the visitor can be on; anything else (a made-up URL) is reported as the home page. */
-const PAGES = new Set(["/", "/projects", "/payment-plans", "/market", "/area", "/guide", "/terms", "/privacy", ...PROJECTS.map((p) => `/projects/${p.slug}`)]);
-function pageOf(raw: unknown): string {
-  if (typeof raw !== "string") return "/";
-  const path = raw.length > 1 ? raw.replace(/\/+$/, "") : raw;
-  return PAGES.has(path) ? path : "/";
-}
+const pageOf = (raw: unknown): string => sitePath(raw) ?? "/";
 
 type SaveInput = { name?: unknown; phone?: unknown; email?: unknown; project?: unknown; request?: unknown; consent_to_contact?: unknown };
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");

@@ -1,28 +1,22 @@
 /**
- * Visitor numbers through Vercel Web Analytics (the dashboard is the owner's
- * Vercel project → Analytics). No cookies; Vercel identifies a visitor with a
- * hash of the request that resets every day.
+ * Visitor numbers, browser side. Keeps one visit in this tab (sessionStorage,
+ * no cookies): the pages opened and the time the site is on screen and in use.
+ * The visit is reported to /api/visit when the visitor leaves or switches
+ * away, with the totals so far; the numbers show on /leads.
  *
- * One page view per page: sent when the path changes, never for a "#..."
- * jump (the enquiry form, the phone chat's "#chat"), so opening the chat
- * doesn't count as a second page. Nothing is sent from a browser marked
- * "don't count" (set when the owner signs in on /leads, or opens /leads?me=1)
- * or from /leads.
- *
- * "Who stayed": Vercel's free plan has no time-on-site figure, so a visit
- * whose page has been on screen for 30 seconds in total sends one extra page
- * view, STAYED_PATH. Its count in the dashboard's Pages list is the number of
- * visits that stayed at least 30 seconds, and the bounce rate becomes the
- * share who left within 30 seconds without opening another page.
+ * Nothing is sent from the owner's browser (marked when the password is typed
+ * on /leads, or by opening /leads?me=1), from /leads itself, or from automated
+ * browsers. "#..." jumps (the phone chat's "#chat", the enquiry form) are not
+ * pages.
  */
-import { useEffect } from "react";
-import { Analytics, type BeforeSendEvent } from "@vercel/analytics/react";
+import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
+import { VISIT_LIMITS, type VisitReport } from "@/lib/visits.shared";
 
 const DONT_COUNT = "dxbch-dont-count";
-const STAYED_SENT = "dxbch-stayed-sent";
-export const STAYED_PATH = "/stayed-30-seconds";
-const STAYED_AFTER_S = 30;
+const VISIT = "dxbch-visit";
+const NEW_VISIT_AFTER_MS = 30 * 60_000; // half an hour away starts a new visit
+const IDLE_AFTER_MS = 2 * 60_000; // no scroll, tap or key for two minutes: stop counting time until the next one
 
 export function isCountingThisDevice(): boolean {
   try { return localStorage.getItem(DONT_COUNT) !== "1"; } catch { return true; }
@@ -33,50 +27,87 @@ export function setCountingThisDevice(count: boolean): boolean {
   return isCountingThisDevice();
 }
 
+type Visit = VisitReport & { last: number };
 const isPrivatePath = (pathname: string) => pathname.toLowerCase().startsWith("/leads");
+const randomId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`);
 
-/* Set just before the "stayed" page view is handed to the (already loaded) script, and used up by the
-   next page view it reports, so that event is filed under STAYED_PATH whatever address the script
-   puts on it. */
-let stayedPending = false;
-
-export function beforeSend(event: BeforeSendEvent): BeforeSendEvent | null {
-  if (!isCountingThisDevice()) { stayedPending = false; return null; }
+function loadVisit(now: number): Visit {
   try {
-    const url = new URL(event.url);
-    if (stayedPending && event.type === "pageview") { stayedPending = false; url.pathname = STAYED_PATH; url.search = ""; }
-    else if (isPrivatePath(url.pathname)) return null;
-    url.hash = "";
-    return { ...event, url: url.toString() };
-  } catch {
-    return event;
-  }
+    const v = JSON.parse(sessionStorage.getItem(VISIT) ?? "null") as Visit | null;
+    if (v && typeof v.id === "string" && Array.isArray(v.pages) && now - v.last < NEW_VISIT_AFTER_MS) return v;
+  } catch { /* start a new one */ }
+  const src = new URLSearchParams(window.location.search).get("utm_source") ?? "";
+  return { id: randomId(), pages: [], views: 0, seconds: 0, ref: document.referrer, src, last: now };
+}
+function storeVisit(v: Visit) {
+  try { sessionStorage.setItem(VISIT, JSON.stringify(v)); } catch { /* private mode: kept in memory for this page */ }
 }
 
 export function SiteAnalytics() {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  // Group the 42 project pages under one route in the dashboard, with each page still listed by its path.
-  const route = path.startsWith("/projects/") ? "/projects/[slug]" : path;
+  const visit = useRef<Visit | null>(null);
+  const active = useRef(false);
 
-  // Count on-screen time across the visit (this tab); at 30 seconds, report the visit as one that stayed.
+  // Count this page.
   useEffect(() => {
-    // Only once Vercel's script is running, so the page views queued before it are reported first.
-    const script = document.querySelector<HTMLScriptElement>('script[src*="/insights/script"]');
-    script?.addEventListener("load", () => { script.dataset["dxbchReady"] = "1"; }, { once: true });
-    try { if (sessionStorage.getItem(STAYED_SENT)) return; } catch { /* no storage: may report once per page load */ }
-    let seen = 0;
-    const timer = window.setInterval(() => {
-      if (document.visibilityState !== "visible" || isPrivatePath(window.location.pathname)) return;
-      if (++seen < STAYED_AFTER_S || script?.dataset["dxbchReady"] !== "1" || !window.va) return;
-      window.clearInterval(timer);
-      try { sessionStorage.setItem(STAYED_SENT, "1"); } catch { /* ignore */ }
-      if (!isCountingThisDevice()) return;
-      stayedPending = true;
-      window.va("pageview", { route: STAYED_PATH, path: STAYED_PATH });
-      window.setTimeout(() => { stayedPending = false; }, 2000);
+    if (!active.current || isPrivatePath(path)) return;
+    const v = visit.current!;
+    if (!v.pages.includes(path) && v.pages.length < VISIT_LIMITS.maxPages) v.pages.push(path);
+    v.views = Math.min(VISIT_LIMITS.maxViews, v.views + 1);
+    v.last = Date.now();
+    storeVisit(v);
+  }, [path]);
+
+  // Start the visit, count time in use, and report on leaving.
+  useEffect(() => {
+    if (!isCountingThisDevice() || navigator.webdriver) return;
+    const now = Date.now();
+    const v = loadVisit(now);
+    visit.current = v;
+    active.current = true;
+    const here = window.location.pathname;
+    if (!isPrivatePath(here)) {
+      if (!v.pages.includes(here)) v.pages.push(here);
+      v.views = Math.min(VISIT_LIMITS.maxViews, v.views + 1);
+    }
+    v.last = now;
+    storeVisit(v);
+
+    let lastInput = now;
+    const input = () => { lastInput = Date.now(); };
+    const events = ["pointerdown", "keydown", "scroll", "touchstart", "wheel", "mousemove"] as const;
+    events.forEach((e) => window.addEventListener(e, input, { passive: true }));
+    const tick = window.setInterval(() => {
+      const t = Date.now();
+      if (document.visibilityState !== "visible" || t - lastInput > IDLE_AFTER_MS || isPrivatePath(window.location.pathname)) return;
+      v.seconds = Math.min(VISIT_LIMITS.maxSeconds, v.seconds + 1);
+      v.last = t;
+      if (v.seconds % 5 === 0) storeVisit(v);
     }, 1000);
-    return () => window.clearInterval(timer);
+
+    let lastSent = "";
+    const report = () => {
+      if (!isCountingThisDevice() || !v.pages.length) return;
+      const body = JSON.stringify({ id: v.id, pages: v.pages, views: v.views, seconds: v.seconds, ref: v.ref, src: v.src } satisfies VisitReport);
+      if (body === lastSent) return; // nothing new since the last report
+      lastSent = body;
+      storeVisit(v);
+      try {
+        if (!navigator.sendBeacon?.("/api/visit", new Blob([body], { type: "text/plain" }))) throw new Error("beacon refused");
+      } catch {
+        void fetch("/api/visit", { method: "POST", body, keepalive: true, headers: { "content-type": "text/plain" } }).catch(() => {});
+      }
+    };
+    const onHide = () => { if (document.visibilityState === "hidden") report(); };
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", report);
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, input));
+      window.clearInterval(tick);
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", report);
+    };
   }, []);
 
-  return <Analytics route={route} path={path} beforeSend={beforeSend} />;
+  return null;
 }
