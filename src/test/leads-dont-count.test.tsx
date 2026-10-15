@@ -11,9 +11,10 @@ const stats: VisitStats = {
   pages: [{ name: "Creek Haven", visits: 20 }], sources: [{ name: "Google", visits: 30 }], countries: [{ name: "United Arab Emirates", visits: 40 }], devices: [{ name: "Phone", visits: 45 }],
 };
 const asked: unknown[] = [];
+let leadsAnswer: unknown = { status: "ok", leads: [] };
 vi.mock("@/lib/enquiries.functions", async (orig) => ({
   ...(await orig<typeof import("@/lib/enquiries.functions")>()),
-  getLeads: async () => ({ status: "ok", leads: [] }),
+  getLeads: async () => leadsAnswer,
 }));
 vi.mock("@/lib/visits.functions", () => ({
   getVisitStats: async (o: { data: unknown }) => { asked.push(o.data); return { status: "ok", stats, emailAlerts: true }; },
@@ -24,9 +25,27 @@ import { isCountingThisDevice } from "@/components/SiteAnalytics";
 
 const Page = Route.options.component as () => React.ReactElement;
 
-beforeEach(() => { localStorage.clear(); sessionStorage.clear(); asked.length = 0; });
+beforeEach(() => { localStorage.clear(); sessionStorage.clear(); asked.length = 0; leadsAnswer = { status: "ok", leads: [] }; });
 
 describe("/leads", () => {
+  it("says the password is right and how to connect the database when none is set", async () => {
+    leadsAnswer = { status: "offline", problem: { kind: "not-set", detail: "", emailAlerts: true } };
+    render(<Page />);
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "x".repeat(24) } });
+    fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
+    await screen.findByText(/The password is right, but no database is connected to this site/);
+    expect(screen.getByText(/new enquiries are still emailed to you/)).toBeTruthy();
+    expect(screen.queryByText(/Database said/)).toBeNull();
+  });
+  it("shows a paused database with its own words, and warns when lead emails are off too", async () => {
+    leadsAnswer = { status: "offline", problem: { kind: "paused", detail: "NeonDbError: Your project has exceeded the compute time quota.", emailAlerts: false } };
+    render(<Page />);
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "x".repeat(24) } });
+    fireEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
+    await screen.findByText(/free monthly allowance is used up/);
+    expect(screen.getByText(/Database said: NeonDbError: Your project has exceeded/)).toBeTruthy();
+    expect(screen.getByText(/Lead emails aren't switched on either/)).toBeTruthy();
+  });
   it("shows the visitor numbers and stops counting this browser once the password is typed in", async () => {
     render(<Page />);
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "x".repeat(24) } });

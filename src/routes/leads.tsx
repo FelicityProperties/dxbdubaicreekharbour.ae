@@ -8,7 +8,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
+import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type DatabaseProblem, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
 import { setCountingThisDevice } from "@/components/SiteAnalytics";
 import { VisitorStats } from "@/components/leads/VisitorStats";
 
@@ -46,6 +46,40 @@ function intl(phone: string, country: string | null): string | null {
   const abroad = !!country && !UAE_COUNTRY.test(country);
   if (!abroad && UAE_RE.test(d)) return `971${d.replace(/^0/, "")}`;
   return null;
+}
+
+const FIX: Record<DatabaseProblem["kind"], string> = {
+  "not-set":
+    "The password is right, but no database is connected to this site, so enquiries can't be listed here. In Vercel, open the project that has dxbdubaicreekharbour.ae under Domains, go to Storage and connect your Neon database with Production ticked, then redeploy.",
+  paused:
+    "The password is right, but your Neon database is paused: its free monthly allowance is used up. It comes back on the 1st of next month, or straight away if you upgrade the Neon plan.",
+  login:
+    "The password is right, but the database refused the login in DATABASE_URL (its password may have changed). Copy the connection string from Neon again into DATABASE_URL in Vercel, then redeploy.",
+  "bad-address":
+    "The password is right, but DATABASE_URL in Vercel isn't a valid database address. Paste the connection string from Neon exactly as given (it starts with postgresql://), then redeploy.",
+  unreachable: "The password is right, but the database didn't answer. Try again in a minute; if it keeps happening, check the database in Neon.",
+  other: "The password is right, but the database gave an error.",
+};
+
+/** Why the enquiries can't be shown, in steps the owner can take (sent only once the password is accepted). */
+function DatabaseTrouble({ problem }: { problem: DatabaseProblem | undefined }) {
+  if (!problem)
+    return (
+      <p className="mt-4 max-w-2xl text-red-800">
+        Couldn't get an answer from the website. If your internet is working, the site or its database may be having trouble — try again in a minute.
+      </p>
+    );
+  return (
+    <div className="mt-4 grid max-w-2xl gap-2">
+      <p className="text-red-800">{FIX[problem.kind]}</p>
+      {problem.detail && <p className="text-[13px] text-muted-foreground [overflow-wrap:anywhere]">Database said: {problem.detail}</p>}
+      <p className="text-[14px] text-muted-foreground">
+        {problem.emailAlerts
+          ? "Meanwhile, new enquiries are still emailed to you."
+          : "Lead emails aren't switched on either (RESEND_API_KEY in Vercel), so a visitor who enquires now sees an error and is offered WhatsApp instead."}
+      </p>
+    </div>
+  );
 }
 
 function readSaved(): string {
@@ -144,9 +178,7 @@ function LeadsPage() {
         </p>
       )}
       {result?.status === "wrong-password" && <p className="mt-4 text-red-800">Wrong password.</p>}
-      {result?.status === "offline" && (
-        <p className="mt-4 text-red-800">Couldn't reach the database. Check DATABASE_URL in Vercel, then try again.</p>
-      )}
+      {result?.status === "offline" && <DatabaseTrouble problem={result.problem} />}
 
       {result?.status === "ok" && (
         <>

@@ -68,9 +68,25 @@ export type LeadsResult =
   | { status: "ok"; leads: Lead[] }
   | { status: "not-configured" }
   | { status: "wrong-password" }
-  | { status: "offline" };
+  | { status: "offline"; problem?: DatabaseProblem };
 
-const text = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
+/**
+ * Why the enquiries couldn't be read, for the owner (only ever sent after the
+ * password has been accepted): no database address in this deployment, or the
+ * database's own error in words he can act on, plus whether lead emails are on.
+ */
+export type DatabaseProblem = { kind: "not-set" | "paused" | "login" | "bad-address" | "unreachable" | "other"; detail: string; emailAlerts: boolean };
+
+/** Sorts a database error into something the owner can fix; the message is passed through redact() first. */
+export function databaseProblem(message: string): DatabaseProblem["kind"] {
+  if (/quota|exceeded|limit has been reached|endpoint (is|has been) disabled|suspended/i.test(message)) return "paused";
+  if (/password authentication failed|28P01|role .* does not exist|authentication/i.test(message)) return "login";
+  if (/connection string|not a valid url|invalid url|cannot parse|wrong url scheme|missing user, host or database|failed to parse url/i.test(message)) return "bad-address";
+  if (/error connecting to database|fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|timed? ?out|network/i.test(message)) return "unreachable";
+  return "other";
+}
+
+const text =(v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const pick = (v: unknown, options: readonly string[]) => {
   const s = text(v, 80);
   return options.includes(s) ? s : null;
@@ -404,19 +420,26 @@ export const getLeads = createServerFn({ method: "POST" })
     const access = await checkLeadsPassword(data.password);
     if (access !== "ok") return { status: access };
 
+    const emailAlerts = !!process.env["RESEND_API_KEY"];
     const url = databaseUrl();
-    if (!url) return { status: "offline" };
+    if (!url) return { status: "offline", problem: { kind: "not-set", detail: "", emailAlerts } };
     try {
-      const sql = await connect(url);
-      await ensureTable(sql);
-      const rows = (await sql`
-        SELECT id::text AS id, created_at, name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page
-        FROM enquiries ORDER BY created_at DESC LIMIT 500
-      `) as Lead[];
-      await cleanCounters(sql, url);
+      // A database that hangs rather than refusing is cut off well before the function's own limit, so the
+      // owner gets the advice below instead of a bare server error.
+      const rows = await withTimeout((async () => {
+        const sql = await connect(url);
+        await ensureTable(sql);
+        const found = (await sql`
+          SELECT id::text AS id, created_at, name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page
+          FROM enquiries ORDER BY created_at DESC LIMIT 500
+        `) as Lead[];
+        await cleanCounters(sql, url);
+        return found;
+      })(), 20_000);
       return { status: "ok", leads: rows.map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() })) };
     } catch (err) {
-      console.error("leads read failed:", redact(err, url));
-      return { status: "offline" };
+      const detail = redact(err, url).slice(0, 300);
+      console.error("leads read failed:", detail);
+      return { status: "offline", problem: { kind: databaseProblem(detail), detail, emailAlerts } };
     }
   });
