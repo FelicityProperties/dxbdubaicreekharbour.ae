@@ -1,4 +1,5 @@
-// Regenerates public/sitemap.xml from the data files: `npm run sitemap`, then commit.
+// Regenerates public/sitemap.xml and public/robots.txt from the data files: `npm run sitemap`, then commit.
+// Every address is SITE.url (the www host Vercel serves): Google won't index a sitemap URL that redirects.
 // A test (src/test/data-integrity.test.ts) fails if a page or project is missing,
 // so the file cannot silently drift from the routes.
 import { readFileSync, writeFileSync } from "node:fs";
@@ -17,4 +18,5 @@ const rows = [
   url("/terms", TERMS.lastUpdated), url("/privacy", PRIVACY.lastUpdated),
 ];
 writeFileSync(new URL("../public/sitemap.xml", import.meta.url), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.join("\n")}\n</urlset>\n`);
+writeFileSync(new URL("../public/robots.txt", import.meta.url), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 console.log(`sitemap.xml: ${rows.length} URLs`);

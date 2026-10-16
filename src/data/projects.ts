@@ -5,7 +5,7 @@
 
 export const SITE = {
   name: "DXB Creek Harbour",
-  url: "https://dxbdubaicreekharbour.ae",
+  url: "https://www.dxbdubaicreekharbour.ae", // the address Vercel serves; the bare domain redirects here, so every canonical, sitemap and share link must use it
   whatsapp: "971563520611",
   whatsappDisplay: "+971 56 352 0611",
   email: "mouhannad@felicitypro.com",

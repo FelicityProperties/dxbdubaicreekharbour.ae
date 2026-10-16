@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { PROJECTS, DISTRICT } from "@/data/projects";
+import { PROJECTS, DISTRICT, SITE } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
 import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, LATEST_ROW } from "@/data/transactions";
@@ -103,7 +103,10 @@ describe("Search results", () => {
 
   it("lists every page and every project in the sitemap, none dated before the data", () => {
     const xml = readFileSync(join(PUBLIC, "sitemap.xml"), "utf8");
-    const locs = [...xml.matchAll(/<loc>https:\/\/dxbdubaicreekharbour\.ae([^<]*)<\/loc>/g)].map((m) => m[1] || "/");
+    const all = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1]!);
+    // Every entry is on the address the site is served from, never one that redirects to it.
+    for (const loc of all) expect(loc.startsWith(`${SITE.url}/`), loc).toBe(true);
+    const locs = all.map((loc) => loc.slice(SITE.url.length) || "/");
     const pages = ["/", "/projects", "/payment-plans", "/market", "/area", "/guide", "/terms", "/privacy", ...PROJECTS.map((p) => `/projects/${p.slug}`)];
     for (const page of pages) expect(locs, page).toContain(page);
     expect(locs).not.toContain("/leads");
@@ -121,5 +124,15 @@ describe("Search results", () => {
       const path = f === "index.tsx" ? "/" : `/${f.replace(/\.tsx$/, "").replace(/\.index$/, "").replace(/\./g, "/")}`;
       expect(locs, f).toContain(path);
     }
+  });
+
+  it("points search engines at the www address the site is served from", () => {
+    // Vercel serves www.dxbdubaicreekharbour.ae and redirects the bare domain to it; a sitemap, canonical or
+    // robots.txt naming the bare domain sends Google through a redirect and the page is not indexed.
+    expect(SITE.url).toBe("https://www.dxbdubaicreekharbour.ae");
+    const robots = readFileSync(join(PUBLIC, "robots.txt"), "utf8");
+    expect(robots).toContain(`Sitemap: ${SITE.url}/sitemap.xml`);
+    expect(robots).not.toMatch(/Disallow:\s*\/\s*$/m);
+    expect(readFileSync(join(PUBLIC, "sitemap.xml"), "utf8")).not.toContain("https://dxbdubaicreekharbour.ae");
   });
 });
