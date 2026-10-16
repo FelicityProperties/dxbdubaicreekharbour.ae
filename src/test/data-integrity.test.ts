@@ -132,6 +132,7 @@ describe("Search results", () => {
     expect(SITE.url).toBe("https://www.dxbdubaicreekharbour.ae");
     const robots = readFileSync(join(PUBLIC, "robots.txt"), "utf8");
     expect(robots).toContain(`Sitemap: ${SITE.url}/sitemap.xml`);
+    for (const [address] of robots.matchAll(/https?:\/\/\S+/g)) expect(address.startsWith(`${SITE.url}/`), address).toBe(true);
     expect(robots).not.toMatch(/Disallow:\s*\/\s*$/m);
     expect(readFileSync(join(PUBLIC, "sitemap.xml"), "utf8")).not.toContain("https://dxbdubaicreekharbour.ae");
   });
