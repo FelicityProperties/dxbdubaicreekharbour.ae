@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "sitemap": "node --experimental-strip-types --no-warnings scripts/sitemap.mjs"
+    "sitemap": "node --experimental-strip-types --no-warnings scripts/sitemap.mjs",
+    "ai-viewings": "node scripts/ai-viewings.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

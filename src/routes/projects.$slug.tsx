@@ -6,6 +6,8 @@ import { salesFor, rentalsFor, salesCount12m, rentalsCount12m, TX } from "@/data
 import { ProjectCard, StatusBadge, WhatsApp, PlanBar, CtaBand, ProjectNotFound, projectMessage, sharingMeta, priceSummary, handoverText, noPlanText, SourceLink, ShareButton } from "@/components/showcase/shared";
 import { ProjectGallery } from "@/components/showcase/ProjectGallery";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
+import { ProjectViewing } from "@/components/showcase/AiViewings";
+import { aiViewingFor, videoObjectNode } from "@/data/ai-viewings";
 import { SalesTable, RentalsTable, ByBuildingTables, SourceNote, kindHelp } from "@/components/market/Market";
 import { dateLong, num, brandLine, projectLabel } from "@/lib/format";
 import { breadcrumbNode, projectDescription, projectTitle } from "@/lib/seo";
@@ -26,9 +28,11 @@ export const Route = createFileRoute("/projects/$slug")({
     const description = projectDescription(project, handoverText(project));
     const canonicalUrl = `${SITE.url}/projects/${project.slug}`;
     const image = project.ogImage ? `${SITE.url}${project.ogImage}` : `${SITE.url}/og-image.png`;
+    const viewing = aiViewingFor(project.slug);
     const ld = { "@context": "https://schema.org", "@graph": [
       { "@type": "ApartmentComplex", name: fullName, url: canonicalUrl, description: project.overview, image: project.images.slice(0, 3).map((i) => `${SITE.url}${i.base}-960.webp`), address: { "@type": "PostalAddress", addressLocality: "Dubai", streetAddress: `Dubai Creek Harbour${project.district ? `, ${project.district}` : ""}`, addressCountry: "AE" }, ...(project.lat && project.lng ? { geo: { "@type": "GeoCoordinates", latitude: project.lat, longitude: project.lng } } : {}) },
       breadcrumbNode([["Home", "/"], ["Projects", "/projects"], [fullName, `/projects/${project.slug}`]]),
+      ...(viewing ? [videoObjectNode(viewing)] : []),
     ] };
     return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: project.overview }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(canonicalUrl, image)], links: [{ rel: "canonical", href: canonicalUrl }], scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }] };
   },
@@ -42,6 +46,7 @@ function ProjectPage() {
   const sales = salesFor(project.slug), rentals = rentalsFor(project.slug);
   const sales12m = salesCount12m(project.slug), rentals12m = rentalsCount12m(project.slug);
   const hood = DISTRICT.neighbourhoods.find((n) => n.name === project.district);
+  const viewing = aiViewingFor(project.slug);
   const bedroomsText = project.unitTypes.length ? project.unitTypes.join(" · ") : project.bedrooms.includes("bedroom") ? project.bedrooms : `${project.bedrooms} bedrooms`;
   // Only call it "expected" when something points forward; a building DLD has no status for is simply not stated.
   const forward = project.construction === "under_construction" || !!project.handover || project.isNewLaunch;
@@ -50,6 +55,8 @@ function ProjectPage() {
     <ProjectGallery key={project.slug} project={project} />
     <div className="detail-layout"><div>
       <section className="detail-section"><span className="eyebrow">A closer look</span><h2>Life at {project.name}</h2><p>{project.overview}</p><ul className="highlight-list">{project.highlights.map((h) => <li key={h}><Check />{h}</li>)}</ul>{project.unitTypes.length > 0 && <p className="mt-5"><strong className="text-foreground font-medium">Unit types:</strong> {project.unitTypes.join(" · ")}</p>}{project.statusNote && <p className="mt-2">{project.statusNote}.</p>}</section>
+
+      {viewing && <ProjectViewing key={project.slug} viewing={viewing} />}
 
       <section className="detail-section" id="plan"><h2>Payment plan</h2>{project.paymentPlan ? <><PlanBar steps={project.paymentPlan.steps} />{project.paymentPlan.schedule.length > 0 && <table className="plan-table schedule-table"><thead><tr><th scope="col">Instalment</th><th scope="col">Due</th><th scope="col">Share</th></tr></thead><tbody>{project.paymentPlan.schedule.map((s, i) => <tr key={`${s.label}-${i}`}><td>{s.label}</td><td>{dateLong(s.date)}</td><td>{s.percent}%</td></tr>)}</tbody></table>}<p className="fact-note mt-4">{project.paymentPlan.note} <SourceLink href={project.paymentPlan.source}>Source: Emaar</SourceLink></p></> : <><p className="mb-5">{noPlanText(project)}</p><WhatsApp message={projectMessage(project.name)} variant="outline">Ask for the payment terms</WhatsApp></>}</section>
 

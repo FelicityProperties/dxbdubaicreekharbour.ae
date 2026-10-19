@@ -9,6 +9,8 @@ import { fitDescription, ldScript, organizationNode, websiteNode } from "@/lib/s
 import { MarketSnapshot, LatestTransactions, SourceNote } from "@/components/market/Market";
 import { WhyCreekHarbour } from "@/components/showcase/Benefits";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
+import { AiViewings } from "@/components/showcase/AiViewings";
+import { AI_VIEWINGS, videoObjectNode } from "@/data/ai-viewings";
 import { dateLong } from "@/lib/format";
 
 const TITLE = "Dubai Creek Harbour: Emaar Projects, Prices & DLD Sales";
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, ...sharingMeta(SITE.url),
     ],
     links: [{ rel: "canonical", href: SITE.url }],
-    scripts: [ldScript([organizationNode(), websiteNode()])],
+    scripts: [ldScript([organizationNode(), websiteNode(), ...AI_VIEWINGS.map(videoObjectNode)])],
   }),
   component: Home,
 });
@@ -35,6 +37,8 @@ function Home() {
   const places = DISTRICT.places.slice(0, 3);
   return <main>
     <section className="hero">{hero && <Picture img={hero} className="hero-image" sizes="100vw" width={1600} priority />}<div className="container hero-content"><span className="eyebrow">Dubai Creek Harbour · an independent broker's showcase</span><h1>Emaar's Dubai Creek Harbour projects,<br /><em>side by side.</em></h1><p className="hero-description">{PROJECTS.length} projects, with Emaar's published prices, payment plans and handover dates wherever Emaar publishes them — plus the sales and rents actually registered with the Dubai Land Department. Independent broker; ask anything on WhatsApp.</p><div className="hero-actions"><Button asChild variant="brass"><Link to="/" hash="projects">View projects <ArrowDown /></Link></Button><WhatsApp variant="heroOutline" /></div></div><div className="container hero-bottom"><span>Dubai Creek Harbour · {PROJECTS.length} projects · prices checked {SITE.pricesCheckedOn}</span><span>{hero?.caption}</span></div></section>
+
+    <AiViewings />
 
     <section className="snapshot-section" aria-labelledby="snapshot-h"><div className="container"><div className="snapshot-head"><div><span className="eyebrow">Registered with the Dubai Land Department</span><h2 id="snapshot-h">The Creek Harbour market, {TX.window.label}</h2></div><Link to="/market" className="teaser-link">All market data <ArrowRight className="size-3.5" /></Link></div><MarketSnapshot /><SourceNote compact /></div></section>
 
