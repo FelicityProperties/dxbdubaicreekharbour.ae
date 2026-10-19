@@ -1,0 +1,44 @@
+{
+  "note": "Written by scripts/ai-viewings.mjs; do not hand-edit.",
+  "videos": [
+    {
+      "slug": "valia",
+      "video": "/felicitypro/valia-ai-viewing.mp4",
+      "poster": "/felicitypro/valia-ai-viewing.jpg",
+      "bytes": 5971966,
+      "seconds": 44.29,
+      "width": 1080,
+      "height": 1920,
+      "audio": false,
+      "hash": "5fd0eda490",
+      "uploadDate": "2026-10-19T21:24:48+04:00",
+      "encoding": "H.264 CRF 26, no sound"
+    },
+    {
+      "slug": "parkwood",
+      "video": "/felicitypro/parkwood-ai-viewing.mp4",
+      "poster": "/felicitypro/parkwood-ai-viewing.jpg",
+      "bytes": 6207861,
+      "seconds": 44.31,
+      "width": 1080,
+      "height": 1920,
+      "audio": true,
+      "hash": "62c060a557",
+      "uploadDate": "2026-10-19T21:25:11+04:00",
+      "encoding": "H.264 CRF 26, AAC 128 kb/s"
+    },
+    {
+      "slug": "albero",
+      "video": "/felicitypro/albero-ai-viewing.mp4",
+      "poster": "/felicitypro/albero-ai-viewing.jpg",
+      "bytes": 6031920,
+      "seconds": 45.01,
+      "width": 1080,
+      "height": 1920,
+      "audio": true,
+      "hash": "f05a888bf1",
+      "uploadDate": "2026-10-19T21:25:34+04:00",
+      "encoding": "H.264 CRF 26, AAC 128 kb/s"
+    }
+  ]
+}

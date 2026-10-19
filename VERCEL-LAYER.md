@@ -83,6 +83,15 @@ starting point but is now behind this repo and should not be copied over it.
   doesn't count against the next, so one visitor can't use up the site's
   allowance.
 
+- `public/felicitypro/` holds felicitypro.com's AI viewing videos. That site
+  is built on Durable, and (the owner's choice, 19 Oct 2026) its pages play
+  them from here through the code in `design/felicitypro-ai-viewings/`
+  (pasted into Durable by the owner). Nothing on this site links to them; deleting or
+  renaming them breaks felicitypro.com. To change them:
+  `npm run ai-viewings -- --set felicitypro`, then
+  `npm run felicitypro-snippets`, then paste the new code into Durable.
+  This site's own viewings are `public/videos/` (`npm run ai-viewings`).
+
 ## Refreshing the data
 
 Both data files carry the date they were taken. To refresh:

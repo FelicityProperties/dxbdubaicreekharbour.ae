@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sitemap": "node --experimental-strip-types --no-warnings scripts/sitemap.mjs",
-    "ai-viewings": "node scripts/ai-viewings.mjs"
+    "ai-viewings": "node scripts/ai-viewings.mjs",
+    "felicitypro-snippets": "node scripts/felicitypro-snippets.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

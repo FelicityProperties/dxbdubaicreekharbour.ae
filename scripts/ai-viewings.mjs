@@ -2,6 +2,10 @@
 // src/data/ai-viewings.json — the site shows a viewing only once it is recorded there.
 //   npm run ai-viewings                   fetch each source below, then encode
 //   npm run ai-viewings -- --from DIR     encode DIR/<slug>.mp4 instead of fetching
+//   npm run ai-viewings -- --set felicitypro
+//     the same for felicitypro.com (built on Durable; it plays these files from here): into
+//     public/felicitypro, recorded in design/felicitypro-ai-viewings/videos.json;
+//     then `npm run felicitypro-snippets` rewrites the code pasted into Durable.
 // Needs ffmpeg and ffprobe. Output: H.264 1080x1920 (padded, never cropped, if a
 // source isn't 9:16), at most 30 fps, CRF 26, +faststart, at most 8 MB — when CRF 26
 // alone comes out larger, a two-pass encode aimed at the 8 MB budget replaces it.
@@ -11,21 +15,27 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const SOURCES = [
-  { slug: "valia", audio: false, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/c09220a1-29ea-466a-bf27-784c49de725b.mp4" },
-  { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/145fa6bd-3a45-4dd0-98fc-0e0047c07163.mp4" },
-];
+const VALIA = { slug: "valia", audio: false, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/c09220a1-29ea-466a-bf27-784c49de725b.mp4" };
+const PARKWOOD = { slug: "parkwood", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/ed958009-d989-4d84-a353-dd8d2f5d3379.mp4" };
+const ALBERO = { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/145fa6bd-3a45-4dd0-98fc-0e0047c07163.mp4" };
+const SETS = {
+  site: { sources: [VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json" },
+  felicitypro: { sources: [VALIA, PARKWOOD, ALBERO], dir: "felicitypro", manifest: "design/felicitypro-ai-viewings/videos.json" },
+};
 const MAX_BYTES = 8_000_000;
 const AUDIO_KBPS = 128;
 
-const root = fileURLToPath(new URL("..", import.meta.url));
-const outDir = join(root, "public/videos");
-const manifestPath = join(root, "src/data/ai-viewings.json");
 const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : null);
 const from = arg("--from");
+const set = SETS[arg("--set") ?? "site"];
+if (!set) throw new Error(`--set must be one of: ${Object.keys(SETS).join(", ")}`);
+const SOURCES = set.sources;
+const root = fileURLToPath(new URL("..", import.meta.url));
+const outDir = join(root, "public", set.dir);
+const manifestPath = join(root, set.manifest);
 
 const run = (cmd, args, cwd) => execFileSync(cmd, args, { cwd, stdio: ["ignore", "pipe", "pipe"], maxBuffer: 1 << 26 }).toString();
 const probe = (file) => JSON.parse(run("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height,avg_frame_rate,r_frame_rate", "-of", "json", file]));
@@ -44,7 +54,7 @@ function boxes(file) {
 }
 const dubaiNow = () => `${new Date(Date.now() + 4 * 3600e3).toISOString().slice(0, 19)}+04:00`;
 
-const previous = JSON.parse(readFileSync(manifestPath, "utf8"));
+const previous = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : { note: "Written by scripts/ai-viewings.mjs; do not hand-edit.", videos: [] };
 const work = mkdtempSync(join(tmpdir(), "ai-viewings-"));
 const videos = [];
 try {
@@ -82,8 +92,8 @@ try {
     const out = probe(video), ov = out.streams.find((x) => x.codec_type === "video");
     const entry = {
       slug: s.slug,
-      video: `/videos/${s.slug}-ai-viewing.mp4`,
-      poster: `/videos/${s.slug}-ai-viewing.jpg`,
+      video: `/${set.dir}/${s.slug}-ai-viewing.mp4`,
+      poster: `/${set.dir}/${s.slug}-ai-viewing.jpg`,
       bytes: statSync(video).size,
       seconds: Math.round(Number(out.format.duration) * 100) / 100,
       width: ov.width,
@@ -99,7 +109,8 @@ try {
   }
   // Every source succeeded: only now replace what the site serves.
   mkdirSync(outDir, { recursive: true });
-  for (const v of videos) for (const file of [v.video, v.poster]) copyFileSync(join(work, file.replace("/videos/", "")), join(root, "public", file));
+  mkdirSync(dirname(manifestPath), { recursive: true });
+  for (const v of videos) for (const file of [v.video, v.poster]) copyFileSync(join(work, basename(file)), join(root, "public", file));
   writeFileSync(manifestPath, `${JSON.stringify({ note: previous.note, videos }, null, 2)}\n`);
 } finally {
   rmSync(work, { recursive: true, force: true });

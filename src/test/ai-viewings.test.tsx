@@ -18,6 +18,8 @@ import { whatsappUrl } from "@/components/showcase/shared";
 import { ViewingCard } from "@/components/showcase/AiViewings";
 
 const PUBLIC = join(process.cwd(), "public");
+/** The owner's WhatsApp link, character for character, with the project name already URL-encoded. */
+const ownerWhatsapp = (name: string) => `https://wa.me/971563520611?text=Hi%20Muhannad%2C%20I%20watched%20the%20${name}%20AI%20viewing%20on%20your%20site%20-%20please%20send%20the%20floor%20plans%20and%20prices`;
 const recorded = encoded.videos as EncodedViewing[];
 
 /** What an MP4 holds: top-level boxes in order, track handlers ("vide", "soun"), sample formats before the media, and the video track's size. */
@@ -66,11 +68,38 @@ describe("AI viewings: what the owner asked for", () => {
   });
 
   it("opens WhatsApp with exactly the owner's message", () => {
-    const want = (name: string) => `https://wa.me/971563520611?text=Hi%20Muhannad%2C%20I%20watched%20the%20${name}%20AI%20viewing%20on%20your%20site%20-%20please%20send%20the%20floor%20plans%20and%20prices`;
-    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([want("Valia"), want("Albero")]);
-    expect(whatsappUrl(viewingMessage({ ...AI_VIEWING_SPECS[0]!, project: "Creek Haven & Co" }))).toBe(want("Creek%20Haven%20%26%20Co"));
+    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
+    expect(whatsappUrl(viewingMessage({ ...AI_VIEWING_SPECS[0]!, project: "Creek Haven & Co" }))).toBe(ownerWhatsapp("Creek%20Haven%20%26%20Co"));
   });
 });
+
+/** A recorded file is what its record says: fast-start H.264 1080x1920, at most 8 MB, sound only where wanted, its own poster. */
+function expectEncoded(v: EncodedViewing, audio: boolean) {
+  const video = join(PUBLIC, v.video), poster = join(PUBLIC, v.poster);
+  expect(existsSync(video) && existsSync(poster)).toBe(true);
+  expect(statSync(video).size).toBe(v.bytes);
+  expect(v.bytes).toBeLessThanOrEqual(8_000_000);
+  expect([v.width, v.height]).toEqual([1080, 1920]);
+  expect(v.seconds).toBeGreaterThan(1);
+  const { order, handlers, sizes, formats } = mp4(video);
+  expect(order.indexOf("moov"), order.join(",")).toBeGreaterThanOrEqual(0);
+  expect(order.indexOf("moov"), "moov before mdat (+faststart)").toBeLessThan(order.indexOf("mdat"));
+  expect(formats).toEqual(["avc1"]); // H.264, which every browser plays
+  expect(sizes).toEqual([[1080, 1920]]);
+  expect(handlers).toContain("vide");
+  expect(handlers.includes("soun")).toBe(audio);
+  expect(v.audio).toBe(audio);
+  expect(readFileSync(poster).subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+  expect(jpegSize(poster)).toEqual([1080, 1920]);
+  expect(createHash("sha256").update(readFileSync(video)).update(readFileSync(poster)).digest("hex").slice(0, 10)).toBe(v.hash);
+  expect(v.uploadDate).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+04:00$/);
+}
+/** Files in public/<dir> that no record mentions. */
+function strayFiles(dir: string, records: EncodedViewing[]) {
+  const path = join(PUBLIC, dir);
+  const known = records.flatMap((v) => [v.video, v.poster]).map((p) => p.replace(`/${dir}/`, ""));
+  return (existsSync(path) ? readdirSync(path) : []).filter((f) => !known.includes(f));
+}
 
 describe("AI viewings: the encoded files", () => {
   it("records only viewings this site carries", () => {
@@ -78,32 +107,61 @@ describe("AI viewings: the encoded files", () => {
   });
 
   it.each(recorded.map((v) => [v.slug, v] as const))("%s is a fast-start 1080x1920 H.264 file of at most 8 MB, with its poster", (slug, v) => {
-    const spec = AI_VIEWING_SPECS.find((s) => s.slug === slug)!;
-    const video = join(PUBLIC, v.video), poster = join(PUBLIC, v.poster);
-    expect(existsSync(video) && existsSync(poster)).toBe(true);
-    expect(statSync(video).size).toBe(v.bytes);
-    expect(v.bytes).toBeLessThanOrEqual(8_000_000);
-    expect([v.width, v.height]).toEqual([1080, 1920]);
-    expect(v.seconds).toBeGreaterThan(1);
-    const { order, handlers, sizes, formats } = mp4(video);
-    expect(order.indexOf("moov"), order.join(",")).toBeGreaterThanOrEqual(0);
-    expect(order.indexOf("moov"), "moov before mdat (+faststart)").toBeLessThan(order.indexOf("mdat"));
-    expect(formats).toEqual(["avc1"]); // H.264, which every browser plays
-    expect(sizes).toEqual([[1080, 1920]]);
-    expect(handlers).toContain("vide");
-    expect(handlers.includes("soun")).toBe(spec.audio);
-    expect(v.audio).toBe(spec.audio);
-    expect(readFileSync(poster).subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
-    expect(jpegSize(poster)).toEqual([1080, 1920]);
-    expect(createHash("sha256").update(readFileSync(video)).update(readFileSync(poster)).digest("hex").slice(0, 10)).toBe(v.hash);
-    expect(v.uploadDate).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+04:00$/);
+    expectEncoded(v, AI_VIEWING_SPECS.find((s) => s.slug === slug)!.audio);
   });
 
   it("leaves no stray files in public/videos", () => {
-    const dir = join(PUBLIC, "videos");
-    const files = existsSync(dir) ? readdirSync(dir) : [];
-    const known = recorded.flatMap((v) => [v.video, v.poster]).map((p) => p.replace("/videos/", ""));
-    expect(files.filter((f) => !known.includes(f))).toEqual([]);
+    expect(strayFiles("videos", recorded)).toEqual([]);
+  });
+});
+
+// felicitypro.com is built on Durable and plays these copies from this site (the owner's choice, 19 Oct 2026),
+// through the code in design/felicitypro-ai-viewings (scripts/felicitypro-snippets.mjs) that the owner pastes into Durable.
+const FELICITY = join(process.cwd(), "design/felicitypro-ai-viewings");
+const felicity = (JSON.parse(readFileSync(join(FELICITY, "videos.json"), "utf8")) as { videos: EncodedViewing[] }).videos;
+
+describe("AI viewings: felicitypro.com's copies", () => {
+  it("has Valia without sound, then Parkwood and Albero with sound", () => {
+    expect(felicity.map((v) => [v.slug, v.audio])).toEqual([["valia", false], ["parkwood", true], ["albero", true]]);
+  });
+
+  it.each(felicity.map((v) => [v.slug, v] as const))("%s is a fast-start 1080x1920 H.264 file of at most 8 MB, with its poster", (slug, v) => {
+    expectEncoded(v, slug !== "valia");
+  });
+
+  it("leaves no stray files in public/felicitypro", () => {
+    expect(strayFiles("felicitypro", felicity)).toEqual([]);
+  });
+
+  it.each(["1-homepage-section.html", "2-ai-viewings-page.html"])("%s plays exactly these files and says what the owner asked", (file) => {
+    const html = readFileSync(join(FELICITY, file), "utf8");
+    const files = felicity.map((v) => [`${SITE.url}${v.video}?v=${v.hash}`, `${SITE.url}${v.poster}?v=${v.hash}`]);
+    expect([...html.matchAll(/<video[^>]* src="([^"]+)" poster="([^"]+)"/g)].map((m) => [m[1], m[2]])).toEqual(files);
+    for (const tag of html.match(/<video[^>]*>/g) ?? []) expect(tag).toMatch(/ muted playsinline loop preload="none" controls /);
+    for (const name of ["Valia", "Parkwood", "Albero"]) expect(html).toContain(`href="${ownerWhatsapp(name)}"`);
+    for (const text of [
+      "Walk through it before it's built",
+      "AI viewings of Dubai off-plan homes, built from the developers' own plans.",
+      "Valia · Dubai Creek Harbour · Emaar",
+      "Parkwood · Dubai Hills Estate · Emaar",
+      "Albero · Dubai Creek Harbour · Emaar",
+      "Emaar renders · AI visualisation",
+      "Floor plans &amp; prices on WhatsApp",
+      "Felicity Properties · RERA ORN 33951 · DLD Permit No. 0710819088",
+      "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1882419628",
+      "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1251122980",
+      'href="https://www.instagram.com/felicity_properties/reels/"',
+      "New viewing every Sunday and Wednesday on Instagram",
+    ]) expect(html).toContain(text);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)![1]!) as { "@graph": { "@type": string; duration: string; contentUrl: string; thumbnailUrl: string[]; uploadDate: string }[] };
+    expect(ld["@graph"].map((n) => [n["@type"], n.contentUrl, n.thumbnailUrl[0], n.duration, n.uploadDate])).toEqual(
+      felicity.map((v, i) => ["VideoObject", files[i]![0], files[i]![1], `PT${Math.round(v.seconds)}S`, v.uploadDate]),
+    );
+  });
+
+  it("gives the /ai-viewings page a video preview for links shared on social media", () => {
+    const head = readFileSync(join(FELICITY, "3-ai-viewings-page-head.html"), "utf8");
+    for (const v of felicity) expect(head).toContain(`<meta property="og:video" content="${SITE.url}${v.video}?v=${v.hash}">`);
   });
 });
 
