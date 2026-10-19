@@ -54,8 +54,9 @@ const RUNTIME_ICONS = {
 };
 
 // Felicity's navy and rose-gold (the brand values in the Felicity Lovable project); text in the
-// darker rose-gold so small type stays readable on white. Fonts are inherited from the Durable page.
-const CSS = `.fpav{--fpav-navy:#0F1B2D;--fpav-rose:#D1966D;--fpav-rose-text:#865634;--fpav-ivory:#FBFAF7;--fpav-muted:#566173;padding:72px 0;color:var(--fpav-navy);text-align:left}
+// darker rose-gold so small type stays readable. The block brings its own light background, so it
+// reads the same in a dark Durable section. Fonts are inherited from the Durable page.
+const CSS = `.fpav{--fpav-navy:#0F1B2D;--fpav-rose:#D1966D;--fpav-rose-text:#865634;--fpav-ivory:#FBFAF7;--fpav-muted:#566173;padding:72px 0;background:var(--fpav-ivory);color:var(--fpav-navy);text-align:left}
 .fpav *{box-sizing:border-box}
 .fpav .fpav-wrap{width:min(1180px,calc(100% - 40px));margin:0 auto}
 .fpav .fpav-eyebrow{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--fpav-rose-text)}
@@ -167,14 +168,12 @@ ${JS}
 </section>
 `;
 
-const first = rows[0];
-const head = `<!-- Felicity Properties · AI viewings page: social-preview video. Paste into this page's own head code only (not the whole site's). -->
+const head = `<!-- Felicity Properties · AI viewings page: video for link previews. Paste into this page's own head code only. If Durable only offers head code for the whole site, leave this file out. -->
 ${rows.map((v) => `<meta property="og:video" content="${esc(v.src)}">
 <meta property="og:video:secure_url" content="${esc(v.src)}">
 <meta property="og:video:type" content="video/mp4">
 <meta property="og:video:width" content="${v.width}">
 <meta property="og:video:height" content="${v.height}">`).join("\n")}
-<meta property="og:image" content="${esc(first.posterSrc)}">
 `;
 
 mkdirSync(outDir, { recursive: true });
