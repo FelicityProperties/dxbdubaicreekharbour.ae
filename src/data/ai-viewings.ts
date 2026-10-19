@@ -35,8 +35,8 @@ export const aiViewingFor = (slug: string): AiViewing | null => AI_VIEWINGS.find
 export const INSTAGRAM_REELS = "https://www.instagram.com/felicity_properties/reels/";
 export const viewingLine = (v: AiViewingSpec) => `${v.project} · ${v.area} · ${v.developer}`;
 export const permitLine = (v: AiViewingSpec) => `Felicity Properties · RERA ORN ${SITE.reraOrn} · DLD Permit No. ${v.permit}`;
-export const viewingWhatsappUrl = (v: AiViewingSpec) =>
-  `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(`Hi Muhannad, I watched the ${v.project} AI viewing on your site - please send the floor plans and prices`)}`;
+/** The WhatsApp message the owner chose; the link itself comes from the shared whatsappUrl. */
+export const viewingMessage = (v: AiViewingSpec) => `Hi Muhannad, I watched the ${v.project} AI viewing on your site - please send the floor plans and prices`;
 // The content hash in the query string replaces a cached copy (the service worker keeps posters) whenever a file is re-encoded.
 export const videoSrc = (v: EncodedViewing) => `${v.video}?v=${v.hash}`;
 export const posterSrc = (v: EncodedViewing) => `${v.poster}?v=${v.hash}`;

@@ -8,9 +8,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Pause, Play, Volume2, VolumeX } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { WhatsAppIcon } from "@/components/showcase/shared";
-import { AI_VIEWINGS, INSTAGRAM_REELS, permitLine, posterSrc, videoLabel, videoSrc, viewingLine, viewingWhatsappUrl, type AiViewing } from "@/data/ai-viewings";
+import { WhatsApp } from "@/components/showcase/shared";
+import { AI_VIEWINGS, INSTAGRAM_REELS, permitLine, posterSrc, videoLabel, videoSrc, viewingLine, viewingMessage, type AiViewing } from "@/data/ai-viewings";
 
 const HEADING = "Walk through it before it's built";
 const SUB = "AI viewings of Dubai off-plan homes, built from the developers' own plans.";
@@ -19,10 +18,11 @@ const SUB = "AI viewings of Dubai off-plan homes, built from the developers' own
 const players = new Set<HTMLVideoElement>();
 
 function start(video: HTMLVideoElement) {
-  video.play().catch(() => {
-    // Sound was on and the browser wants a tap first: carry on muted. Otherwise
-    // (Low Power Mode, data saver) the play button stays for the visitor to press.
-    if (!video.muted) {
+  video.play().catch((e: unknown) => {
+    // The browser wants a tap before it plays sound: carry on muted. Any other refusal
+    // (Low Power Mode, data saver) leaves the play button for the visitor; an AbortError
+    // is a pause() that arrived while the file was still loading, so it stays paused.
+    if (e instanceof DOMException && e.name === "NotAllowedError" && !video.muted) {
       video.muted = true;
       video.play().catch(() => {});
     }
@@ -32,6 +32,7 @@ function start(video: HTMLVideoElement) {
 export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewing; linkProject?: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
   const held = useRef(false); // paused by the visitor: scrolling back doesn't restart it
+  const inView = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
 
@@ -46,9 +47,9 @@ export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewi
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting && entry.intersectionRatio >= 0.5) {
-          if (!still && !held.current) start(video);
-        } else video.pause();
+        inView.current = !!entry?.isIntersecting && entry.intersectionRatio >= 0.5;
+        if (!inView.current) video.pause();
+        else if (!still && !held.current) start(video);
       },
       { threshold: [0, 0.5] },
     );
@@ -103,14 +104,20 @@ export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewi
           aria-label={videoLabel(viewing)}
           onClick={togglePlay}
           onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
+          onPause={() => {
+            setPlaying(false);
+            // Paused on screen by something other than scrolling (the lock screen, a headphone
+            // button): treat it as the visitor's pause. A pause because the tab went to the
+            // background is not one.
+            if (inView.current && document.visibilityState === "visible") held.current = true;
+          }}
           onVolumeChange={(e) => setMuted(e.currentTarget.muted)}
         />
         <button type="button" className="aiv-control aiv-play" onClick={togglePlay} aria-label={`${playing ? "Pause" : "Play"} the ${viewing.project} AI viewing`}>
           {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
         </button>
         {viewing.audio && (
-          <button type="button" className="aiv-control aiv-sound" onClick={toggleSound} aria-pressed={!muted} aria-label={`${muted ? "Turn on sound for" : "Mute"} the ${viewing.project} AI viewing`}>
+          <button type="button" className="aiv-control aiv-sound" onClick={toggleSound} aria-label={muted ? `Tap for sound: the ${viewing.project} AI viewing` : `Mute the ${viewing.project} AI viewing`}>
             {muted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
             {muted && <span aria-hidden="true">Tap for sound</span>}
           </button>
@@ -119,12 +126,9 @@ export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewi
       <div className="aiv-body">
         <h3 className="aiv-project">{linkProject ? <Link to="/projects/$slug" params={{ slug: viewing.slug }}>{name}</Link> : name}</h3>
         <span className="chip">Emaar renders · AI visualisation</span>
-        <Button asChild className="aiv-wa">
-          <a href={viewingWhatsappUrl(viewing)} target="_blank" rel="noopener noreferrer">
-            <WhatsAppIcon />
-            Floor plans & prices on WhatsApp
-          </a>
-        </Button>
+        <WhatsApp message={viewingMessage(viewing)} className="aiv-wa">
+          Floor plans & prices on WhatsApp
+        </WhatsApp>
         <p className="aiv-permit">{permitLine(viewing)}</p>
       </div>
     </article>
