@@ -3,7 +3,7 @@
   "name": "Dubai Land Department",
   "basis": "Dubai Land Department registration records",
   "coverage": "DLD registrations loaded through September 2026",
-  "snapshotDate": "2026-10-19",
+  "snapshotDate": "2026-10-20",
   "filters": "Market sales only: related-party transfers and completion re-registrations of the same purchase are left out. Apartments only in the 12-month summaries."
  },
  "window": {
@@ -25,8 +25,8 @@
   "rentals": {
    "count": 200,
    "from": "2026-10-12",
-   "to": "2026-10-17",
-   "newContracts": 129
+   "to": "2026-10-18",
+   "newContracts": 128
   }
  },
  "summary": {
@@ -7664,6 +7664,78 @@
  ],
  "rentals": [
   {
+   "registered": "2026-10-18",
+   "start": "2026-11-01",
+   "end": "2027-10-31",
+   "building": "Creek Palace",
+   "project": "creek-palace",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 642,
+   "annualRent": 85000,
+   "rentPsf": 132,
+   "newContract": true
+  },
+  {
+   "registered": "2026-10-18",
+   "start": "2026-10-20",
+   "end": "2027-10-19",
+   "building": "Orchid at Creek Beach Building 2",
+   "project": "orchid",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 667,
+   "annualRent": 95000,
+   "rentPsf": 142,
+   "newContract": false
+  },
+  {
+   "registered": "2026-10-18",
+   "start": "2026-10-14",
+   "end": "2027-03-31",
+   "building": "Vida Residences Creek Beach",
+   "project": "vida-residences-creek-beach",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 692,
+   "annualRent": 97189,
+   "rentPsf": 141,
+   "newContract": true
+  },
+  {
+   "registered": "2026-10-18",
+   "start": "2026-09-29",
+   "end": "2027-09-28",
+   "building": "Harbour Views 1",
+   "project": "harbour-views",
+   "bedrooms": "3 Bed",
+   "sizeSqft": 1707,
+   "annualRent": 170000,
+   "rentPsf": 100,
+   "newContract": false
+  },
+  {
+   "registered": "2026-10-18",
+   "start": "2026-09-25",
+   "end": "2027-09-24",
+   "building": "Creek Crescent",
+   "project": "creek-crescent",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1053,
+   "annualRent": 135000,
+   "rentPsf": 128,
+   "newContract": false
+  },
+  {
+   "registered": "2026-10-18",
+   "start": "2026-09-01",
+   "end": "2027-08-31",
+   "building": "Creek Gate Tower 2",
+   "project": "creek-gate",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1115,
+   "annualRent": 115000,
+   "rentPsf": 103,
+   "newContract": false
+  },
+  {
    "registered": "2026-10-17",
    "start": "2026-11-01",
    "end": "2027-10-31",
@@ -9597,18 +9669,6 @@
   },
   {
    "registered": "2026-10-12",
-   "start": "2026-10-30",
-   "end": "2027-03-31",
-   "building": "The Cove Building 2",
-   "project": "the-cove",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 724,
-   "annualRent": 87791,
-   "rentPsf": 121,
-   "newContract": false
-  },
-  {
-   "registered": "2026-10-12",
    "start": "2026-10-27",
    "end": "2027-10-26",
    "building": "Surf at Creek Beach Building 1",
@@ -9629,18 +9689,6 @@
    "sizeSqft": 751,
    "annualRent": 85000,
    "rentPsf": 113,
-   "newContract": true
-  },
-  {
-   "registered": "2026-10-12",
-   "start": "2026-10-20",
-   "end": "2027-10-19",
-   "building": "The Cove II Building 9",
-   "project": "the-cove",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1561,
-   "annualRent": 260000,
-   "rentPsf": null,
    "newContract": true
   },
   {
@@ -9825,18 +9873,6 @@
   },
   {
    "registered": "2026-10-12",
-   "start": "2026-10-13",
-   "end": "2027-10-12",
-   "building": "The Cove Building 1",
-   "project": "the-cove",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 826,
-   "annualRent": 120000,
-   "rentPsf": 145,
-   "newContract": false
-  },
-  {
-   "registered": "2026-10-12",
    "start": "2026-10-12",
    "end": "2027-10-11",
    "building": "Creek Edge Tower 2",
@@ -9857,18 +9893,6 @@
    "sizeSqft": 1187,
    "annualRent": 155000,
    "rentPsf": 131,
-   "newContract": true
-  },
-  {
-   "registered": "2026-10-12",
-   "start": "2026-10-11",
-   "end": "2027-10-10",
-   "building": "The Cove II Building 7",
-   "project": "the-cove",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1389,
-   "annualRent": 200000,
-   "rentPsf": 144,
    "newContract": true
   },
   {
@@ -9945,18 +9969,6 @@
   },
   {
    "registered": "2026-10-12",
-   "start": "2026-10-05",
-   "end": "2027-04-04",
-   "building": "The Grand",
-   "project": "the-grand",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 802,
-   "annualRent": 100275,
-   "rentPsf": 125,
-   "newContract": false
-  },
-  {
-   "registered": "2026-10-12",
    "start": "2026-10-01",
    "end": "2027-09-30",
    "building": "17 Icon Bay",
@@ -9977,18 +9989,6 @@
    "sizeSqft": 1176,
    "annualRent": 120000,
    "rentPsf": 102,
-   "newContract": true
-  },
-  {
-   "registered": "2026-10-12",
-   "start": "2026-10-01",
-   "end": "2027-09-30",
-   "building": "The Cove Building 1",
-   "project": "the-cove",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1839,
-   "annualRent": 300000,
-   "rentPsf": 163,
    "newContract": true
   },
   {
