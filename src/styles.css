@@ -398,6 +398,8 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .aiv-single {max-width:360px;}
 .aiv-follow {margin-top:28px;}
 @media(min-width:641px) {.aiv-grid {grid-template-columns:repeat(2,minmax(0,1fr));}}
+/* Tablets: an odd last viewing sits centred under the pair, one column wide, rather than alone on the left. */
+@media(min-width:641px) and (max-width:1023px) {.aiv-grid > .aiv-card:last-child:nth-child(odd) {grid-column:1 / -1;justify-self:center;width:calc((100% - 24px) / 2);}}
 @media(min-width:1024px) {.aiv-grid {grid-template-columns:repeat(3,minmax(0,1fr));} .aiv-grid[data-count="2"] {grid-template-columns:repeat(2,minmax(0,1fr));max-width:calc((100% - 48px) / 3 * 2 + 24px);} .aiv-grid[data-count="1"] {grid-template-columns:minmax(0,1fr);max-width:calc((100% - 48px) / 3);}}
 /* Phones: also fit between the sticky header (76px) and the bottom bar (66px), so the controls are never hidden under either. */
 @media(max-width:640px) {.aiv-frame {width:min(100%,calc(80vh * 9 / 16),max(200px,calc((100svh - 160px - env(safe-area-inset-bottom)) * 9 / 16)));} .aiv-permit {font-size:12px;} .aiv-single {max-width:none;}}

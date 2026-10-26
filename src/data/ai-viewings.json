@@ -2,6 +2,19 @@
   "note": "Written by scripts/ai-viewings.mjs; do not hand-edit.",
   "videos": [
     {
+      "slug": "lyvia-by-palace",
+      "video": "/videos/lyvia-by-palace-ai-viewing.mp4",
+      "poster": "/videos/lyvia-by-palace-ai-viewing.jpg",
+      "bytes": 7682542,
+      "seconds": 45,
+      "width": 1080,
+      "height": 1920,
+      "audio": true,
+      "hash": "1bf7047fef",
+      "uploadDate": "2026-10-26T22:11:11+04:00",
+      "encoding": "H.264 two-pass at 1237 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
+    },
+    {
       "slug": "valia",
       "video": "/videos/valia-ai-viewing.mp4",
       "poster": "/videos/valia-ai-viewing.jpg",

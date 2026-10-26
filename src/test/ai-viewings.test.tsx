@@ -12,7 +12,7 @@ import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import encoded from "@/data/ai-viewings.json";
-import { AI_VIEWING_SPECS, permitLine, videoObjectNode, viewingLine, viewingMessage, type AiViewing, type EncodedViewing } from "@/data/ai-viewings";
+import { AI_VIEWINGS, AI_VIEWING_SPECS, permitLine, videoObjectNode, viewingLine, viewingMessage, type AiViewing, type EncodedViewing } from "@/data/ai-viewings";
 import { PROJECTS, SITE } from "@/data/projects";
 import { whatsappUrl } from "@/components/showcase/shared";
 import { ViewingCard } from "@/components/showcase/AiViewings";
@@ -56,19 +56,20 @@ function jpegSize(file: string): [number, number] | null {
 }
 
 describe("AI viewings: what the owner asked for", () => {
-  it("shows Valia and Albero, each a project on this site, with its own permit", () => {
-    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["valia", "albero"]);
+  it("leads with Lyvia, then Valia and Albero, each a project on this site, with its own permit", () => {
+    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["lyvia-by-palace", "valia", "albero"]);
     for (const v of AI_VIEWING_SPECS) expect(PROJECTS.some((p) => p.slug === v.slug), v.slug).toBe(true);
-    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Valia · Dubai Creek Harbour · Emaar", "Albero · Dubai Creek Harbour · Emaar"]);
+    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Lyvia by Palace · Dubai Creek Harbour · Emaar", "Valia · Dubai Creek Harbour · Emaar", "Albero · Dubai Creek Harbour · Emaar"]);
     expect(AI_VIEWING_SPECS.map(permitLine)).toEqual([
+      "Felicity Properties · RERA ORN 33951 · DLD Permit No. 2107900942",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 0710819088",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1251122980",
     ]);
-    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([false, true]); // Valia has no sound
+    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, false, true]); // Valia has no sound
   });
 
   it("opens WhatsApp with exactly the owner's message", () => {
-    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
+    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Lyvia%20by%20Palace"), ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
     expect(whatsappUrl(viewingMessage({ ...AI_VIEWING_SPECS[0]!, project: "Creek Haven & Co" }))).toBe(ownerWhatsapp("Creek%20Haven%20%26%20Co"));
   });
 });
@@ -102,8 +103,10 @@ function strayFiles(dir: string, records: EncodedViewing[]) {
 }
 
 describe("AI viewings: the encoded files", () => {
-  it("records only viewings this site carries", () => {
+  it("records exactly the viewings this site carries, so every one shows, in order", () => {
     for (const v of recorded) expect(AI_VIEWING_SPECS.some((s) => s.slug === v.slug), v.slug).toBe(true);
+    // A spec without an encoded file drops off the page silently; this keeps Lyvia leading the homepage.
+    expect(AI_VIEWINGS.map((v) => v.slug)).toEqual(AI_VIEWING_SPECS.map((s) => s.slug));
   });
 
   it.each(recorded.map((v) => [v.slug, v] as const))("%s is a fast-start 1080x1920 H.264 file of at most 8 MB, with its poster", (slug, v) => {

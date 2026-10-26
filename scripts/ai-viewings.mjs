@@ -21,8 +21,9 @@ import { fileURLToPath } from "node:url";
 const VALIA = { slug: "valia", audio: false, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/c09220a1-29ea-466a-bf27-784c49de725b.mp4" };
 const PARKWOOD = { slug: "parkwood", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/ed958009-d989-4d84-a353-dd8d2f5d3379.mp4" };
 const ALBERO = { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/145fa6bd-3a45-4dd0-98fc-0e0047c07163.mp4" };
+const LYVIA = { slug: "lyvia-by-palace", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/8462be8f-3033-4f24-89ca-0c360e0c69c4.mp4" };
 const SETS = {
-  site: { sources: [VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json" },
+  site: { sources: [LYVIA, VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json" },
   felicitypro: { sources: [VALIA, PARKWOOD, ALBERO], dir: "felicitypro", manifest: "design/felicitypro-ai-viewings/videos.json" },
 };
 const MAX_BYTES = 8_000_000;
