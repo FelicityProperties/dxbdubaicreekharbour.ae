@@ -13,7 +13,7 @@ export type AiViewingSpec = {
   area: string;
   developer: string;
   permit: string; // DLD (Trakheesi) advertising permit number for this viewing: Valia and Albero as the owner gave them 19 Oct 2026, Lyvia as printed in the owner's own video (26 Oct 2026)
-  audio: boolean; // Valia's viewing has no sound track
+  audio: boolean; // whether the viewing keeps its sound track (behind a tap-for-sound button)
 };
 /** What the encoder measured and wrote (src/data/ai-viewings.json). */
 export type EncodedViewing = { slug: string; video: string; poster: string; bytes: number; seconds: number; width: number; height: number; audio: boolean; hash: string; uploadDate: string; encoding: string };
@@ -22,7 +22,7 @@ export type AiViewing = AiViewingSpec & EncodedViewing;
 /** The viewings this site shows, in order: Lyvia leads (the owner's main video, 26 Oct 2026). */
 export const AI_VIEWING_SPECS: AiViewingSpec[] = [
   { slug: "lyvia-by-palace", project: "Lyvia by Palace", area: "Dubai Creek Harbour", developer: "Emaar", permit: "2107900942", audio: true },
-  { slug: "valia", project: "Valia", area: "Dubai Creek Harbour", developer: "Emaar", permit: "0710819088", audio: false },
+  { slug: "valia", project: "Valia", area: "Dubai Creek Harbour", developer: "Emaar", permit: "0710819088", audio: true },
   { slug: "albero", project: "Albero", area: "Dubai Creek Harbour", developer: "Emaar", permit: "1251122980", audio: true },
 ];
 

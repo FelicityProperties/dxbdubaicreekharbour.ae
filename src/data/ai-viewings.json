@@ -18,27 +18,27 @@
       "slug": "valia",
       "video": "/videos/valia-ai-viewing.mp4",
       "poster": "/videos/valia-ai-viewing.jpg",
-      "bytes": 5971966,
-      "seconds": 44.29,
+      "bytes": 7719314,
+      "seconds": 45.01,
       "width": 1080,
       "height": 1920,
-      "audio": false,
-      "hash": "5fd0eda490",
-      "uploadDate": "2026-10-19T21:16:48+04:00",
-      "encoding": "H.264 CRF 26, no sound"
+      "audio": true,
+      "hash": "e8dc6400f0",
+      "uploadDate": "2026-10-27T18:31:55+04:00",
+      "encoding": "H.264 two-pass at 1237 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
     },
     {
       "slug": "albero",
       "video": "/videos/albero-ai-viewing.mp4",
       "poster": "/videos/albero-ai-viewing.jpg",
-      "bytes": 6031920,
+      "bytes": 7676364,
       "seconds": 45.01,
       "width": 1080,
       "height": 1920,
       "audio": true,
-      "hash": "f05a888bf1",
-      "uploadDate": "2026-10-19T21:17:11+04:00",
-      "encoding": "H.264 CRF 26, AAC 128 kb/s"
+      "hash": "6b72dda55d",
+      "uploadDate": "2026-10-27T18:33:39+04:00",
+      "encoding": "H.264 two-pass at 1237 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
     }
   ]
 }

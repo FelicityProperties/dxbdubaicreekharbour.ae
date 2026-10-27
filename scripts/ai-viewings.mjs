@@ -18,9 +18,9 @@ import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const VALIA = { slug: "valia", audio: false, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/c09220a1-29ea-466a-bf27-784c49de725b.mp4" };
+const VALIA = { slug: "valia", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/b4a5ceb2-eb4d-4de0-b333-082c2e0138fc.mp4" };
 const PARKWOOD = { slug: "parkwood", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/ed958009-d989-4d84-a353-dd8d2f5d3379.mp4" };
-const ALBERO = { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/145fa6bd-3a45-4dd0-98fc-0e0047c07163.mp4" };
+const ALBERO = { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/95b5bacd-311e-4d0c-a37f-75a648c4944a.mp4" };
 const LYVIA = { slug: "lyvia-by-palace", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/8462be8f-3033-4f24-89ca-0c360e0c69c4.mp4" };
 const SETS = {
   site: { sources: [LYVIA, VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json" },

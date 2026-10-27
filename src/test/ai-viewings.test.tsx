@@ -65,7 +65,7 @@ describe("AI viewings: what the owner asked for", () => {
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 0710819088",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1251122980",
     ]);
-    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, false, true]); // Valia has no sound
+    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, true, true]); // all three keep their songs since 27 Oct 2026
   });
 
   it("opens WhatsApp with exactly the owner's message", () => {
