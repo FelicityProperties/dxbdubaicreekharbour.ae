@@ -380,7 +380,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 
 /* AI viewings (src/components/showcase/AiViewings.tsx). The 9:16 frame is sized before the poster arrives, so nothing shifts; it never grows taller than 80vh. Only the frame shrinks for short screens; the text and button below keep the column width. */
 .aiv-grid {display:grid;grid-template-columns:minmax(0,1fr);gap:44px 24px;}
-.aiv-card {min-width:0;}
+.aiv-card {min-width:0;display:flex;flex-direction:column;} /* cards in a row share its height, so the chip, button and permit line sit level even when one title wraps */
 .aiv-frame {position:relative;width:min(100%,calc(80vh * 9 / 16));margin-inline:auto;aspect-ratio:9/16;background:var(--primary);border-radius:3px;overflow:hidden;}
 .aiv-video {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
 @supports not (aspect-ratio:1/1) {.aiv-video {position:static;height:auto;}} /* Safari before 15: size from the video itself rather than collapse to nothing */
@@ -390,11 +390,12 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .aiv-control svg {width:18px;height:18px;flex:none;}
 .aiv-play {left:12px;bottom:12px;width:44px;padding:0;}
 .aiv-sound {right:12px;top:12px;} /* top corner: clear of the floating chat buttons on phones */
-.aiv-body {display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-top:18px;}
+.aiv-body {display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-top:18px;flex:1;}
+.aiv-body > .chip {margin-top:auto;}
 .aiv-project {font-size:23px;line-height:1.2;}
 .aiv-project a:hover {color:var(--brass-text);}
 .aiv-wa {width:100%;white-space:normal;height:auto;min-height:44px;text-align:center;}
-.aiv-permit {font-size:10px;letter-spacing:.2px;color:var(--muted-foreground);}
+.aiv-permit {font-size:10px;letter-spacing:.2px;color:var(--muted-foreground);font-variant-numeric:tabular-nums;} /* equal-width digits: the permit lines wrap together, so the cards stay level with enlarged text */
 .aiv-single {max-width:360px;}
 .aiv-follow {margin-top:28px;}
 @media(min-width:641px) {.aiv-grid {grid-template-columns:repeat(2,minmax(0,1fr));}}
