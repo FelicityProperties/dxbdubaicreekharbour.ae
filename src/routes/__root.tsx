@@ -64,7 +64,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Creek Harbour" },
       { title: "DXB Creek Harbour" },
-      { name: "description", content: "An independent showcase of Dubai Creek Harbour residential projects, with Emaar's published prices and the sales and rents registered with the Dubai Land Department." },
+      { name: "description", content: "An independent showcase of Dubai Creek Harbour homes, with Emaar's published prices and the sales and rents registered with the Dubai Land Department." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "DXB Creek Harbour" },
       { name: "twitter:card", content: "summary_large_image" },

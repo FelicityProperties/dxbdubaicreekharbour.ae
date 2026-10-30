@@ -8,7 +8,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { EMAIL_RE, MIN_LEADS_PASSWORD, getLeads, type DatabaseProblem, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
+import { EMAIL_RE, LEADS_SHOWN, MIN_LEADS_PASSWORD, getLeads, type DatabaseProblem, type Lead, type LeadsResult } from "@/lib/enquiries.functions";
 import { setCountingThisDevice } from "@/components/SiteAnalytics";
 import { VisitorStats } from "@/components/leads/VisitorStats";
 
@@ -135,6 +135,7 @@ function LeadsPage() {
   }, []);
 
   const leads: Lead[] = result?.status === "ok" ? result.leads : [];
+  const total = result?.status === "ok" ? Math.max(result.total ?? leads.length, leads.length) : 0;
 
   return (
     <main className="container min-h-[calc(100svh-90px)] py-12 max-sm:min-h-[calc(100svh-76px)]">
@@ -186,7 +187,7 @@ function LeadsPage() {
             {(
               [
                 ["visitors", "Visitors"],
-                ["enquiries", `Enquiries (${leads.length})`],
+                ["enquiries", `Enquiries (${total})`],
               ] as const
             ).map(([id, label]) => (
               <button
@@ -215,7 +216,7 @@ function LeadsPage() {
           </div>
           <div hidden={tab !== "enquiries"}>
           <p className="mt-6 text-muted-foreground">
-            {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}, newest first. Times are Dubai time.
+            {total} {total === 1 ? "enquiry" : "enquiries"}, newest first.{total > leads.length ? ` The newest ${LEADS_SHOWN} are listed here; the older ones are still saved in the database.` : ""} Times are Dubai time.
           </p>
           <div className="mt-8 grid gap-4">
             {leads.map((r) => {

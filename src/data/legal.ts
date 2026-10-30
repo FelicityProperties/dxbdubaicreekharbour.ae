@@ -95,7 +95,7 @@ export const TERMS: LegalDoc = {
 export const PRIVACY: LegalDoc = {
   "title": "Privacy Notice",
   "intro": "This notice explains what DXB Creek Harbour collects when you use dxbdubaicreekharbour.ae, what we do with it, and how to ask us to see, correct or delete it. If anything is unclear, message us on WhatsApp or by email using the details at the end.",
-  "lastUpdated": "2026-10-14",
+  "lastUpdated": "2026-10-30",
   "sections": [
     {
       "heading": "Who we are",
@@ -109,11 +109,11 @@ export const PRIVACY: LegalDoc = {
       "heading": "What we collect, and where it comes from",
       "paragraphs": [
         "Enquiry form. When you send an enquiry we ask for your name and your phone or WhatsApp number. You can also give an email address and your country of residence. The form asks which language you prefer, which project interests you, what you are looking for, whether you are buying a home or an investment, how many bedrooms you want, your budget band, your timing, how you plan to pay, and a free-text message. We also record the page you were on and the time you sent the form.",
-        "The form has a hidden field that people never see. It exists only to catch automated spam.",
+        "The form has a hidden field that people never see. It exists only to catch automated spam. To stop misuse, we also count how many enquiries each connection sends per day, using a scrambled code made from its IP address rather than the address itself; these counts are deleted after about three days.",
         "FelicityBot, the AI assistant. When you chat with FelicityBot, the messages in that chat and the address of the page you are on are sent to our AI provider so it can write each answer. We do not save the chat. The conversation stays in your browser tab until you close it or start a new chat. To stop misuse, we count how many questions each connection asks per day, using a scrambled code made from its IP address rather than the address itself; these counts are deleted after about three days. If you ask FelicityBot to pass your details to us, it saves your name, phone number, email if you give one, and a short note of what you asked for, as an enquiry, exactly like the enquiry form.",
         "WhatsApp. If you message us on WhatsApp, we receive your number and whatever you write. WhatsApp (Meta) handles the message under its own terms.",
         "Server logs. The company that hosts the website keeps ordinary server logs, including IP addresses, for security and to keep the site running.",
-        "Visit statistics. The site counts its own visits, without cookies and without any outside analytics service. For each visit it records the pages you open, how long the site is on your screen and in use, the site or campaign you came from, your country (as our hosting provider reports it from your connection) and whether you use a phone, tablet or computer. It also records the date and time of the visit. A random code made in your browser tab ties one visit's pages together; it is stored with that visit's statistics and is not linked to your other visits. To count people rather than visits, it also stores a code made from your connection and browser that changes every day, so it cannot follow you from one day to the next; your IP address itself is not stored. Only the operator sees the numbers, as totals."
+        "Visit statistics. The site counts its own visits, without cookies and without any outside analytics service. For each visit it records the pages you open, how long the site is on your screen and in use, the site or campaign you came from, your country (as our hosting provider reports it from your connection) and whether you use a phone, tablet or computer. It also records the date and time of the visit. A random code made in your browser tab ties one visit's pages together; it is stored with that visit's statistics and is not linked to your other visits. To count people rather than visits, it also stores two codes that change every day, one made from your connection and browser and one from your connection alone, so they cannot follow you from one day to the next; your IP address itself is not stored. Only the operator sees the numbers, as totals."
       ]
     },
     {
@@ -146,7 +146,7 @@ export const PRIVACY: LegalDoc = {
     {
       "heading": "Cookies and tracking",
       "paragraphs": [
-        "The site sets no cookies for advertising or tracking. Its visit statistics use your browser's session storage, which is cleared when you close the tab, instead of cookies.",
+        "The site sets no cookies for advertising or tracking. Its visit statistics use your browser's session storage, which is cleared when you close the tab, instead of cookies. The only thing kept after that is a note in your browser's local storage of where your latest visit came from (the referring site or campaign tag) and when, so a page you open from it in a new tab is credited to the same site or campaign. Your next visit replaces it, it is never sent to us on its own, and clearing this site's data in your browser removes it.",
         "Apart from the visit statistics and FelicityBot's question counts described above, the only technical data collected when you browse is the hosting provider's server logs. FelicityBot keeps your current chat in your browser's session storage, which is cleared when you close the tab; it is not a cookie and is sent to us only as part of your next question. If that changes, we will update this notice."
       ]
     },

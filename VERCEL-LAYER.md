@@ -37,8 +37,9 @@ starting point but is now behind this repo and should not be copied over it.
   `design/benefits-sources.json`.
 - `public/sw.js` + `public/site.webmanifest` — the site installs on phones
   like an app (standalone display, home-screen icon). Pages are always
-  fetched from the network first; only images and hashed build assets are
-  cached. Bump `VERSION` in `sw.js` to clear old caches.
+  fetched from the network first; images and hashed build assets are
+  cached, and one HTML copy per page is kept only as the offline fallback.
+  Bump `VERSION` in `sw.js` to clear old caches.
 - `public/img/<project-slug>/` — Emaar's renders and photos, resized to
   480/960/1600 WebP plus a 1200×630 `og.jpg` for sharing previews.
   `public/img/district/` holds the area images.
@@ -112,6 +113,10 @@ by hand.
   `bun.lock` points at Lovable's private package registry).
 - Environment variables:
   - `DATABASE_URL` — from the Neon integration. Enquiries are saved here.
+    One connection can send 5 enquiries per 10 minutes and 10 per day
+    (counted only once the details are valid); past that the form shows its
+    WhatsApp fallback, so a script can't bury real leads or flood the inbox.
+    `/leads` lists the newest 500 and says when there are more.
   - `LEADS_PASSWORD` — password for `/leads`, **at least 20 characters**
     (shorter ones are refused, because nothing slows down guessing). Set it
     before the last deployment or redeploy after setting it.
@@ -152,7 +157,8 @@ by hand.
 - Visitor numbers: the site's own, shown on `/leads` (Visitors tab) behind
   `LEADS_PASSWORD`; nothing to switch on. `src/components/SiteAnalytics.tsx`
   keeps one visit per browser tab (sessionStorage, no cookies: pages opened,
-  seconds on screen and in use) and reports it to `POST /api/visit`
+  seconds on screen and in use; localStorage keeps only where the latest
+  visit came from, for tabs it opens) and reports it to `POST /api/visit`
   (`src/routes/api.visit.ts` → `src/lib/visits.server.ts`) when the visitor
   leaves or switches away. One row per visit in `site_visits` (creates
   itself; rows older than 13 months are deleted), so the database is woken
@@ -174,8 +180,9 @@ by hand.
   - Comparisons ("▲ 12% on the 7 days before") use the same stretch of time
     cut at the same clock time, and only once counting covered it.
     "Visitors" over several days adds up each day's visitors. Referring
-    sites or campaign tags from fewer than two visitors in the period are
-    grouped as "Other sites". The visitor code's key is derived with scrypt
+    sites or campaign tags from fewer than two different connections in the
+    period are grouped as "Other sites" (a daily connection code without the
+    browser string, so one script can't pass by claiming two browsers). The visitor code's key is derived with scrypt
     from `ANALYTICS_SECRET` (or `LEADS_PASSWORD`).
   - Vercel Web Analytics is no longer used; it can be switched off in the
     project's Analytics tab.

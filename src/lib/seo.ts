@@ -79,5 +79,5 @@ export function projectDescription(p: Project, handover: string): string {
     : p.pricesFrom ? `Listed units from ${p.pricesFrom}.` : "Price on request.";
   const plan = p.paymentPlan ? `${p.paymentPlan.steps.map((s) => s.percent).join("/")} payment plan.` : null;
   const when = /on request/.test(handover) ? null : `${handover}.`;
-  return fitDescription([`${label} by Emaar${where}.`, price, `${bedroomsText(p)}.`, plan, when, p.isNewLaunch ? null : "Registered sales and rents.", "Enquire on WhatsApp."]);
+  return fitDescription([`${label} by Emaar${where}.`, price, `${bedroomsText(p)}.`, plan, when, p.isNewLaunch ? null : p.construction === "under_construction" ? "Registered sales." : "Registered sales and rents.", "Enquire on WhatsApp."]);
 }

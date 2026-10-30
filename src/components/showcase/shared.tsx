@@ -27,13 +27,16 @@ export function WhatsApp({ message = GENERIC_MESSAGE, children = "WhatsApp us", 
 export const mailtoUrl = (subject = "Dubai Creek Harbour enquiry", body = "") => `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ""}`;
 export function Wordmark() { return <Link to="/" className="dxbch-lockup"><svg className="dxbch-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 40" aria-hidden="true" focusable="false"><path className="dxbch-arch" d="M1 30V3A34.167 34.167 0 0 1 29 3V30H26V14.5A11 11 0 0 0 4 14.5V30ZM6 30V14.5A9 9 0 0 1 24 14.5V30H21V14.5A6 6 0 0 0 9 14.5V30Z"/><path className="dxbch-water" d="M0 33.5C10.5 31.5 19.5 31.5 30 33.5C19.5 35.5 10.5 35.5 0 33.5ZM15 38.75C19.9 37.083 24.1 37.083 29 38.75C24.1 40.417 19.9 40.417 15 38.75Z"/></svg><span className="dxbch-words"><span className="dxbch-dxb">DXB</span>{" "}<span className="dxbch-sub">Creek Harbour</span></span></Link>; }
 
+/** Pages that render an enquiry section: "Enquire" jumps to it there (keeping the project prefilled); everything else (terms, privacy, leads, 404s) goes to the home form. */
+const pageHasForm = (path: string) => ["/", "/projects", "/payment-plans", "/market", "/area", "/guide"].includes(path) || PROJECTS.some((p) => path === `/projects/${p.slug}`);
 function NavLinks({ onPick }: { onPick?: () => void }) {
+  const path = useRouterState({ select: (s) => s.location.pathname });
   return <>
     <Link to="/projects" className="nav-link" onClick={onPick}>Projects</Link>
     <Link to="/market" className="nav-link" onClick={onPick}>Market data</Link>
     <Link to="/area" className="nav-link" onClick={onPick}>The area</Link>
     <Link to="/guide" className="nav-link" onClick={onPick}>Buying guide</Link>
-    <Link to="/" hash="enquire" className="nav-link" onClick={onPick}>Enquire</Link>
+    {pageHasForm(path) ? <a href="#enquire" className="nav-link" onClick={onPick}>Enquire</a> : <Link to="/" hash="enquire" className="nav-link" onClick={onPick}>Enquire</Link>}
   </>;
 }
 type InstallPromptEvent = Event & { prompt: () => Promise<void> };
@@ -72,8 +75,7 @@ export function Footer() {
 export function MobileBar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const cls = (active: boolean) => `tab${active ? " active" : ""}`;
-  // Pages that render an enquiry section get the in-page jump; everything else (terms, privacy, leads, 404s) goes to the home form.
-  const hasForm = ["/", "/projects", "/payment-plans", "/market", "/area", "/guide"].includes(path) || PROJECTS.some((p) => path === `/projects/${p.slug}`);
+  const hasForm = pageHasForm(path);
   // activeProps={{}} keeps the router from adding its own "active" class, so only cls() decides the highlight.
   return <nav className="mobile-bar" aria-label="Quick navigation">
     <Link to="/" activeProps={{}} className={cls(path === "/")}><Home />Home</Link>
@@ -117,6 +119,8 @@ export function handoverText(p: Project): string {
   if (p.construction === "under_construction") return "Under construction";
   return p.isNewLaunch ? "New launch" : "Construction status on request";
 }
+/** Sort key for "soonest handover first": completed buildings lead, then Emaar's estimated dates, then the rest. */
+export const handoverSortKey = (p: Project) => (p.construction === "completed" ? "0000" : p.handover?.text ?? "9999");
 /** How a project without a published Emaar instalment plan is paid, by status (project page and FelicityBot). */
 export function noPlanText(p: Project): string {
   if (p.status === "Now selling") {

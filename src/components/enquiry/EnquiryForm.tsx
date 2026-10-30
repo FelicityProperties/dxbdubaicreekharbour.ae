@@ -1,7 +1,7 @@
 /**
  * The enquiry form that saves to Neon (see src/lib/enquiries.functions.ts).
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
 import { whatsappUrl, mailtoUrl, WhatsAppIcon } from "@/components/showcase/shared";
@@ -61,6 +61,11 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
     page: "",
   });
   const [state, setState] = useState<State>({ kind: "idle" });
+  // Guards double submits without disabling the button, which would drop keyboard focus to the page.
+  const sending = useRef(false);
+  // The form is replaced by the thank-you box: move focus there so it isn't lost.
+  const doneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (state.kind === "done") doneRef.current?.focus(); }, [state.kind]);
   const set = (k: keyof EnquiryInput) => (e: { target: { value: string } }) => setV({ ...v, [k]: e.target.value });
 
   const summary = () =>
@@ -82,6 +87,8 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (sending.current) return;
+    sending.current = true;
     setState({ kind: "sending" });
     try {
       const res = await submitEnquiry({ data: { ...v, page: window.location.pathname } });
@@ -90,12 +97,14 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
       else setState({ kind: "offline" });
     } catch {
       setState({ kind: "offline" });
+    } finally {
+      sending.current = false;
     }
   }
 
   if (state.kind === "done") {
     return (
-      <div className="rounded-[3px] border border-border bg-background p-6" role="status">
+      <div ref={doneRef} tabIndex={-1} className="rounded-[3px] border border-border bg-background p-6 outline-none" role="status">
         {/* div, not p: the `.enquiry-card p` rule would shrink it to grey 13px. */}
         <div className="font-[family-name:var(--font-display)] text-[28px] leading-tight text-foreground">
           Thank you{state.firstName ? `, ${state.firstName}` : ""}. We'll be in touch shortly.
@@ -213,7 +222,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
         </div>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" disabled={state.kind === "sending"} className="min-h-11">
+        <Button type="submit" aria-disabled={state.kind === "sending"} className="min-h-11 aria-disabled:cursor-wait aria-disabled:opacity-50">
           {state.kind === "sending" ? "Sending…" : "Send enquiry"}
         </Button>
         <a

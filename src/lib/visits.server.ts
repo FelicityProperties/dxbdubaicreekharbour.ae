@@ -13,7 +13,7 @@
  * from the enquiries; otherwise they share DATABASE_URL.
  */
 import { createHmac, scryptSync } from "node:crypto";
-import { connect, redact, type Sql } from "@/lib/enquiries.functions";
+import { connect, connectionOf, redact, type Sql } from "@/lib/enquiries.functions";
 import { sitePath, pageName } from "@/lib/site-pages";
 import { SITE } from "@/data/projects";
 import { withTimeout } from "@/lib/with-timeout";
@@ -41,6 +41,8 @@ function ensureVisitsTable(sql: Sql): Promise<unknown> {
         device TEXT NOT NULL
       )`;
       await sql`CREATE INDEX IF NOT EXISTS site_visits_day_idx ON site_visits (day)`;
+      // Added October 2026: the day's connection code, without the browser (older rows have none).
+      await sql`ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS conn TEXT`;
     })().catch((err) => { tableReady = null; throw err; });
   }
   return tableReady;
@@ -93,7 +95,10 @@ export async function handleVisit(request: Request): Promise<Response> {
   const now = new Date();
   if (!allowed(ip, now.getTime())) return done;
   const day = dubaiDay(now);
-  const visitor = createHmac("sha256", keyFor(process.env["ANALYTICS_SECRET"] || process.env["LEADS_PASSWORD"] || url)).update(`${day}|${ip}|${userAgent}`).digest("base64url").slice(0, 16);
+  const key = keyFor(process.env["ANALYTICS_SECRET"] || process.env["LEADS_PASSWORD"] || url);
+  const visitor = createHmac("sha256", key).update(`${day}|${ip}|${userAgent}`).digest("base64url").slice(0, 16);
+  // The same without the browser string (and an IPv6 address by its /64), which a script can change at will.
+  const conn = createHmac("sha256", key).update(`conn|${day}|${connectionOf(ip)}`).digest("base64url").slice(0, 16);
   const country = (request.headers.get("x-vercel-ip-country") ?? "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2) || null;
 
   try {
@@ -102,8 +107,8 @@ export async function handleVisit(request: Request): Promise<Response> {
     // The first report of a visit creates its row; later ones only raise the totals (a visit is reported again with
     // the totals so far each time the visitor switches away). Reports for visits older than a day are ignored.
     await withTimeout(sql`
-      INSERT INTO site_visits (id, day, visitor, pages, page_views, seconds, source, country, device)
-      VALUES (${report.id}, ${day}, ${visitor}, ${report.pages}, ${report.views}, ${report.seconds},
+      INSERT INTO site_visits (id, day, visitor, conn, pages, page_views, seconds, source, country, device)
+      VALUES (${report.id}, ${day}, ${visitor}, ${conn}, ${report.pages}, ${report.views}, ${report.seconds},
               ${sourceName(report.ref, report.src, OWN_HOST)}, ${country}, ${deviceName(userAgent, report.touch)})
       ON CONFLICT (id) DO UPDATE SET
         pages = CASE WHEN cardinality(EXCLUDED.pages) > cardinality(site_visits.pages) THEN EXCLUDED.pages ELSE site_visits.pages END,
@@ -123,8 +128,9 @@ const toRanked = (rows: { name: string | null; visits: number | string }[], rena
   rows.map((r) => ({ name: r.name ? String(rename(String(r.name))) : "Unknown", visits: Number(r.visits) }));
 
 /* Sources the site names itself; any other referring site or campaign tag is listed by name only once at
-   least two different visitors came from it in the period (one script can't fill the list with its own words). */
-const KNOWN_SOURCES = ["Direct", "Google", "Bing", "Other search", "Instagram", "Facebook", "LinkedIn", "X (Twitter)", "YouTube", "TikTok", "WhatsApp", "Snapchat", "Property Finder", "Bayut", "Dubizzle", "ChatGPT", "Perplexity", "Email", "felicitypro.com", "Other app"];
+   least two different connections came from it in the period (one script can't fill the list with its own
+   words, whatever browser it claims to be). */
+const KNOWN_SOURCES = ["Direct", "Google", "Bing", "Other search", "Instagram", "Facebook", "LinkedIn", "X (Twitter)", "YouTube", "TikTok", "WhatsApp", "Snapchat", "Property Finder", "Bayut", "Dubizzle", "ChatGPT", "Gemini", "Perplexity", "Email", "felicitypro.com", "Other app"];
 
 /** The numbers for the last `days` Dubai days (today included), or null when there is no database or it fails. */
 export async function visitStats(days: number): Promise<Omit<VisitStats, "enquiries"> | null> {
@@ -155,7 +161,7 @@ export async function visitStats(days: number): Promise<Omit<VisitStats, "enquir
       range(sql`SELECT p AS name, count(*) AS visits FROM site_visits, unnest(pages) AS p WHERE day BETWEEN ${from} AND ${to} AND p LIKE '/%' GROUP BY p ORDER BY 2 DESC, 1 LIMIT 10`),
       range(sql`
         SELECT name, sum(visits) AS visits FROM (
-          SELECT CASE WHEN source = ANY(${KNOWN_SOURCES}::text[]) OR count(DISTINCT (day, visitor)) >= 2 THEN source ELSE 'Other sites' END AS name, count(*) AS visits
+          SELECT CASE WHEN source = ANY(${KNOWN_SOURCES}::text[]) OR count(DISTINCT (day, coalesce(conn, visitor))) >= 2 THEN source ELSE 'Other sites' END AS name, count(*) AS visits
           FROM site_visits WHERE day BETWEEN ${from} AND ${to} GROUP BY source
         ) s GROUP BY name ORDER BY 2 DESC, 1 LIMIT 8`),
       range(sql`SELECT country AS name, count(*) AS visits FROM site_visits WHERE day BETWEEN ${from} AND ${to} GROUP BY country ORDER BY 2 DESC, 1 LIMIT 8`),
@@ -165,8 +171,9 @@ export async function visitStats(days: number): Promise<Omit<VisitStats, "enquir
     await cleanOldVisits(sql, to);
     const t = totals[0] ?? {};
     // No comparison until counting had started before the earlier stretch began (else it shows made-up growth).
+    // Strictly before: counting never starts at midnight, so the first day with data is only partly counted.
     const first = start[0]?.["first"] ? String(start[0]["first"]) : null;
-    const previous = first && first <= prevFrom ? { visitors: Number(prev[0]?.["visitors"] ?? 0), visits: Number(prev[0]?.["visits"] ?? 0) } : null;
+    const previous = first && first < prevFrom ? { visitors: Number(prev[0]?.["visitors"] ?? 0), visits: Number(prev[0]?.["visits"] ?? 0) } : null;
     const countryName = (() => { try { const names = new Intl.DisplayNames(["en"], { type: "region" }); return (c: string) => names.of(c) ?? c; } catch { return (c: string) => c; } })();
     return {
       days, from, to,

@@ -69,6 +69,45 @@ describe("Visit counting in the browser", () => {
     expect(second.pages).toEqual(["/projects/creek-haven", "/market"]);
     expect(second.seconds).toBe(10);
   });
+  it("counts a tab opened in the background from when it is first looked at, keeping its source", async () => {
+    Object.defineProperty(document, "referrer", { value: "https://www.google.com/", configurable: true });
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    render(<SiteAnalytics />);
+    act(() => { vi.advanceTimersByTime(40 * 60_000); });
+    show(); document.dispatchEvent(new Event("visibilitychange"));
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(60_000); });
+    hide();
+    vi.useRealTimers();
+    const reports = await Promise.all(sent.map(async (b) => JSON.parse(await read(b)) as { id: string; seconds: number; ref: string }));
+    expect(new Set(reports.map((r) => r.id)).size).toBe(1);
+    expect(reports.at(-1)).toMatchObject({ seconds: 60, ref: "https://www.google.com/" });
+    Object.defineProperty(document, "referrer", { value: "", configurable: true });
+  });
+  it("starts a new visit when a tab left on screen is used again after half an hour", async () => {
+    render(<SiteAnalytics />);
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(20_000); });
+    act(() => { vi.advanceTimersByTime(3 * 3600_000); });
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(30_000); });
+    hide();
+    vi.useRealTimers();
+    const reports = await Promise.all(sent.map(async (b) => JSON.parse(await read(b)) as { id: string; seconds: number }));
+    const ids = [...new Set(reports.map((r) => r.id))];
+    expect(ids).toHaveLength(2);
+    // The first visit's time stops two idle minutes after its last scroll.
+    expect(reports.filter((r) => r.id === ids[0]).at(-1)!.seconds).toBe(120);
+    expect(reports.at(-1)!.seconds).toBe(30);
+  });
+  it("doesn't start a new visit when a cursor merely passes over a window left on screen", async () => {
+    render(<SiteAnalytics />);
+    act(() => { window.dispatchEvent(new Event("scroll")); vi.advanceTimersByTime(20_000); });
+    act(() => { vi.advanceTimersByTime(3 * 3600_000); });
+    act(() => { window.dispatchEvent(new Event("mousemove")); vi.advanceTimersByTime(30_000); });
+    hide();
+    vi.useRealTimers();
+    const reports = await Promise.all(sent.map(async (b) => JSON.parse(await read(b)) as { id: string; seconds: number }));
+    expect(new Set(reports.map((r) => r.id)).size).toBe(1);
+    expect(reports.at(-1)!.seconds).toBe(120);
+  });
   it("doesn't report a tab that was never looked at", () => {
     Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
     render(<SiteAnalytics />);

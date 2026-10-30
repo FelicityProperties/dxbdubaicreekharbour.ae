@@ -64,8 +64,9 @@ export function cleanReport(raw: unknown, isPage: (path: unknown) => string | nu
   };
 }
 
+// Google hosts that aren't search come first: Gemini is an AI assistant like ChatGPT, and Gmail on the web is email.
 const SOURCES: [RegExp, string][] = [
-  [/(^|\.)google\./, "Google"], [/(^|\.)bing\.com$/, "Bing"], [/(^|\.)(duckduckgo|yahoo|yandex|ecosia)\./, "Other search"],
+  [/^(mail|inbox)\.google\./, "Email"], [/^(gemini|bard)\.google\./, "Gemini"], [/(^|\.)google\./, "Google"], [/(^|\.)bing\.com$/, "Bing"], [/(^|\.)(duckduckgo|yahoo|yandex|ecosia)\./, "Other search"],
   [/(^|\.)instagram\.com$/, "Instagram"], [/(^|\.)(facebook\.com|fb\.com|fb\.me)$/, "Facebook"], [/(^|\.)(linkedin\.com|lnkd\.in)$/, "LinkedIn"],
   [/(^|\.)(t\.co|twitter\.com|x\.com)$/, "X (Twitter)"], [/(^|\.)(youtube\.com|youtu\.be)$/, "YouTube"], [/(^|\.)tiktok\.com$/, "TikTok"],
   [/(^|\.)(whatsapp\.com|wa\.me)$/, "WhatsApp"], [/(^|\.)snapchat\.com$/, "Snapchat"], [/(^|\.)propertyfinder\./, "Property Finder"],
@@ -75,11 +76,11 @@ const SOURCES: [RegExp, string][] = [
 const TAGS: Record<string, string> = {
   ig: "Instagram", instagram: "Instagram", "instagram.com": "Instagram", fb: "Facebook", facebook: "Facebook", "facebook.com": "Facebook", meta: "Facebook",
   google: "Google", linkedin: "LinkedIn", "linkedin.com": "LinkedIn", whatsapp: "WhatsApp", wa: "WhatsApp", tiktok: "TikTok", youtube: "YouTube",
-  email: "Email", newsletter: "Email", chatgpt: "ChatGPT", "chatgpt.com": "ChatGPT", openai: "ChatGPT", perplexity: "Perplexity", "perplexity.ai": "Perplexity",
+  email: "Email", newsletter: "Email", chatgpt: "ChatGPT", "chatgpt.com": "ChatGPT", openai: "ChatGPT", gemini: "Gemini", "gemini.google.com": "Gemini", perplexity: "Perplexity", "perplexity.ai": "Perplexity",
   propertyfinder: "Property Finder", bayut: "Bayut",
 };
 /** Android apps that report themselves as the referrer ("android-app://com.whatsapp/"). */
-const APPS: Record<string, string> = { "com.whatsapp": "WhatsApp", "com.whatsapp.w4b": "WhatsApp", "com.instagram.android": "Instagram", "com.facebook.katana": "Facebook", "com.linkedin.android": "LinkedIn", "com.google.android.gm": "Email", "com.google.android.googlequicksearchbox": "Google" };
+const APPS: Record<string, string> = { "com.whatsapp": "WhatsApp", "com.whatsapp.w4b": "WhatsApp", "com.instagram.android": "Instagram", "com.facebook.katana": "Facebook", "com.linkedin.android": "LinkedIn", "com.google.android.gm": "Email", "com.google.android.apps.bard": "Gemini", "com.google.android.googlequicksearchbox": "Google" };
 
 /** Where a visit came from, in words: a campaign tag wins over the referring site. */
 export function sourceName(ref: string, src: string, ownHost: string): string {

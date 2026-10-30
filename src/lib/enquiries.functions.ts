@@ -65,7 +65,7 @@ export type Lead = {
 };
 
 export type LeadsResult =
-  | { status: "ok"; leads: Lead[] }
+  | { status: "ok"; leads: Lead[]; total: number }
   | { status: "not-configured" }
   | { status: "wrong-password" }
   | { status: "offline"; problem?: DatabaseProblem };
@@ -351,6 +351,51 @@ export async function recordEnquiry(row: EnquiryRecord): Promise<{ ok: true } | 
   return stored || emailed ? { ok: true } : { ok: false, reason: "offline" };
 }
 
+/* Brakes on scripted floods (a real buyer sends one or two enquiries): a burst limit per connection in this
+   server instance's memory, and a daily allowance per connection in the database, keyed by a scrambled code
+   made from the IP address (an IPv6 address by its /64, which one household or phone can rotate freely). */
+const ENQUIRY_WINDOW_MS = 10 * 60_000;
+const ENQUIRIES_PER_WINDOW = 5;
+const ENQUIRIES_PER_DAY = 10;
+const enquiryHits = new Map<string, number[]>();
+function enquiryAllowed(conn: string, now: number): boolean {
+  const recent = (enquiryHits.get(conn) ?? []).filter((t) => now - t < ENQUIRY_WINDOW_MS);
+  if (recent.length >= ENQUIRIES_PER_WINDOW) { enquiryHits.set(conn, recent); return false; }
+  recent.push(now); enquiryHits.set(conn, recent);
+  if (enquiryHits.size > 5000) enquiryHits.clear();
+  return true;
+}
+/** The part of an address one sender controls: IPv4 as is, IPv6 by its first four groups. */
+export function connectionOf(ip: string): string {
+  if (!ip.includes(":")) return ip;
+  if (ip.includes(".")) return ip.slice(ip.lastIndexOf(":") + 1); // IPv4-mapped (::ffff:203.0.113.7)
+  const [head = "", tail = ""] = ip.toLowerCase().split("::");
+  const front = head ? head.split(":") : [];
+  const back = tail ? tail.split(":") : [];
+  const groups = ip.includes("::") ? [...front, ...Array(Math.max(0, 8 - front.length - back.length)).fill("0"), ...back] : front;
+  return groups.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, "")).join(":") + "::/64";
+}
+let enquiryKey: { from: string; key: Buffer } | null = null;
+/** True when this connection has used up its enquiries for now. */
+async function enquiryRefused(now: Date): Promise<boolean> {
+  let ip = "unknown";
+  try {
+    const { getRequestIP } = await import("@tanstack/react-start/server");
+    ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+  } catch { /* not behind a request */ }
+  if (ip === "unknown") return false;
+  const conn = connectionOf(ip);
+  if (!enquiryAllowed(conn, now.getTime())) return true;
+  const secret = process.env["ANALYTICS_SECRET"] || process.env["LEADS_PASSWORD"];
+  if (!secret) return false;
+  const { createHmac, scryptSync } = await import("node:crypto");
+  // Derived slowly from the secret (as the visit codes are), so a stored code can't be used to test guesses at it.
+  if (enquiryKey?.from !== secret) enquiryKey = { from: secret, key: scryptSync(secret, "dxbch-enquiry-limit-v1", 32) };
+  const code = createHmac("sha256", enquiryKey.key).update(`enquiry:${conn}`).digest("base64url").slice(0, 16);
+  // null (no database, or too slow) lets the enquiry through: the burst brake above still applies.
+  return !!(await takeQuota([{ key: `enquiry:v:${code}:${now.toISOString().slice(0, 10)}`, limit: ENQUIRIES_PER_DAY }]));
+}
+
 export const submitEnquiry = createServerFn({ method: "POST" })
   .validator((d: unknown) => asObject<EnquiryInput>(d))
   .handler(async ({ data }): Promise<EnquiryResult> => {
@@ -380,6 +425,12 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     if (problem) return { ok: false, reason: "invalid", message: problem };
     if (data.consent !== true)
       return { ok: false, reason: "invalid", message: "Please tick the box so we may contact you about your enquiry." };
+    // Counted only once the details are valid, so fixing a typo doesn't use up an attempt. A refusal shows
+    // the form's WhatsApp fallback.
+    if (await enquiryRefused(new Date())) {
+      console.warn("enquiry: too many from one connection — not saved");
+      return { ok: false, reason: "offline" };
+    }
 
     const saved = await recordEnquiry(row);
     if (!saved.ok) return saved;
@@ -414,6 +465,9 @@ export async function checkLeadsPassword(password: unknown): Promise<"ok" | "not
   return timingSafeEqual(a, b) ? "ok" : "wrong-password";
 }
 
+/** The newest enquiries /leads lists; older ones stay in the database and are counted. */
+export const LEADS_SHOWN = 500;
+
 export const getLeads = createServerFn({ method: "POST" })
   .validator((d: unknown) => asObject<{ password: string }>(d))
   .handler(async ({ data }): Promise<LeadsResult> => {
@@ -431,12 +485,14 @@ export const getLeads = createServerFn({ method: "POST" })
         await ensureTable(sql);
         const found = (await sql`
           SELECT id::text AS id, created_at, name, phone, email, country, language, project, looking_for, buy_as, bedrooms, budget, timing, funding, message, page
-          FROM enquiries ORDER BY created_at DESC LIMIT 500
+          FROM enquiries ORDER BY created_at DESC LIMIT ${LEADS_SHOWN}
         `) as Lead[];
+        // A full page may not be all of them: count the rest so older enquiries never vanish without a word.
+        const total = found.length < LEADS_SHOWN ? found.length : Number(((await sql`SELECT count(*) AS n FROM enquiries`) as { n: number | string }[])[0]?.n ?? found.length);
         await cleanCounters(sql, url);
-        return found;
+        return { found, total };
       })(), 20_000);
-      return { status: "ok", leads: rows.map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() })) };
+      return { status: "ok", total: rows.total, leads: rows.found.map((r) => ({ ...r, created_at: new Date(r.created_at).toISOString() })) };
     } catch (err) {
       const detail = redact(err, url).slice(0, 300);
       console.error("leads read failed:", detail);

@@ -36,6 +36,13 @@ describe("Visit reports", () => {
     expect(sourceName("https://www.google.com/", "ig", "dxbdubaicreekharbour.ae")).toBe("Instagram");
     expect(sourceName("https://news.example.org/a", "", "dxbdubaicreekharbour.ae")).toBe("news.example.org");
     expect(sourceName("https://chatgpt.com/", "chatgpt.com", "dxbdubaicreekharbour.ae")).toBe("ChatGPT");
+    // Google's AI assistant and its webmail aren't Google search.
+    expect(sourceName("https://gemini.google.com/", "", "dxbdubaicreekharbour.ae")).toBe("Gemini");
+    expect(sourceName("https://mail.google.com/", "", "dxbdubaicreekharbour.ae")).toBe("Email");
+    expect(sourceName("https://www.google.com/", "", "dxbdubaicreekharbour.ae")).toBe("Google");
+    expect(sourceName("https://www.google.ae/", "", "dxbdubaicreekharbour.ae")).toBe("Google");
+    expect(sourceName("https://news.google.com/", "", "dxbdubaicreekharbour.ae")).toBe("Google");
+    expect(sourceName("android-app://com.google.android.googlequicksearchbox/", "", "dxbdubaicreekharbour.ae")).toBe("Google");
     expect(sourceName("android-app://com.whatsapp/", "", "dxbdubaicreekharbour.ae")).toBe("WhatsApp");
     expect(sourceName("", "constructor", "dxbdubaicreekharbour.ae")).toBe("Constructor");
   });
@@ -53,11 +60,24 @@ describe("Visit reports", () => {
   it("stores one row per visit without the IP address", async () => {
     expect((await post(report)).status).toBe(204);
     const insert = writes.find((w) => w.q.includes("INSERT INTO site_visits"))!;
-    const [id, day, visitor, pages, views, seconds, source, country, device] = insert.values;
+    const [id, day, visitor, conn, pages, views, seconds, source, country, device] = insert.values;
     expect({ id, pages, views, seconds, source, country, device }).toEqual({ id: report.id, pages: ["/", "/projects/creek-haven"], views: 4, seconds: 48, source: "Google", country: "AE", device: "Phone" });
     expect(day).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(String(visitor)).toHaveLength(16);
+    expect(String(conn)).toHaveLength(16);
     expect(JSON.stringify(insert.values)).not.toContain("203.0.113.7");
+  });
+  it("gives one connection the same connection code whatever browser it claims", async () => {
+    const codes = async (ua: string, ip = "198.51.100.9") => {
+      writes.length = 0;
+      await post({ ...report, id: crypto.randomUUID() }, { "user-agent": ua, "x-forwarded-for": ip });
+      const [, , visitor, conn] = writes.find((w) => w.q.includes("INSERT INTO site_visits"))!.values;
+      return { visitor, conn };
+    };
+    const a = await codes(PHONE), b = await codes("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130.0");
+    expect(a.visitor).not.toBe(b.visitor);
+    expect(a.conn).toBe(b.conn);
+    expect((await codes(PHONE, "198.51.100.10")).conn).not.toBe(a.conn);
   });
   it("ignores robots, other sites and junk", async () => {
     await post(report, { "user-agent": "Googlebot/2.1" });

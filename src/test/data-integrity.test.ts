@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { PROJECTS, DISTRICT, SITE } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
 import { TERMS, PRIVACY } from "@/data/legal";
-import { TX, LATEST_ROW } from "@/data/transactions";
+import { TX, LATEST_ROW, salesCount12m, rentalsCount12m } from "@/data/transactions";
 import { aed, num, projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
 import { handoverText } from "@/components/showcase/shared";
@@ -20,6 +20,18 @@ describe("Project data", () => {
     const slugs = PROJECTS.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
     for (const p of PROJECTS) expect(p.images.length, p.slug).toBeGreaterThan(0);
+  });
+
+  it("gives every place card a photo that exists, or none on purpose", () => {
+    for (const place of DISTRICT.places) expect(place.image === null || place.image in DISTRICT.images, `${place.title} -> ${place.image}`).toBe(true);
+  });
+
+  it("puts every map pin inside Dubai Creek Harbour", () => {
+    for (const p of PROJECTS) {
+      if (p.lat === null || p.lng === null) continue;
+      expect(p.lat, `${p.slug} lat`).toBeGreaterThan(25.185); expect(p.lat, `${p.slug} lat`).toBeLessThan(25.22);
+      expect(p.lng, `${p.slug} lng`).toBeGreaterThan(55.335); expect(p.lng, `${p.slug} lng`).toBeLessThan(55.375);
+    }
   });
 
   it("ships every image variant it references", () => {
@@ -98,6 +110,14 @@ describe("Search results", () => {
       expect(d.length, `${p.slug}: ${d}`).toBeLessThanOrEqual(DESCRIPTION_MAX);
       expect(d.length, `${p.slug}: description too thin`).toBeGreaterThan(70);
       expect(t, p.slug).not.toMatch(/\| DXB Creek Harbour/);
+    }
+  });
+
+  it("claims registered sales or rents in a description only when the snapshot has them", () => {
+    for (const p of PROJECTS) {
+      const d = projectDescription(p, handoverText(p));
+      if (d.includes("Registered sales and rents.")) expect(salesCount12m(p.slug) > 0 && rentalsCount12m(p.slug) > 0, `${p.slug}: ${d}`).toBe(true);
+      else if (d.includes("Registered sales.")) expect(salesCount12m(p.slug), `${p.slug}: ${d}`).toBeGreaterThan(0);
     }
   });
 

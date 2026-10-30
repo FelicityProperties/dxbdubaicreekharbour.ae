@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ProjectCollection } from "@/components/showcase/ProjectCollection";
 import { PROJECTS, DISTRICT, FAQ, COSTS, SITE, districtImage } from "@/data/projects";
 import { TX } from "@/data/transactions";
-import { WhatsApp, PlanBar, CtaBand, ArrowDown, sharingMeta, Picture } from "@/components/showcase/shared";
+import { WhatsApp, PlanBar, CtaBand, ArrowDown, sharingMeta, Picture, handoverSortKey } from "@/components/showcase/shared";
 import { fitDescription, ldScript, organizationNode, websiteNode } from "@/lib/seo";
 import { MarketSnapshot, LatestTransactions, SourceNote } from "@/components/market/Market";
 import { WhyCreekHarbour } from "@/components/showcase/Benefits";
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const plans = PROJECTS.filter((p) => p.paymentPlan).sort((a, b) => (a.handover?.text ?? "9999").localeCompare(b.handover?.text ?? "9999"));
+  const plans = PROJECTS.filter((p) => p.paymentPlan).sort((a, b) => handoverSortKey(a).localeCompare(handoverSortKey(b)));
   const hero = DISTRICT.images["hero"];
   const places = DISTRICT.places.slice(0, 3);
   return <main>
@@ -46,7 +46,7 @@ function Home() {
 
     <WhyCreekHarbour compact />
 
-    <section className="section plans-section" id="payment-plans"><div className="container plans-layout"><div><span className="eyebrow">The path to your new home</span><h2>Payment plans<br />at a glance</h2><div className="plan-legend"><span><i className="legend-dot booking" />Booking</span><span><i className="legend-dot construction" />Construction</span><span><i className="legend-dot handover" />Handover</span></div><p className="plan-context">Emaar's published instalment schedules, summarised here as booking / construction / handover and shown in handover order. Each project page has the dated schedule as Emaar publishes it. For resale, confirm the seller's paid and remaining instalments.</p><Link to="/payment-plans" className="teaser-link mt-5">Every schedule, instalment by instalment <ArrowRight className="size-3.5" /></Link></div><div>{plans.map((p) => <div key={p.slug}><div className="plan-row"><Link className="plan-row-name" to="/projects/$slug" params={{ slug: p.slug }}>{p.name}{p.handover && <span className="block text-[11px] font-sans text-muted-foreground mt-1">Handover {dateLong(p.handover.text)}</span>}</Link>{p.paymentPlan && <PlanBar steps={p.paymentPlan.steps} />}</div></div>)}</div></div></section>
+    <section className="section plans-section" id="payment-plans"><div className="container plans-layout"><div><span className="eyebrow">The path to your new home</span><h2>Payment plans<br />at a glance</h2><div className="plan-legend"><span><i className="legend-dot booking" />Booking</span><span><i className="legend-dot construction" />Construction</span><span><i className="legend-dot handover" />Handover</span></div><p className="plan-context">Emaar's published instalment schedules, summarised here as booking / construction / handover and shown in handover order. Each project page has the dated schedule as Emaar publishes it. For resale, confirm the seller's paid and remaining instalments.</p><Link to="/payment-plans" className="teaser-link mt-5">Every schedule, instalment by instalment <ArrowRight className="size-3.5" /></Link></div><div>{plans.map((p) => <div key={p.slug}><div className="plan-row"><Link className="plan-row-name" to="/projects/$slug" params={{ slug: p.slug }}>{p.name}{p.construction === "completed" ? <span className="block text-[11px] font-sans text-muted-foreground mt-1">Completed building</span> : p.handover && <span className="block text-[11px] font-sans text-muted-foreground mt-1">Handover {dateLong(p.handover.text)}</span>}</Link>{p.paymentPlan && <PlanBar steps={p.paymentPlan.steps} />}</div></div>)}</div></div></section>
 
     <section className="section" id="market"><div className="container"><div className="section-heading"><div><span className="eyebrow">What actually changed hands</span><h2>Latest registered sales and rents</h2></div><p className="section-intro">Ready homes, off-plan and tenancy contracts across Dubai Creek Harbour, straight from the Land Department register.</p></div><LatestTransactions initial={10} /><SourceNote compact /><Link to="/market" className="teaser-link">Full market data: by bedroom, by building, all recent rows <ArrowRight className="size-3.5" /></Link></div></section>
 

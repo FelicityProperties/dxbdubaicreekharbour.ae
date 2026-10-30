@@ -5,9 +5,10 @@
  * away, with the totals so far; the numbers show on /leads.
  *
  * Half an hour without use ends a visit, also in a tab that stays open: the
- * next page or return to the tab starts a new one. A project opened in a new
- * tab keeps the source of the visit it came from. A tab that is never looked at
- * (opened in the background, then closed) isn't reported.
+ * next page, return to the tab or use of it starts a new one. A project opened
+ * in a new tab keeps the source of the visit it came from. A tab opened in the
+ * background starts its visit when first looked at, and isn't reported if it
+ * never is.
  *
  * Nothing is sent from the owner's browser (marked when the password is typed
  * on /leads, or by opening /leads?me=1), from /leads itself, or from automated
@@ -105,12 +106,21 @@ export function SiteAnalytics() {
     if (!isPrivatePath(window.location.pathname)) countPage.current(window.location.pathname);
 
     let lastInput = Date.now();
+    // A scroll, tap or key press: someone is really back. A cursor passing over the window only keeps time counting.
+    let lastAct = Date.now();
     const input = () => { lastInput = Date.now(); };
-    const events = ["pointerdown", "keydown", "scroll", "touchstart", "wheel", "mousemove"] as const;
-    events.forEach((e) => window.addEventListener(e, input, { passive: true }));
+    const act = () => { lastInput = lastAct = Date.now(); };
+    const acts = ["pointerdown", "keydown", "scroll", "touchstart", "wheel"] as const;
+    acts.forEach((e) => window.addEventListener(e, act, { passive: true }));
+    window.addEventListener("mousemove", input, { passive: true });
     const tick = window.setInterval(() => {
       const t = Date.now();
       if (document.visibilityState !== "visible" || t - lastInput > IDLE_AFTER_MS || isPrivatePath(window.location.pathname)) return;
+      // In use again after half an hour on screen untouched: that's a new visit too (once they scroll, tap or type).
+      if (t - v.last >= NEW_VISIT_AFTER_MS) {
+        if (t - lastAct > IDLE_AFTER_MS) return;
+        if (freshIfStale()) countPage.current?.(window.location.pathname);
+      }
       v.seconds = Math.min(VISIT_LIMITS.maxSeconds, v.seconds + 1);
       v.last = t;
       if (v.seconds % 5 === 0) storeVisit(v);
@@ -118,8 +128,12 @@ export function SiteAnalytics() {
 
     // Back to the tab (or back to a page kept in the browser's memory): maybe a new visit, counted from this page.
     const onBack = () => {
-      seen = true;
-      lastInput = Date.now();
+      lastInput = lastAct = Date.now();
+      if (!seen) {
+        seen = true;
+        // First look at a tab opened in the background: its visit starts now and keeps its source.
+        if (v.seconds === 0) { v.last = Date.now(); storeVisit(v); return; }
+      }
       if (freshIfStale() && !isPrivatePath(window.location.pathname)) countPage.current?.(window.location.pathname);
     };
     const onVisibility = () => { if (document.visibilityState === "hidden") report(); else onBack(); };
@@ -129,7 +143,8 @@ export function SiteAnalytics() {
     window.addEventListener("pageshow", onShow);
     return () => {
       countPage.current = null;
-      events.forEach((e) => window.removeEventListener(e, input));
+      acts.forEach((e) => window.removeEventListener(e, act));
+      window.removeEventListener("mousemove", input);
       window.clearInterval(tick);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", report);

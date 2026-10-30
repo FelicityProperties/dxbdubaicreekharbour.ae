@@ -2479,7 +2479,7 @@ export const PROJECTS: Project[] = [
       {
         "base": "/img/surf/1",
         "caption": "Surf — the towers and low-rise homes around the park, render (Emaar)",
-        "w": 1620,
+        "w": 1120,
         "h": 832,
         "widths": [
           480,
@@ -3547,8 +3547,8 @@ export const PROJECTS: Project[] = [
       "Multi-Purpose Room"
     ],
     "nearby": null,
-    "lat": 25.2044323,
-    "lng": 55.3142386,
+    "lat": null,
+    "lng": null,
     "brochureUrl": "https://www.emaar.com/cms-media/uploads/167418_brochure_File_2f81644226_prod.pdf",
     "floorPlanUrl": "https://www.emaar.com/cms-media/uploads/dubai-creek-harbour-floor-plan.pdf",
     "emaarUrl": "https://www.emaar.com/en/properties/rosewater",
@@ -5156,7 +5156,7 @@ export const DISTRICT = {
     {
       "title": "Central Park and Creek Play",
       "body": "A park the size of six football fields with a promenade, amphitheatre, skate park and dog park, and a 350-metre playscape with seven activity nodes (Emaar).",
-      "image": "central-park"
+      "image": null
     },
     {
       "title": "Ras Al Khor Wildlife Sanctuary",
@@ -5316,7 +5316,7 @@ export const DISTRICT = {
 };
 
 /** District image by key; undefined when the key is unknown. */
-export const districtImage = (key: string): ProjectImage | undefined => (DISTRICT.images as Record<string, ProjectImage>)[key];
+export const districtImage = (key: string | null): ProjectImage | undefined => (key ? (DISTRICT.images as Record<string, ProjectImage>)[key] : undefined);
 
 export const GUIDE = {
   "checked": "Checked against Emaar's published terms on 9 October 2026",

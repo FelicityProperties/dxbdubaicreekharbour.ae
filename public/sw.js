@@ -1,8 +1,9 @@
 /* Service worker: makes the site installable and quick to reopen on a phone.
    Pages are always fetched from the network first (so prices and figures are
-   never stale) and only served from cache when offline; images, fonts and
-   hashed build assets are cached on first use. Bump VERSION to drop old caches. */
-const VERSION = "2026-10-12b";
+   never stale) and only served from cache when offline, one copy per page
+   (tracking parameters ignored); images, fonts and hashed build assets are
+   cached on first use. Bump VERSION to drop old caches. */
+const VERSION = "2026-10-30";
 const STATIC = `static-${VERSION}`;
 const PAGES = `pages-${VERSION}`;
 
@@ -44,10 +45,12 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) {
+          // Only HTML pages, one copy per path: a video or XML file opened in its own tab is not stored,
+          // and ?fbclid=… / ?utm_… links overwrite the same entry instead of adding copies.
+          if (res.ok && (res.headers.get("content-type") || "").includes("text/html")) {
             // Clone before the body is handed to the page, and keep the worker alive until the copy is stored.
             const copy = res.clone();
-            event.waitUntil(caches.open(PAGES).then((cache) => cache.put(req, copy)).catch(() => {}));
+            event.waitUntil(caches.open(PAGES).then((cache) => cache.put(url.origin + url.pathname, copy)).catch(() => {}));
           }
           return res;
         })

@@ -11,6 +11,8 @@ export const Route = createFileRoute("/api/visit")({
         const { handleVisit } = await import("@/lib/visits.server");
         return handleVisit(request);
       },
+      // Anything but the beacon's POST: a plain 405, not the site's 200 "page not found" shell.
+      ANY: () => new Response("Method Not Allowed", { status: 405, headers: { allow: "POST", "x-robots-tag": "noindex" } }),
     },
   },
 });

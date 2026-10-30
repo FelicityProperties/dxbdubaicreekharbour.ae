@@ -187,7 +187,12 @@ export function FelicityBot() {
     // On the phone sheet the "#chat" entry is replaced, so Back from the new page returns to the page itself.
     void router.navigate({ href, replace: sheet && window.location.hash === "#chat" });
   };
-  function newChat() { chatRun.current++; setTurns([]); save([]); setProblem(null); }
+  /** Keep focus inside the panel when the control that had it disappears: the question box with a mouse, the panel itself on touch screens (no keyboard pop-up). */
+  function keepFocus() {
+    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus();
+    else if (document.activeElement !== inputRef.current) panelRef.current?.focus();
+  }
+  function newChat() { chatRun.current++; setTurns([]); save([]); setProblem(null); keepFocus(); }
 
   async function ask(question: string) {
     const q = question.trim().slice(0, BOT_LIMITS.maxUserChars);
@@ -195,8 +200,8 @@ export function FelicityBot() {
     const run = chatRun.current;
     let history = historyFor(turns, q);
     setTurns(history); save(history); setInput(""); setBusy(true); setProblem(null);
-    // Keep the keyboard on the question box (with a mouse; on phones this would pop the keyboard up).
-    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus();
+    // The tapped suggestion or Send button goes away or is disabled: keep focus in the panel.
+    keepFocus();
     let res: BotResult;
     try {
       res = await askFelicityBot({ data: { turns: history, page: path, hp } });
