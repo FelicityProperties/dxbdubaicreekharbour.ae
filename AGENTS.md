@@ -26,9 +26,8 @@
 - Never link to a page of Emaar's website or any developer's website — no
   project page, source or "learn more" link, on any page, in any language,
   and not from FelicityBot. Visitors buy through us. The only exception, by
-  the owner's decision: the download buttons for Emaar's brochure and
-  floor-plan PDF files on project pages (where Emaar publishes none, they are
-  offered on WhatsApp). The data files keep Emaar's page addresses only as
+  the owner's decision: Emaar's brochure and floor-plan PDF files (project
+  pages and FelicityBot). The data files keep Emaar's page addresses only as
   the record of where each figure came from.
   `src/test/no-developer-links.test.ts` enforces it.
 - FelicityBot (the AI assistant) answers only from the knowledge text that

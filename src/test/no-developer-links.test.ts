@@ -31,8 +31,10 @@ describe("no links to the developer's website", () => {
     expect(bad).toEqual([]);
   });
 
-  it("FelicityBot has no Emaar address to give and cannot render one as a link", () => {
-    expect(FELICITYBOT_SYSTEM).not.toMatch(/emaar\.com/i);
+  it("FelicityBot knows no Emaar page address and cannot render one as a link (brochure and floor-plan PDFs only)", () => {
+    const addresses = FELICITYBOT_SYSTEM.match(/https?:\/\/[^\s)"'>\]]+/g) ?? [];
+    expect(addresses.filter((a) => /emaar\.com/i.test(a) && !/^https:\/\/www\.emaar\.com\/cms-media\/[^?#]+\.pdf$/i.test(a))).toEqual([]);
     expect(safeHref("https://www.emaar.com/en/properties/valia", SITE.whatsapp)).toBeNull();
+    expect(safeHref("https://www.emaar.com/cms-media/uploads/valia-floor-plan.pdf", SITE.whatsapp)).not.toBeNull();
   });
 });

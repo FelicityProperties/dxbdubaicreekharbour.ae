@@ -100,11 +100,13 @@ export function historyFor(turns: BotTurn[], question: string): BotTurn[] {
 
 /**
  * Links FelicityBot may render: this site's own paths (never "//host", which
- * browsers read as another site) and the broker's WhatsApp. Everything else,
- * Emaar's website included, stays plain text: visitors buy through us.
+ * browsers read as another site), the broker's WhatsApp, and Emaar's brochure
+ * and floor-plan PDF files. Everything else, Emaar's web pages included, stays
+ * plain text: visitors buy through us.
  */
 export function safeHref(href: string, whatsapp: string): string | null {
   if (/^\/(?![/\\])[\w\-/#?=&.%]*$/.test(href)) return href;
+  if (/^https:\/\/(www\.)?emaar\.com\/cms-media\/[^\s"'<>?#]+\.pdf$/i.test(href)) return href;
   if (new RegExp(`^https://wa\\.me/${whatsapp}(\\?[^\\s"'<>]*)?$`).test(href)) return href;
   return null;
 }
