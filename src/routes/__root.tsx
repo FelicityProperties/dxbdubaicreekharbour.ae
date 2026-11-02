@@ -91,7 +91,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/cormorant-garamond-latin.woff2", crossOrigin: "anonymous" },
     ],
     // Installable on phones: the service worker caches images and build assets; pages always come from the network first.
-    scripts: [{ children: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}" }],
+    scripts: [
+      // updateViaCache "none": the browser always checks for a new sw.js, so a fix to it reaches every visitor on their next visit.
+      { children: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).catch(function(){})})}" },
+      // Self-repair: if a page ever shows without its design (a stale saved copy: the logo fills the screen),
+      // delete the site's saved copies and reload once. The flag stops it ever looping.
+      { children: "addEventListener('load',function(){try{var m=document.querySelector('.dxbch-mark');if(!m||m.getBoundingClientRect().width<=60||sessionStorage.getItem('dxbch-healed'))return;sessionStorage.setItem('dxbch-healed','1');var go=function(){location.reload()};Promise.all([navigator.serviceWorker?navigator.serviceWorker.getRegistrations().then(function(r){return Promise.all(r.map(function(x){return x.unregister()}))}):0,window.caches?caches.keys().then(function(k){return Promise.all(k.map(function(n){return caches.delete(n)}))}):0]).then(go,go)}catch(e){}})" },
+    ],
   }; },
   shellComponent: RootShell,
   component: RootComponent,

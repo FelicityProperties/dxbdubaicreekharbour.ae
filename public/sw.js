@@ -3,7 +3,7 @@
    never stale) and only served from cache when offline, one copy per page
    (tracking parameters ignored); images, fonts and hashed build assets are
    cached on first use. Bump VERSION to drop old caches. */
-const VERSION = "2026-10-30";
+const VERSION = "2026-11-02";
 const STATIC = `static-${VERSION}`;
 const PAGES = `pages-${VERSION}`;
 

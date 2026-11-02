@@ -39,7 +39,10 @@ starting point but is now behind this repo and should not be copied over it.
   like an app (standalone display, home-screen icon). Pages are always
   fetched from the network first; images and hashed build assets are
   cached, and one HTML copy per page is kept only as the offline fallback.
-  Bump `VERSION` in `sw.js` to clear old caches.
+  Bump `VERSION` in `sw.js` to clear old caches (every visitor's browser
+  checks for a new `sw.js` on each visit). A small script in the root head
+  repairs a page that ever loads without its stylesheet (a stale saved copy):
+  it deletes the site's saved copies and reloads once.
 - `public/img/<project-slug>/` — Emaar's renders and photos, resized to
   480/960/1600 WebP plus a 1200×630 `og.jpg` for sharing previews.
   `public/img/district/` holds the area images.
