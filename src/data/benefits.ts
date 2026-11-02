@@ -48,7 +48,7 @@ export const BENEFITS: Benefit[] = [
   },
   {
     "title": "A registered rental and resale market",
-    "body": "Dubai Land Department records for the 12 months to 30 September 2026 show 3,962 new tenancy contracts and 2,465 renewals registered for apartments in Dubai Creek Harbour, with a median rent of AED 96,000 across 2,611 one-bedroom contracts. The same records show 987 ready-apartment sales registered in that window; these are registered contracts and sales, not valuations or forecasts.",
+    "body": "Dubai Land Department records for the 12 months to 31 October 2026 show 4,040 new tenancy contracts and 2,491 renewals registered for apartments in Dubai Creek Harbour, with a median rent of AED 95,000 across 2,678 one-bedroom contracts. The same records show 965 ready-apartment sales registered in that window; these are registered contracts and sales, not valuations or forecasts.",
     "sourceUrl": "dld-snapshot",
     "kind": "dld-snapshot"
   },
