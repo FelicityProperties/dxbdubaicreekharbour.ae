@@ -209,5 +209,9 @@ export function CtaBand({ project }: { project?: Project }) { const t = useT(); 
 function TwoLines({ text }: { text: string }) { const [a, b] = text.split("|"); return <>{a}{b !== undefined && <><br />{b}</>}</>; }
 export function ProjectNotFound() { const t = useT(); return <main className="container unavailable"><span className="eyebrow">{t("Project unavailable")}</span><h1><TwoLines text={t("Let's find your place|at the Creek.")} /></h1><p>{t("We couldn't find that project. Explore the current collection or ask us on WhatsApp.")}</p><div className="flex flex-wrap gap-3"><Button asChild><Link to="/projects">{t("View all projects")} <ArrowRight /></Link></Button><WhatsApp variant="outline" /></div></main>; }
 export function PageNotFound() { const t = useT(); return <main className="container unavailable"><span className="eyebrow">{t("Page not found")}</span><h1><TwoLines text={t("Let's find your place|at the Creek.")} /></h1><p>{t("That page doesn't exist. Explore the current collection or ask us on WhatsApp.")}</p><div className="flex flex-wrap gap-3"><Button asChild><Link to="/projects">{t("View all projects")} <ArrowRight /></Link></Button><WhatsApp variant="outline" /></div></main>; }
-export function SourceLink({ href, children }: { href: string; children?: React.ReactNode }) { const t = useT(); return <a className="src-link" href={href} target="_blank" rel="noopener noreferrer">{children ?? t("Source")}</a>; }
+/**
+ * Credits a figure or text to its publisher ("Source: Emaar") as plain text. The site never links to Emaar's or
+ * any developer's website: visitors ask us for brochures, floor plans and price lists on WhatsApp instead.
+ */
+export function SourceCredit({ children }: { children?: React.ReactNode }) { const t = useT(); return <span className="src-note">{children ?? t("Source")}</span>; }
 export { ArrowDown, ArrowUpRight, ArrowRight };

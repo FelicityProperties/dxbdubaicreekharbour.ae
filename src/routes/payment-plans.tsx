@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
-import { CtaBand, PlanBar, SourceLink, WhatsApp, handoverSortKey, projectMessage } from "@/components/showcase/shared";
+import { CtaBand, PlanBar, SourceCredit, WhatsApp, handoverSortKey, projectMessage } from "@/components/showcase/shared";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
 import { breadcrumbNode, descriptionMax, fitDescription, ldScript, pageHead } from "@/lib/seo";
 import { dateLong } from "@/lib/format";
@@ -39,7 +39,7 @@ function PaymentPlansPage() {
         {/* Step labels come from the data ("On booking"); lowercasing a translation changes nothing in Arabic or Chinese. */}
         <p className="mt-3">{p.paymentPlan.steps.map((s) => t("{percent}% {label}", { percent: s.percent, label: t(s.label).toLowerCase() })).join(" · ")}</p>
         {p.paymentPlan.schedule.length > 0 && <div className="table-scroll"><table className="plan-table schedule-table"><thead><tr><th scope="col">{t("Instalment")}</th><th scope="col">{t("Due")}</th><th scope="col">{t("Share@@table column: the instalment's share of the price")}</th></tr></thead><tbody>{p.paymentPlan.schedule.map((s, i) => <tr key={`${s.label}-${i}`}><td>{t(s.label)}</td><td>{dateLong(s.date, t.locale)}</td><td>{s.percent}%</td></tr>)}</tbody></table></div>}
-        <p className="fact-note mt-4">{t(p.paymentPlan.note)}{gap(t)}<SourceLink href={p.paymentPlan.source}>{t("Source: Emaar")}</SourceLink></p>
+        <p className="fact-note mt-4">{t(p.paymentPlan.note)}{gap(t)}<SourceCredit>{t("Source: Emaar")}</SourceCredit></p>
         <div className="flex flex-wrap gap-3 mt-5"><Button asChild variant="outline" size="sm" className="h-auto min-h-8 whitespace-normal py-1.5 text-start"><Link to="/projects/$slug" params={{ slug: p.slug }}>{t("{name}: prices and registered sales", { name: p.name })} <ArrowUpRight /></Link></Button><WhatsApp message={projectMessage(p.name, t)} className="text-xs" variant="outline">{t("Ask for today's plan")}</WhatsApp></div>
       </article>)}
     </div></section>

@@ -20,8 +20,15 @@
   links to page code or to the data files.
 - If a figure is missing, show "on request" or leave the row out. A
   plausible-sounding number is wrong even when it is close.
-- The area page and the buying guide quote Emaar's published figures with a
-  source link beside each one. Editorial copy stays qualitative.
+- The area page and the buying guide quote Emaar's published figures with
+  Emaar credited beside each one, in plain text. Editorial copy stays
+  qualitative.
+- Never link to Emaar's website or any developer's website — no project page,
+  brochure, floor plan, source or "learn more" link, on any page, in any
+  language, and not from FelicityBot. Visitors buy through us: brochures,
+  floor plans and price lists are offered on WhatsApp. The data files keep
+  Emaar's addresses only as the record of where each figure came from.
+  `src/test/no-developer-links.test.ts` enforces it.
 - FelicityBot (the AI assistant) answers only from the knowledge text that
   `src/lib/felicitybot.knowledge.ts` renders from these same data files. To
   teach it a fact, change the data file; never type a figure into its rules

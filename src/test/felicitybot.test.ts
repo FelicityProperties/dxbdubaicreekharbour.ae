@@ -100,11 +100,11 @@ describe("FelicityBot conversation checks", () => {
 
 describe("FelicityBot links", () => {
   const ok = (h: string) => safeHref(h, SITE.whatsapp);
-  it("allows this site's paths, Emaar and the broker's WhatsApp", () => {
-    for (const h of ["/", "/projects/creek-haven", "/payment-plans", "/#enquire", "/market?x=1", "https://www.emaar.com/en/our-communities/dubai-creek-harbour", `https://wa.me/${SITE.whatsapp}`, `https://wa.me/${SITE.whatsapp}?text=Hi`]) expect(ok(h), h).toBe(h);
+  it("allows this site's paths and the broker's WhatsApp", () => {
+    for (const h of ["/", "/projects/creek-haven", "/payment-plans", "/#enquire", "/market?x=1", `https://wa.me/${SITE.whatsapp}`, `https://wa.me/${SITE.whatsapp}?text=Hi`]) expect(ok(h), h).toBe(h);
   });
-  it("refuses other sites, including protocol-relative links", () => {
-    for (const h of ["//evil.example/x", "///evil.example", "/\\evil.example", "https://evil.example/", "javascript:alert(1)", "https://wa.me/447700900123", `https://wa.me/${SITE.whatsapp}9`, "https://emaar.com.evil.example/"]) expect(ok(h), h).toBeNull();
+  it("refuses other sites, Emaar's included, and protocol-relative links", () => {
+    for (const h of ["https://www.emaar.com/en/our-communities/dubai-creek-harbour", "https://emaar.com/x", "//evil.example/x", "///evil.example", "/\\evil.example", "https://evil.example/", "javascript:alert(1)", "https://wa.me/447700900123", `https://wa.me/${SITE.whatsapp}9`, "https://emaar.com.evil.example/"]) expect(ok(h), h).toBeNull();
   });
 });
 

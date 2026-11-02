@@ -150,7 +150,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 .page-hero .breadcrumb {padding-block:0 18px;}
 .source-note {font-size:11px;color:var(--muted-foreground);line-height:1.8;margin-top:14px;max-width:920px;}
 .source-note a {text-decoration:underline;text-underline-offset:3px;}
-.src-link {font-size:11px;color:var(--brass-text);text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+.src-note {font-size:11px;color:var(--muted-foreground);white-space:nowrap;}
 .market-layout {display:grid;gap:40px;}.market-layout > *,.market-block,.table-scroll {min-width:0;max-width:100%;}
 .market-block h3 {font-size:26px;margin-bottom:6px;}
 .block-note {font-size:12px;color:var(--muted-foreground);margin-bottom:16px;line-height:1.8;max-width:860px;}
@@ -217,7 +217,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
  .site-footer {padding-bottom:40px;}
  .guide-steps li {grid-template-columns:40px 1fr;gap:12px;}
  .tx-table {font-size:13px;}
- .source-note,.block-note,.chip,.kind,.filter-label,.stat-label,.stat-note,.project-table th,.tx-table th,.src-link {font-size:11px;}
+ .source-note,.block-note,.chip,.kind,.filter-label,.stat-label,.stat-note,.project-table th,.tx-table th,.src-note {font-size:11px;}
  .costs-box {padding:20px;}.costs-box h3 {font-size:26px;}
  .market-block h3 {font-size:24px;}
  .detail-heading .badge-row {margin-top:12px;}
@@ -448,7 +448,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 /* Arabic and Chinese type. Small print: Arabic letters run small for their size and Chinese characters blur below
    12px, so the English design's 8–11px captions, labels and notes are set at 12px (phones already use it for most).
    Notes set as paragraphs of a project section or legal page are 13–14px in English already: those are left alone. */
-:root:is(:lang(ar),:lang(zh)) :is(.eyebrow,.hero-bottom,.breadcrumb,.price-note,.fact-label,.fact-note,.plan-context,.plan-legend,.image-note,.disclaimer,.footer-bottom,.footer-nav,.stat-label,.stat-note,.filter-label,.source-note,.block-note,.src-link,.card-facts,.amenity,.view-toggle button,.cost-detail,.benefit-src,.aiv-permit,.bot-sub,.bot-note,.art-caption,.project-art .brand,.status-badge,.chip,.kind,.plan-table th,.tx-table th,.project-table th,.plan-row-name span):not(.detail-section p,.legal-body p) {font-size:12px;}
+:root:is(:lang(ar),:lang(zh)) :is(.eyebrow,.hero-bottom,.breadcrumb,.price-note,.fact-label,.fact-note,.plan-context,.plan-legend,.image-note,.disclaimer,.footer-bottom,.footer-nav,.stat-label,.stat-note,.filter-label,.source-note,.block-note,.src-note,.card-facts,.amenity,.view-toggle button,.cost-detail,.benefit-src,.aiv-permit,.bot-sub,.bot-note,.art-caption,.project-art .brand,.status-badge,.chip,.kind,.plan-table th,.tx-table th,.project-table th,.plan-row-name span):not(.detail-section p,.legal-body p) {font-size:12px;}
 :root:is(:lang(ar),:lang(zh)) .mobile-bar .tab {font-size:11px;}
 /* Arabic running text one size up from the English. */
 :root:lang(ar) :is(.section-intro,.district-point p,.faq-item p,.place-card p,.hood p,.benefit p,.highlight-list li,.filter-bar,.teaser-link,.fact-links,.inline-links,.legal-toc a,.nav-small,.nav-note) {font-size:13px;}

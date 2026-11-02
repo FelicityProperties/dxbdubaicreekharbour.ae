@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { BENEFITS } from "@/data/benefits";
 import { dateText } from "@/lib/format";
 import { msg, tFor, useT, type T } from "@/i18n/messages";
-import { SourceLink } from "./shared";
+import { SourceCredit } from "./shared";
 
 /** English, for code that runs outside a page (tests): dldCardBody(body) defaults to it. */
 const EN = tFor("en");
@@ -35,7 +35,7 @@ export function WhyCreekHarbour({ compact = false }: { compact?: boolean }) {
   const list = compact ? BENEFITS.slice(0, 4) : BENEFITS;
   return <section className="section benefits-section" id="why"><div className="container">
     <div className="section-heading"><div><span className="eyebrow">{t("Why buyers choose it")}</span><h2>{t("Why Dubai Creek Harbour")}</h2></div><p className="section-intro">{t("Freehold, visa-eligible, developer payment plans and a waterfront district between Downtown and the airport — in Emaar's words and the Land Department's numbers, not ours.")}</p></div>
-    <div className="benefit-grid">{list.map((b, i) => <article className="benefit" key={b.title}><span className="benefit-n">{String(i + 1).padStart(2, "0")}</span><h3>{t(b.title)}</h3><p>{b.kind !== "dld-snapshot" ? t(b.body) : dldCardBody(b.body, t)}</p><p className="benefit-src">{b.kind === "dld-snapshot" ? t("Dubai Land Department records") : <SourceLink href={b.sourceUrl}>{t("Source: Emaar")}</SourceLink>}</p></article>)}</div>
+    <div className="benefit-grid">{list.map((b, i) => <article className="benefit" key={b.title}><span className="benefit-n">{String(i + 1).padStart(2, "0")}</span><h3>{t(b.title)}</h3><p>{b.kind !== "dld-snapshot" ? t(b.body) : dldCardBody(b.body, t)}</p><p className="benefit-src">{b.kind === "dld-snapshot" ? t("Dubai Land Department records") : <SourceCredit>{t("Source: Emaar")}</SourceCredit>}</p></article>)}</div>
     {compact && <Link to="/guide" hash="why" className="teaser-link">{t("All {n} reasons, and how buying works", { n: BENEFITS.length })} <ArrowRight className="size-3.5" /></Link>}
   </div></section>;
 }

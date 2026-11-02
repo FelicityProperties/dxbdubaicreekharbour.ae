@@ -209,6 +209,6 @@ by hand.
 - Emaar figures come only from `src/data/projects.ts`; registered figures
   only from `src/data/transactions.json`. Don't add numbers anywhere else —
   that includes FelicityBot's rules text.
-- Photos and brochures are Emaar's official files; brochures and floor plans
-  link to Emaar's site, images are self-hosted copies with Emaar credited in
-  every caption.
+- Photos and brochures are Emaar's official files. Images are self-hosted
+  copies with Emaar credited in every caption. Nothing links to Emaar's site:
+  brochures, floor plans and price lists are offered on WhatsApp.
