@@ -1,7 +1,8 @@
 /**
- * Visitors buy through us: no page, and no FelicityBot reply, links to Emaar's (or any developer's) website.
- * The data files keep Emaar's addresses as the record of where each figure came from; pages credit Emaar in
- * plain text and offer brochures, floor plans and price lists on WhatsApp instead.
+ * Visitors buy through us: no page, and no FelicityBot reply, links to Emaar's (or any developer's) website —
+ * no project page, no source page. The one exception, by the owner's decision (2 Nov 2026): the download
+ * buttons for Emaar's brochure and floor-plan PDF files. The data files keep Emaar's page addresses as the
+ * record of where each figure came from; pages credit Emaar in plain text.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -12,8 +13,8 @@ import { safeHref } from "@/lib/felicitybot.shared";
 import { SITE } from "@/data/projects";
 
 const ROOT = process.cwd();
-/** Data fields that hold addresses on Emaar's website. */
-const EMAAR_FIELDS = /\b(emaarUrl|brochureUrl|floorPlanUrl|sourceUrl|placesSource|overseasSource|driveTimesSource)\b|\.source\b(?!\.)/;
+/** Data fields that hold addresses of pages on Emaar's website (brochureUrl and floorPlanUrl are PDF files, allowed). */
+const EMAAR_FIELDS = /\b(emaarUrl|sourceUrl|placesSource|overseasSource|driveTimesSource)\b|\.source\b(?!\.)/;
 
 describe("no links to the developer's website", () => {
   it("page code never puts an Emaar address in a link", () => {
@@ -24,7 +25,7 @@ describe("no links to the developer's website", () => {
       text.split("\n").forEach((line, i) => {
         if (/emaar\.com/i.test(line)) bad.push(`${path.slice(ROOT.length + 1)}:${i + 1} names emaar.com`);
         if (/href=\{[^}]*\}/.test(line) && [...line.matchAll(/href=\{([^}]*)\}/g)].some((m) => EMAAR_FIELDS.test(m[1]!))) bad.push(`${path.slice(ROOT.length + 1)}:${i + 1} links a source field`);
-        if (/\b(emaarUrl|brochureUrl|floorPlanUrl|sourceUrl)\b/.test(line)) bad.push(`${path.slice(ROOT.length + 1)}:${i + 1} uses an Emaar address field`);
+        if (/\b(emaarUrl|sourceUrl)\b/.test(line)) bad.push(`${path.slice(ROOT.length + 1)}:${i + 1} uses an Emaar address field`);
       });
     }
     expect(bad).toEqual([]);

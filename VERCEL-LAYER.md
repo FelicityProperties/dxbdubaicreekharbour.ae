@@ -210,5 +210,5 @@ by hand.
   only from `src/data/transactions.json`. Don't add numbers anywhere else —
   that includes FelicityBot's rules text.
 - Photos and brochures are Emaar's official files. Images are self-hosted
-  copies with Emaar credited in every caption. Nothing links to Emaar's site:
-  brochures, floor plans and price lists are offered on WhatsApp.
+  copies with Emaar credited in every caption. Brochure and floor-plan
+  buttons download Emaar's PDF files; nothing else links to Emaar's site.

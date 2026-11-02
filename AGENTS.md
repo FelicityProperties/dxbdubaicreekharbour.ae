@@ -23,11 +23,13 @@
 - The area page and the buying guide quote Emaar's published figures with
   Emaar credited beside each one, in plain text. Editorial copy stays
   qualitative.
-- Never link to Emaar's website or any developer's website — no project page,
-  brochure, floor plan, source or "learn more" link, on any page, in any
-  language, and not from FelicityBot. Visitors buy through us: brochures,
-  floor plans and price lists are offered on WhatsApp. The data files keep
-  Emaar's addresses only as the record of where each figure came from.
+- Never link to a page of Emaar's website or any developer's website — no
+  project page, source or "learn more" link, on any page, in any language,
+  and not from FelicityBot. Visitors buy through us. The only exception, by
+  the owner's decision: the download buttons for Emaar's brochure and
+  floor-plan PDF files on project pages (where Emaar publishes none, they are
+  offered on WhatsApp). The data files keep Emaar's page addresses only as
+  the record of where each figure came from.
   `src/test/no-developer-links.test.ts` enforces it.
 - FelicityBot (the AI assistant) answers only from the knowledge text that
   `src/lib/felicitybot.knowledge.ts` renders from these same data files. To
