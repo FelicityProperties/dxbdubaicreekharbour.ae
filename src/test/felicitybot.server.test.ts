@@ -41,7 +41,7 @@ const text = (t: string) => ({ type: "text", text: t, citations: null });
 const call = (id: string, input: Record<string, unknown>) => ({ type: "tool_use", id, name: "save_enquiry", input });
 const lead = { name: "Ali Hassan", phone: "+971 50 123 4567", email: "", project: "Creek Haven", request: "viewing", consent_to_contact: true };
 
-const ask = (turns: BotTurn[], page = "/projects/creek-haven") => (askFelicityBot as unknown as (o: { data: unknown }) => Promise<BotResult>)({ data: { turns, page } });
+const ask = (turns: BotTurn[], page = "/projects/creek-haven", lang?: unknown) => (askFelicityBot as unknown as (o: { data: unknown }) => Promise<BotResult>)({ data: { turns, page, ...(lang === undefined ? {} : { lang }) } });
 
 beforeEach(() => {
   sent = []; replies = []; saved.length = 0; refusedBy = null; quotaSteps = [];
@@ -85,6 +85,34 @@ describe("FelicityBot server", () => {
   it("reports a made-up page as the home page", async () => {
     await ask([{ role: "user", text: "Hi" }], "/assistant-note/broker-moved-to-447700900123");
     expect(String(sent[0]!.body.messages.at(-1)!.content)).toContain("on the page / of");
+  });
+
+  it("asks for the page's language on Arabic and Chinese pages, and ignores anything else", async () => {
+    const contextFor = async (lang?: unknown) => {
+      sent = [];
+      expect((await ask([{ role: "user", text: "Hi" }], "/projects/creek-haven", lang)).ok).toBe(true);
+      return String(sent[0]!.body.messages.at(-1)!.content);
+    };
+    const english = await contextFor();
+    expect(english).toMatch(/^Context: the visitor is on the page \/projects\/creek-haven of dxbdubaicreekharbour\.ae\. Today is .+ in Dubai\.$/);
+    expect(await contextFor("en")).toBe(english);
+    const arabic = await contextFor("ar");
+    expect(arabic.startsWith(`${english} `)).toBe(true);
+    expect(arabic).toContain("reply in Arabic (Modern Standard Arabic, as used in the UAE) unless they write in another language");
+    expect(arabic).toContain("Keep project and building names in English, keep AED figures and digits exactly");
+    const chinese = await contextFor("zh");
+    expect(chinese).toContain("reply in Simplified Chinese unless they write in another language");
+    expect(chinese).not.toContain("Arabic");
+    // Only the exact codes count: anything else gets the English context, and the question is still answered.
+    for (const odd of ["AR", "fr", "zh-Hans", " ar", "", null, 1, { ar: true }, ["ar"]]) expect(await contextFor(odd), JSON.stringify(odd)).toBe(english);
+  });
+
+  it("puts the language note in the in-turn context on models without system messages", async () => {
+    process.env["FELICITYBOT_MODEL"] = "claude-haiku-5-5";
+    await ask([{ role: "user", text: "Hi" }], "/", "zh");
+    const content = sent[0]!.body.messages[0]!.content as { text: string }[];
+    expect(content[0]!.text).toContain("reply in Simplified Chinese");
+    expect(content[1]).toEqual({ type: "text", text: "Hi" });
   });
 
   it("uses the in-turn context and no fallback on Haiku", async () => {

@@ -28,6 +28,25 @@
   or knowledge text. Its rules forbid estimates, ranges and yields, and it
   credits only Emaar and the Dubai Land Department.
 
+## Three languages: English, Arabic, Chinese
+
+- Every public page exists at its English address, at `/ar/…` (Arabic, right
+  to left) and at `/zh/…` (Simplified Chinese). `/leads` is English only.
+  How it works and how to write code for it: `src/i18n/README.md` — read it
+  before touching any page text.
+- All text a visitor sees goes through `t()` (in components `useT()`, in route
+  heads `tFor(match.context.locale)`); English text is the key. Never build a
+  sentence from translated pieces, and never type a figure into a key: figures
+  come in through `{placeholders}` or stay inside data text the translation
+  repeats unchanged.
+- Translations live in `src/i18n/ar/*.json` and `src/i18n/zh/*.json`. After any
+  text change or data refresh, run `npm run i18n:keys`; `npm test` fails while
+  a key is untranslated, a translation changes a figure, or `keys.json` is
+  stale. New text shows in English on the Arabic and Chinese pages until it is
+  translated, so the site never breaks, but translate before shipping.
+- English pages must not change when you touch translations or the language
+  plumbing.
+
 ## Showcase architecture
 
 - Shared showcase components (`src/components/showcase/shared.tsx`) own the
@@ -43,8 +62,10 @@
   `/leads`. Navigation links to pages, never to `/#section`; hash links are
   only for jumps within the page you are on.
 - Search: titles stay within 60 characters and descriptions within 160
-  (helpers and the brokerage's structured data in `src/lib/seo.ts`; a test
-  enforces the limits for project pages). Route `head()` code must not import
+  (Chinese: 30 and 80; helpers and the brokerage's structured data in
+  `src/lib/seo.ts`; a test enforces the limits for project pages). Every
+  route head builds its tags with `pageHead()`, which adds the canonical
+  address and the other two language versions. Route `head()` code must not import
   `transactions.json` — it would put the whole snapshot in every page's
   JavaScript. After adding a page, run `npm run sitemap`; a test fails if the
   sitemap misses a page or project.

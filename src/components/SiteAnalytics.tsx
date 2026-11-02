@@ -63,7 +63,9 @@ function storeVisit(v: Visit) {
 }
 
 export function SiteAnalytics() {
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  // The address as the browser shows it: Arabic and Chinese pages keep their prefix ("/ar/market"), like the first page
+  // counted below, so /leads shows their language. (The router's own pathname has the prefix taken off.)
+  const path = useRouterState({ select: (s) => s.location.publicHref.split(/[?#]/)[0] || "/" });
   // Set while counting runs: counts the page now on screen (starting a new visit first if the last one went stale).
   const countPage = useRef<((pathname: string) => void) | null>(null);
 

@@ -15,10 +15,13 @@ import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/s
 import { SITE } from "@/data/projects";
 import { FelicityBot } from "@/components/felicitybot/FelicityBot";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
+import { LOCALE_META, localeFromHref, localizePath, type Locale } from "@/i18n/locales";
+import { tFor, useLocale, useT } from "@/i18n/messages";
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
+  const t = useT();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -27,10 +30,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+          {t("This page didn't load")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {t("Something went wrong on our end. You can try refreshing or head back home.")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -40,13 +43,13 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Try again
+            {t("Try again")}
           </button>
           <a
-            href="/"
+            href={localizePath("/", t.locale)}
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Go home
+            {t("Go home")}
           </a>
         </div>
       </div>
@@ -55,7 +58,9 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  // The language of the page, from its address (/ar/…, /zh/…); every route head reads it as match.context.locale.
+  beforeLoad: ({ location }): { locale: Locale } => ({ locale: localeFromHref(location.publicHref) }),
+  head: ({ match }) => { const t = tFor(match.context.locale); return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
@@ -64,7 +69,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Creek Harbour" },
       { title: "DXB Creek Harbour" },
-      { name: "description", content: "An independent showcase of Dubai Creek Harbour homes, with Emaar's published prices and the sales and rents registered with the Dubai Land Department." },
+      { name: "description", content: t("An independent showcase of Dubai Creek Harbour homes, with Emaar's published prices and the sales and rents registered with the Dubai Land Department.") },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "DXB Creek Harbour" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -87,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     // Installable on phones: the service worker caches images and build assets; pages always come from the network first.
     scripts: [{ children: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}" }],
-  }),
+  }; },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: PageNotFound,
@@ -95,8 +100,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const locale = useLocale();
   return (
-    <html lang="en">
+    <html lang={LOCALE_META[locale].htmlLang} dir={LOCALE_META[locale].dir}>
       <head>
         <HeadContent />
       </head>

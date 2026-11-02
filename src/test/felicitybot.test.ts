@@ -3,10 +3,11 @@ import { describe, expect, it } from "vitest";
 import { PROJECTS } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
 import { FELICITYBOT_SYSTEM, KNOWLEDGE, SAVE_ENQUIRY_TOOL, supportsFallback, supportsSystemMessages } from "@/lib/felicitybot.knowledge";
-import { BOT_LIMITS, cleanTurns, clip, historyFor, safeHref, storedTurns } from "@/lib/felicitybot.shared";
+import { BOT_LIMITS, CUT_NOTE, FIXED_REPLIES, cleanTurns, clip, fixedReply, historyFor, safeHref, shownReply, storedTurns } from "@/lib/felicitybot.shared";
+import { tFor, type T } from "@/i18n/messages";
 import { normalisePhone, enquiryProblem } from "@/lib/enquiries.functions";
 import { SITE } from "@/data/projects";
-import { bubbleDir } from "@/components/felicitybot/FelicityBot";
+import { bubbleDir, keepNumbersLtr } from "@/components/felicitybot/FelicityBot";
 
 describe("FelicityBot knowledge", () => {
   it("covers every project with a working link", () => {
@@ -107,6 +108,26 @@ describe("FelicityBot links", () => {
   });
 });
 
+describe("FelicityBot's fixed replies", () => {
+  // A stand-in translator: marks the text, then fills the placeholders as the real one does.
+  const fake = Object.assign((text: string, vars?: Record<string, string | number>) => `«${text}»`.replace(/\{(\w+)\}/g, (m, k: string) => (vars && k in vars ? String(vars[k]) : m)), { locale: "ar" as const }) as T;
+  it("are sent in English with the site's contact details filled in", () => {
+    expect(fixedReply("saved")).toBe(`Thank you, your details are with ${SITE.broker} at ${SITE.company}, who will be in touch. You can also WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`);
+    expect(fixedReply("fallback")).toBe(`I can't help with that here. Ask me about Dubai Creek Harbour, or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`);
+    for (const which of Object.keys(FIXED_REPLIES) as (keyof typeof FIXED_REPLIES)[]) expect(fixedReply(which), which).not.toMatch(/[{}]/);
+  });
+  it("are shown in the page's language; the model's own words are left as they are", () => {
+    const en = tFor("en");
+    for (const which of Object.keys(FIXED_REPLIES) as (keyof typeof FIXED_REPLIES)[]) {
+      expect(shownReply(fixedReply(which), en)).toBe(fixedReply(which));
+      expect(shownReply(fixedReply(which), fake)).toBe(fixedReply(which, fake));
+      expect(shownReply(fixedReply(which), fake)).toContain(SITE.whatsappDisplay);
+    }
+    expect(shownReply(`نص طويل…\n\n${CUT_NOTE}`, fake)).toBe(`نص طويل…\n\n«${CUT_NOTE}»`);
+    expect(shownReply("**Creek Haven** — [the page](/projects/creek-haven)", fake)).toBe("**Creek Haven** — [the page](/projects/creek-haven)");
+  });
+});
+
 describe("Chat bubble direction", () => {
   it("reads Arabic right to left even when it is full of Latin names and links", () => {
     expect(bubbleDir("- **Creek Haven**: شقة غرفة واحدة AED 2,722,888، وشقة غرفتين AED 3,100,000.")).toBe("rtl");
@@ -115,6 +136,11 @@ describe("Chat bubble direction", () => {
   it("keeps English left to right", () => {
     expect(bubbleDir("**Creek Haven** starts from AED 1.86M. See [the page](/projects/creek-haven).")).toBe("ltr");
     expect(bubbleDir("2,722,888")).toBe("auto");
+  });
+  it("keeps a phone number's digit groups in order inside right-to-left text, and leaves left-to-right text alone", () => {
+    expect(keepNumbersLtr("راسل الوسيط عبر واتساب على +971 56 352 0611.", true)).toBe("راسل الوسيط عبر واتساب على \u2066+971 56 352 0611\u2069.");
+    const english = "Message the broker on WhatsApp at +971 56 352 0611.";
+    expect(keepNumbersLtr(english, false)).toBe(english);
   });
 });
 

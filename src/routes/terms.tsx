@@ -2,12 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SITE } from "@/data/projects";
 import { TERMS } from "@/data/legal";
 import { LegalPage } from "@/components/showcase/LegalPage";
-import { sharingMeta } from "@/components/showcase/shared";
+import { pageHead } from "@/lib/seo";
+import { tFor, useT } from "@/i18n/messages";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [{ title: "Terms of Use | DXB Creek Harbour" }, { name: "description", content: "The terms on which this independent Dubai Creek Harbour property showcase is provided: what the figures are, what they are not, and how to contact us." }, { property: "og:title", content: "Terms of Use | DXB Creek Harbour" }, { property: "og:description", content: "The terms on which this independent Dubai Creek Harbour property showcase is provided: what the figures are, what they are not, and how to contact us." }, { property: "og:type", content: "website" }, ...sharingMeta(`${SITE.url}/terms`)],
-    links: [{ rel: "canonical", href: `${SITE.url}/terms` }],
-  }),
-  component: () => <LegalPage doc={TERMS} other={{ to: "/privacy", label: "Read the Privacy Notice →" }} />,
+  head: ({ match }) => {
+    const locale = match.context.locale;
+    const t = tFor(locale);
+    return pageHead({ locale, path: "/terms", title: t("Terms of Use | {site}", { site: SITE.name }), description: t("The terms on which this independent Dubai Creek Harbour property showcase is provided: what the figures are, what they are not, and how to contact us."), largeCard: false });
+  },
+  component: TermsPage,
 });
+
+function TermsPage() {
+  const t = useT();
+  return <LegalPage doc={TERMS} path="/terms" other={{ to: "/privacy", label: t("Read the Privacy Notice →") }} />;
+}

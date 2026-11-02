@@ -9,6 +9,7 @@ import { TX, LATEST_ROW, salesCount12m, rentalsCount12m } from "@/data/transacti
 import { aed, num, projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
 import { handoverText } from "@/components/showcase/shared";
+import { LOCALES, LOCALE_META, localizePath } from "@/i18n/locales";
 import sources from "../../design/benefits-sources.json";
 
 const PUBLIC = join(process.cwd(), "public");
@@ -128,16 +129,26 @@ describe("Search results", () => {
     for (const loc of all) expect(loc.startsWith(`${SITE.url}/`), loc).toBe(true);
     const locs = all.map((loc) => loc.slice(SITE.url.length) || "/");
     const pages = ["/", "/projects", "/payment-plans", "/market", "/area", "/guide", "/terms", "/privacy", ...PROJECTS.map((p) => `/projects/${p.slug}`)];
-    for (const page of pages) expect(locs, page).toContain(page);
-    expect(locs).not.toContain("/leads");
+    // every page in English, Arabic and Chinese
+    for (const page of pages) for (const l of LOCALES) expect(locs, `${l} ${page}`).toContain(localizePath(page, l));
+    expect(locs.length).toBe(pages.length * LOCALES.length);
+    expect(locs.some((l) => /leads/.test(l))).toBe(false);
     expect(new Set(locs).size).toBe(locs.length);
+    // each entry names all three language versions and the default, on the served address
+    for (const entry of xml.match(/<url>.*?<\/url>/g) ?? []) {
+      for (const l of LOCALES) expect(entry, entry.slice(0, 80)).toContain(`hreflang="${LOCALE_META[l].hreflang}"`);
+      expect(entry).toContain('hreflang="x-default"');
+      for (const [, href] of entry.matchAll(/href="([^"]+)"/g)) expect(href!.startsWith(`${SITE.url}/`) || href === SITE.url, href).toBe(true);
+    }
     // data pages are dated no earlier than the snapshot; the legal pages carry their own "last updated" date
     for (const m of xml.matchAll(/<loc>[^<]+?(\/[a-z0-9/-]*)<\/loc><lastmod>([^<]+)<\/lastmod>/g)) {
-      if (m[1] === "/terms" || m[1] === "/privacy") continue;
+      if (/\/(terms|privacy)$/.test(m[1]!)) continue;
       expect(m[2]! >= TX.source.snapshotDate, m[1]).toBe(true);
     }
-    expect(xml).toContain(`/terms</loc><lastmod>${TERMS.lastUpdated}</lastmod>`);
-    expect(xml).toContain(`/privacy</loc><lastmod>${PRIVACY.lastUpdated}</lastmod>`);
+    for (const l of LOCALES) {
+      expect(xml).toContain(`${localizePath("/terms", l)}</loc><lastmod>${TERMS.lastUpdated}</lastmod>`);
+      expect(xml).toContain(`${localizePath("/privacy", l)}</loc><lastmod>${PRIVACY.lastUpdated}</lastmod>`);
+    }
     // every route file except the root, the private leads page and the dynamic project route has a sitemap entry
     const routes = readdirSync(join(process.cwd(), "src/routes")).filter((f) => f.endsWith(".tsx") && !["__root.tsx", "leads.tsx", "projects.$slug.tsx"].includes(f));
     for (const f of routes) {

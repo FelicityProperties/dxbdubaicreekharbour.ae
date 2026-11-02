@@ -101,7 +101,13 @@ Both data files carry the date they were taken. To refresh:
    `src/data/projects.ts` (prices, unit counts, sizes, schedules, status).
 2. Re-query PropertyIndex and run `build_transactions.py` to regenerate
    `src/data/transactions.json`.
-3. Build, check every page, commit, push.
+3. Run `npm run sitemap` and `npm run i18n:keys`. A refresh that only moves
+   numbers needs no new translation (the window label, coverage line and DLD
+   figures card are rebuilt from templates). New or changed text — a new
+   project, a rewritten caption — is listed as missing for Arabic and
+   Chinese: translate it into `src/i18n/ar/*.json` and `src/i18n/zh/*.json`
+   (glossary in `src/i18n/README.md`) until `npm test` passes.
+4. Build, check every page in all three languages, commit, push.
 
 The generators live with the session tooling, not in this repo; the rule
 that matters is in `AGENTS.md`: no Dubai real-estate figure is ever typed in

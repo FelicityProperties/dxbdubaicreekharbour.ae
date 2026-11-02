@@ -5,18 +5,23 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { PROJECTS, SITE } from "../src/data/projects.ts";
 import { TERMS, PRIVACY } from "../src/data/legal.ts";
+import { LOCALES, LOCALE_META, localizePath } from "../src/i18n/locales.ts";
 
 const tx = JSON.parse(readFileSync(new URL("../src/data/transactions.json", import.meta.url), "utf8"));
 // Content pages change when either snapshot or the shared footer changes; keep this date in step with real edits.
 const CONTENT_UPDATED = "2026-10-12";
 const later = (a, b) => (a > b ? a : b);
 const content = later(tx.source.snapshotDate, CONTENT_UPDATED);
-const url = (path, lastmod) => `  <url><loc>${SITE.url}${path}</loc><lastmod>${lastmod}</lastmod></url>`;
+// Every page exists in English, Arabic (/ar/…) and Chinese (/zh/…); each entry names all three versions
+// (hreflang), as the pages' own <link rel="alternate"> tags do, so search engines show each person their language.
+const address = (path, locale) => `${SITE.url}${localizePath(path, locale)}`;
+const alternates = (path) => [...LOCALES.map((l) => `<xhtml:link rel="alternate" hreflang="${LOCALE_META[l].hreflang}" href="${address(path, l)}"/>`), `<xhtml:link rel="alternate" hreflang="x-default" href="${address(path, "en")}"/>`].join("");
+const url = (path, lastmod) => LOCALES.map((l) => `  <url><loc>${address(path, l)}</loc><lastmod>${lastmod}</lastmod>${alternates(path)}</url>`);
 const rows = [
   url("/", content), url("/projects", content), url("/payment-plans", content), url("/market", content), url("/area", content), url("/guide", content),
   ...PROJECTS.map((p) => url(`/projects/${p.slug}`, content)),
   url("/terms", TERMS.lastUpdated), url("/privacy", PRIVACY.lastUpdated),
-];
-writeFileSync(new URL("../public/sitemap.xml", import.meta.url), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.join("\n")}\n</urlset>\n`);
+].flat();
+writeFileSync(new URL("../public/sitemap.xml", import.meta.url), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${rows.join("\n")}\n</urlset>\n`);
 writeFileSync(new URL("../public/robots.txt", import.meta.url), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 console.log(`sitemap.xml: ${rows.length} URLs`);

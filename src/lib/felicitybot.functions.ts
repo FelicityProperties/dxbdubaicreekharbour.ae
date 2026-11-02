@@ -23,10 +23,11 @@ import { getRequestIP } from "@tanstack/react-start/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { FELICITYBOT_SYSTEM, SAVE_ENQUIRY_TOOL, supportsFallback, supportsSystemMessages } from "@/lib/felicitybot.knowledge";
 import { PROJECT_OPTIONS, enquiryProblem, normalisePhone, recordEnquiry, takeQuota, type EnquiryRecord } from "@/lib/enquiries.functions";
-import { PROJECTS, SITE } from "@/data/projects";
+import { PROJECTS } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
 import { sitePath } from "@/lib/site-pages";
-import { BOT_LIMITS, cleanTurns, clip, type BotInput, type BotResult, type BotTurn } from "@/lib/felicitybot.shared";
+import { isLocale, type Locale } from "@/i18n/locales";
+import { BOT_LIMITS, CUT_NOTE, cleanTurns, clip, fixedReply, type BotInput, type BotResult, type BotTurn } from "@/lib/felicitybot.shared";
 
 export type { BotTurn, BotInput, BotResult } from "@/lib/felicitybot.shared";
 
@@ -89,6 +90,14 @@ function signedHistory(turns: BotTurn[], key: Buffer): boolean {
 
 /** Pages the visitor can be on; anything else (a made-up URL) is reported as the home page. */
 const pageOf = (raw: unknown): string => sitePath(raw) ?? "/";
+/** The language of the page the visitor is on: exactly "en", "ar" or "zh"; anything else is English. */
+const langOf = (raw: unknown): Locale => (isLocale(raw) ? raw : "en");
+/** Added to the per-request context on the Arabic and Chinese pages (nothing on English ones). */
+const LANGUAGE_NOTE: Record<Locale, string> = {
+  en: "",
+  ar: "The visitor is reading the Arabic version of the site: reply in Arabic (Modern Standard Arabic, as used in the UAE) unless they write in another language, in which case reply in theirs. Keep project and building names in English, keep AED figures and digits exactly as they appear in the KNOWLEDGE, and write links to this site exactly as the KNOWLEDGE gives them.",
+  zh: "The visitor is reading the Simplified Chinese version of the site: reply in Simplified Chinese unless they write in another language, in which case reply in theirs. Keep project and building names in English, keep AED figures and digits exactly as they appear in the KNOWLEDGE, and write links to this site exactly as the KNOWLEDGE gives them.",
+};
 
 type SaveInput = { name?: unknown; phone?: unknown; email?: unknown; project?: unknown; request?: unknown; consent_to_contact?: unknown };
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -119,12 +128,12 @@ async function runSaveEnquiry(input: SaveInput, page: string, ip: string): Promi
   return { text: "Not saved: the enquiry system is offline. Give the visitor the WhatsApp number and email instead.", isError: true, saved: false };
 }
 
-const FALLBACK_REPLY = `I can't help with that here. Ask me about Dubai Creek Harbour, or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
-const SAVED_REPLY = `Thank you, your details are with ${SITE.broker} at ${SITE.company}, who will be in touch. You can also WhatsApp ${SITE.whatsappDisplay} or email ${SITE.email}.`;
-const TOO_LONG_REPLY = `That needs a longer answer than I can give here. Could you narrow it down, for example to one project or one budget? Or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
-const CUT_NOTE = "(That answer was cut short. Ask me about one part of it for more.)";
-const NOT_PASSED_REPLY = `I couldn't pass your details on just then. Please send your name and number again, or WhatsApp ${SITE.whatsappDisplay}.`;
-const STOPPED_REPLY = `I couldn't finish that one. Please ask again, or message the broker on WhatsApp at ${SITE.whatsappDisplay}.`;
+// Sent in English whatever the page's language (the reply is signed as sent); the chat window shows them translated.
+const FALLBACK_REPLY = fixedReply("fallback");
+const SAVED_REPLY = fixedReply("saved");
+const TOO_LONG_REPLY = fixedReply("tooLong");
+const NOT_PASSED_REPLY = fixedReply("notPassed");
+const STOPPED_REPLY = fixedReply("stopped");
 
 /**
  * The response's content as it may be sent back in the next round. After a
@@ -145,6 +154,7 @@ export const askFelicityBot = createServerFn({ method: "POST" })
     const turns = cleanTurns(data.turns);
     if (!turns) return { ok: false, reason: "invalid" };
     const page = pageOf(data.page);
+    const lang = langOf(data.lang);
 
     const apiKey = process.env["ANTHROPIC_API_KEY"];
     if (!apiKey) return { ok: false, reason: "offline" };
@@ -160,7 +170,7 @@ export const askFelicityBot = createServerFn({ method: "POST" })
     const model = process.env["FELICITYBOT_MODEL"] || DEFAULT_MODEL;
     const client = new Anthropic({ apiKey, maxRetries: 1 });
     const today = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dubai", day: "numeric", month: "long", year: "numeric" }).format(new Date(started));
-    const context = `Context: the visitor is on the page ${page} of dxbdubaicreekharbour.ae. Today is ${today} in Dubai.`;
+    const context = `Context: the visitor is on the page ${page} of dxbdubaicreekharbour.ae. Today is ${today} in Dubai.${LANGUAGE_NOTE[lang] ? ` ${LANGUAGE_NOTE[lang]}` : ""}`;
     const messages: Anthropic.Beta.BetaMessageParam[] = turns.map((t) => ({ role: t.role, content: t.text }));
     // Operator context after the visitor's latest message (outside the cached prefix). Models without
     // mid-conversation system messages get it as a tagged block ahead of the question instead.

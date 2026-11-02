@@ -1,10 +1,44 @@
 /** Shapes and limits shared by FelicityBot's chat window and its server function (no server code here). */
+import { SITE } from "@/data/projects";
+import { msg, tFor, type T } from "@/i18n/messages";
+import type { Locale } from "@/i18n/locales";
+
 /** `sig` is the server's signature on one of its own replies; the browser keeps it with the turn and sends it back. */
 export type BotTurn = { role: "user" | "assistant"; text: string; sig?: string };
-export type BotInput = { turns: BotTurn[]; page: string; hp?: string };
+/** `page` is the router's path without the language prefix; `lang` is the language of the page (the server checks it). */
+export type BotInput = { turns: BotTurn[]; page: string; hp?: string; lang?: Locale };
 /** "expired": the replies' signatures no longer check out (new server key); start a fresh chat.
     "limit": this visitor's or the site's allowance of questions is used up for now. */
 export type BotResult = { ok: true; reply: string; sig: string; saved: boolean } | { ok: false; reason: "offline" | "busy" | "invalid" | "expired" | "limit" };
+
+/**
+ * FelicityBot's fixed replies, written by the server rather than the model. The server sends and signs them in
+ * English (that English is what comes back as history); the chat window shows them in the page's language
+ * through shownReply().
+ */
+export const FIXED_REPLIES = {
+  fallback: msg("I can't help with that here. Ask me about Dubai Creek Harbour, or message the broker on WhatsApp at {whatsapp}."),
+  saved: msg("Thank you, your details are with {broker} at {company}, who will be in touch. You can also WhatsApp {whatsapp} or email {email}."),
+  tooLong: msg("That needs a longer answer than I can give here. Could you narrow it down, for example to one project or one budget? Or message the broker on WhatsApp at {whatsapp}."),
+  notPassed: msg("I couldn't pass your details on just then. Please send your name and number again, or WhatsApp {whatsapp}."),
+  stopped: msg("I couldn't finish that one. Please ask again, or message the broker on WhatsApp at {whatsapp}."),
+} as const;
+/** Added under an answer that hit the length limit. */
+export const CUT_NOTE = msg("(That answer was cut short. Ask me about one part of it for more.)");
+const REPLY_VARS = { whatsapp: SITE.whatsappDisplay, broker: SITE.broker, company: SITE.company, email: SITE.email };
+const EN = tFor("en");
+/** A fixed reply, filled in: English (as the server sends it) unless a translator is given. */
+export const fixedReply = (which: keyof typeof FIXED_REPLIES, t: T = EN): string => t(FIXED_REPLIES[which], REPLY_VARS);
+
+/**
+ * A reply as the chat window shows it. The model already answers in the visitor's language, so its words are
+ * shown as they are; the server's fixed replies and the cut-short note are shown in the page's language.
+ */
+export function shownReply(text: string, t: T): string {
+  if (t.locale === "en") return text;
+  for (const which of Object.keys(FIXED_REPLIES) as (keyof typeof FIXED_REPLIES)[]) if (text === fixedReply(which)) return fixedReply(which, t);
+  return text.endsWith(`\n\n${CUT_NOTE}`) ? `${text.slice(0, -CUT_NOTE.length)}${t(CUT_NOTE)}` : text;
+}
 
 /* Sized for two-to-six-sentence answers and a few rounds of follow-ups. Smaller bodies also cap what one
    request can cost; the chat window trims older turns to stay inside these limits. */

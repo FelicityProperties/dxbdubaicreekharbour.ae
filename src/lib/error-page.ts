@@ -1,9 +1,18 @@
-export function renderErrorPage(): string {
+import { LOCALE_META, isLocale, localizePath, type Locale } from "@/i18n/locales";
+import { tFor } from "@/i18n/messages";
+
+/** Text goes into the page as HTML: a translation must not be able to break it. */
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/** The plain page shown when the server itself fails, in the language of the address asked for (English by default). */
+export function renderErrorPage(locale: Locale = "en"): string {
+  const l: Locale = isLocale(locale) ? locale : "en";
+  const t = tFor(l);
   return `<!doctype html>
-<html lang="en">
+<html lang="${LOCALE_META[l].htmlLang}" dir="${LOCALE_META[l].dir}">
   <head>
     <meta charset="utf-8" />
-    <title>This page didn't load</title>
+    <title>${esc(t("This page didn't load"))}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #fafafa; color: #111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
@@ -18,11 +27,11 @@ export function renderErrorPage(): string {
   </head>
   <body>
     <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+      <h1>${esc(t("This page didn't load"))}</h1>
+      <p>${esc(t("Something went wrong on our end. You can try refreshing or head back home."))}</p>
       <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
+        <button class="primary" onclick="location.reload()">${esc(t("Try again"))}</button>
+        <a class="secondary" href="${localizePath("/", l)}">${esc(t("Go home"))}</a>
       </div>
     </div>
   </body>

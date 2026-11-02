@@ -8,6 +8,11 @@
  * or from Emaar's pages (projects.ts).
  */
 import raw from "./transactions.json";
+import { dateLong, monthYear } from "@/lib/format";
+import { tFor, type T } from "@/i18n/messages";
+
+/** English, for code outside a page (FelicityBot's knowledge, tests): windowLabel() and coverageLabel() default to it. */
+const EN = tFor("en");
 
 export type Basis = "ready" | "offplan";
 export type SaleRow = {
@@ -59,6 +64,26 @@ export type Transactions = {
 export const TX = raw as unknown as Transactions;
 /** The latest registration date among the recent-row tables (the 12-month summaries stop at TX.window.to; rows run past it). */
 export const LATEST_ROW = [TX.recent.readySales.to, TX.recent.offplanSales.to, TX.recent.rentals.to].reduce((a, b) => (a > b ? a : b));
+
+/**
+ * The 12-month window ("12 months to 31 October 2026") in the page's language, rebuilt from the window's end date so a
+ * data refresh needs no new translation (src/i18n/README.md, "Text that changes with the data"). In English it is
+ * exactly TX.window.label.
+ */
+export const windowLabel = (t: T = EN): string => t("12 months to {date}", { date: dateLong(TX.window.to, t.locale) });
+
+/**
+ * "DLD registrations loaded through October 2026" in the page's language, rebuilt from the month the snapshot's
+ * coverage line names. In English it is exactly TX.source.coverage; a line in any other wording comes back unchanged.
+ */
+export function coverageLabel(t: T = EN): string {
+  const m = /^DLD registrations loaded through ([A-Z][a-z]+) (\d{4})$/.exec(TX.source.coverage);
+  const month = m && Array.from({ length: 12 }, (_, i) => `${m[2]}-${String(i + 1).padStart(2, "0")}`).find((ym) => monthYear(ym) === `${m[1]} ${m[2]}`);
+  return month ? t("DLD registrations loaded through {month}", { month: monthYear(month, t.locale) }) : TX.source.coverage;
+}
+
+/** The placeholder the snapshot puts where the register has not yet named a building ("New launch — building not yet named in the register"): unlike real building names, it is translated. */
+export const UNASSIGNED = /not yet named/;
 
 export const salesFor = (slug: string) => TX.sales.filter((s) => s.project === slug);
 export const rentalsFor = (slug: string) => TX.rentals.filter((r) => r.project === slug);

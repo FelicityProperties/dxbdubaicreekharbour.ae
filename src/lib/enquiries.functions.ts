@@ -10,15 +10,21 @@ import { createServerFn } from "@tanstack/react-start";
 import { withTimeout } from "@/lib/with-timeout";
 import { PROJECTS, SITE } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
+import { msg } from "@/i18n/messages";
 
-export const BUY_AS = ["A home to live in", "An investment", "Both / not sure"] as const;
-export const BEDROOMS = ["Studio", "1 bedroom", "2 bedrooms", "3 bedrooms", "4+ bedrooms", "Townhouse", "Not sure"] as const;
-export const BUDGETS = ["Under AED 2M", "AED 2M – 3M", "AED 3M – 5M", "AED 5M+", "Prefer not to say"] as const;
-export const TIMINGS = ["Ready to buy now", "Within 3 months", "3 – 12 months", "Just researching"] as const;
-export const FUNDING = ["Cash", "Mortgage", "Not sure yet"] as const;
-export const LOOKING_FOR = ["A new launch (off-plan)", "Ready to move in", "Resale while under construction", "Renting", "Not sure yet"] as const;
-export const LANGUAGES = ["English", "Arabic", "Russian", "Chinese", "Hindi / Urdu", "French", "German", "Other"] as const;
-export const ANY_PROJECT = "Any / not sure";
+/*
+ * The form's choices. These English values are what is saved and what /leads shows, in every language; the form
+ * shows each one translated (msg() makes it a translation key). Amounts stay as they are ("AED 2M – 3M"); "Under
+ * AED 2M" is shown through the "Under {amount}" key (EnquiryForm's optionText).
+ */
+export const BUY_AS = [msg("A home to live in"), msg("An investment"), msg("Both / not sure")] as const;
+export const BEDROOMS = [msg("Studio"), msg("1 bedroom"), msg("2 bedrooms"), msg("3 bedrooms"), msg("4+ bedrooms"), msg("Townhouse"), msg("Not sure")] as const;
+export const BUDGETS = ["Under AED 2M", "AED 2M – 3M", "AED 3M – 5M", "AED 5M+", msg("Prefer not to say")] as const;
+export const TIMINGS = [msg("Ready to buy now"), msg("Within 3 months"), msg("3 – 12 months"), msg("Just researching")] as const;
+export const FUNDING = [msg("Cash"), msg("Mortgage"), msg("Not sure yet")] as const;
+export const LOOKING_FOR = [msg("A new launch (off-plan)"), msg("Ready to move in"), msg("Resale while under construction"), msg("Renting"), msg("Not sure yet")] as const;
+export const LANGUAGES = [msg("English"), msg("Arabic"), msg("Russian"), msg("Chinese"), msg("Hindi / Urdu"), msg("French"), msg("German"), msg("Other")] as const;
+export const ANY_PROJECT = msg("Any / not sure");
 export const PROJECT_OPTIONS = [ANY_PROJECT, ...PROJECTS.map(projectLabel)];
 
 export type EnquiryInput = {
@@ -125,9 +131,9 @@ export const EMAIL_RE = /^[A-Za-z0-9.!$'*+=^_`{|}~-]+@(?:[A-Za-z0-9](?:[A-Za-z0-
 
 /** The Neon driver repeats the connection string, password included, in its errors. */
 export function redact(err: unknown, url: string | null): string {
-  let msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-  if (url) msg = msg.split(url).join("<DATABASE_URL>");
-  return msg.replace(/\/\/[^\s'"@/]*@/g, "//<credentials>@");
+  let out = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+  if (url) out = out.split(url).join("<DATABASE_URL>");
+  return out.replace(/\/\/[^\s'"@/]*@/g, "//<credentials>@");
 }
 
 export type Sql = Awaited<ReturnType<typeof connect>>;
@@ -305,11 +311,14 @@ export async function takeQuota(steps: { key: string; limit: number }[], timeout
   }
 }
 
-/** What is wrong with a record, in words a visitor can act on; null when it can be saved. */
+/**
+ * What is wrong with a record, in words a visitor can act on; null when it can be saved. Always English (FelicityBot
+ * reads it too); the form shows it translated, so each message is marked with msg().
+ */
 export function enquiryProblem(row: Pick<EnquiryRecord, "name" | "phone" | "email">): string | null {
-  if (row.name.length < 2) return "Please tell us your name.";
-  if (row.phone.replace(/\D/g, "").length < 7 || !/^[+\d\s()-]+$/.test(row.phone)) return "Please enter a phone number we can call or WhatsApp.";
-  if (row.email && !EMAIL_RE.test(row.email)) return "That email address doesn't look right — or leave it blank.";
+  if (row.name.length < 2) return msg("Please tell us your name.");
+  if (row.phone.replace(/\D/g, "").length < 7 || !/^[+\d\s()-]+$/.test(row.phone)) return msg("Please enter a phone number we can call or WhatsApp.");
+  if (row.email && !EMAIL_RE.test(row.email)) return msg("That email address doesn't look right — or leave it blank.");
   return null;
 }
 
@@ -424,7 +433,7 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     const problem = enquiryProblem(row);
     if (problem) return { ok: false, reason: "invalid", message: problem };
     if (data.consent !== true)
-      return { ok: false, reason: "invalid", message: "Please tick the box so we may contact you about your enquiry." };
+      return { ok: false, reason: "invalid", message: msg("Please tick the box so we may contact you about your enquiry.") };
     // Counted only once the details are valid, so fixing a typo doesn't use up an attempt. A refusal shows
     // the form's WhatsApp fallback.
     if (await enquiryRefused(new Date())) {
