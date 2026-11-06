@@ -15,9 +15,10 @@
 import { createHmac, scryptSync } from "node:crypto";
 import { connect, connectionOf, redact, type Sql } from "@/lib/enquiries.functions";
 import { sitePath, pageName } from "@/lib/site-pages";
-import { SITE } from "@/data/projects";
+import { SITE, PROJECTS } from "@/data/projects";
+import { projectLabel } from "@/lib/format";
 import { withTimeout } from "@/lib/with-timeout";
-import { STAYED_SECONDS, cleanReport, deviceName, isRobot, sourceName, type Ranked, type VisitStats } from "@/lib/visits.shared";
+import { STAYED_SECONDS, WA_PLACES, cleanReport, deviceName, isRobot, sourceName, type Ranked, type VisitStats, type WaPlace } from "@/lib/visits.shared";
 
 const dbUrl = () => process.env["ANALYTICS_DATABASE_URL"] || process.env["DATABASE_URL"] || process.env["POSTGRES_URL"] || null;
 const OWN_HOST = new URL(SITE.url).hostname.replace(/^www\./, "");
@@ -43,6 +44,8 @@ function ensureVisitsTable(sql: Sql): Promise<unknown> {
       await sql`CREATE INDEX IF NOT EXISTS site_visits_day_idx ON site_visits (day)`;
       // Added October 2026: the day's connection code, without the browser (older rows have none).
       await sql`ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS conn TEXT`;
+      // Added November 2026: taps on a WhatsApp button during the visit ([{at, page, place, project}], oldest first).
+      await sql`ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS wa_clicks JSONB NOT NULL DEFAULT '[]'::jsonb`;
     })().catch((err) => { tableReady = null; throw err; });
   }
   return tableReady;
@@ -86,9 +89,9 @@ export async function handleVisit(request: Request): Promise<Response> {
   const origin = request.headers.get("origin");
   if (origin && host(origin) !== host(request.url)) return done;
   const body = await request.text().catch(() => "");
-  if (body.length > 4000) return done;
+  if (body.length > 8000) return done;
   let report;
-  try { report = cleanReport(JSON.parse(body), sitePath); } catch { return done; }
+  try { report = cleanReport(JSON.parse(body), sitePath, isProject); } catch { return done; }
   if (!report) return done;
 
   const ip = (request.headers.get("x-forwarded-for") ?? "").split(",")[0]!.trim() || "unknown";
@@ -100,6 +103,8 @@ export async function handleVisit(request: Request): Promise<Response> {
   // The same without the browser string (and an IPv6 address by its /64), which a script can change at will.
   const conn = createHmac("sha256", key).update(`conn|${day}|${connectionOf(ip)}`).digest("base64url").slice(0, 16);
   const country = (request.headers.get("x-vercel-ip-country") ?? "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2) || null;
+  // Tap times come from the visitor's clock: kept no later than now and no earlier than a day ago.
+  const taps = JSON.stringify((report.wa ?? []).map((c) => ({ ...c, at: new Date(Math.min(now.getTime(), Math.max(now.getTime() - 86_400_000, c.at))).toISOString() })));
 
   try {
     const sql = await connect(url);
@@ -107,11 +112,12 @@ export async function handleVisit(request: Request): Promise<Response> {
     // The first report of a visit creates its row; later ones only raise the totals (a visit is reported again with
     // the totals so far each time the visitor switches away). Reports for visits older than a day are ignored.
     await withTimeout(sql`
-      INSERT INTO site_visits (id, day, visitor, conn, pages, page_views, seconds, source, country, device)
+      INSERT INTO site_visits (id, day, visitor, conn, pages, page_views, seconds, source, country, device, wa_clicks)
       VALUES (${report.id}, ${day}, ${visitor}, ${conn}, ${report.pages}, ${report.views}, ${report.seconds},
-              ${sourceName(report.ref, report.src, OWN_HOST)}, ${country}, ${deviceName(userAgent, report.touch)})
+              ${sourceName(report.ref, report.src, OWN_HOST)}, ${country}, ${deviceName(userAgent, report.touch)}, ${taps}::jsonb)
       ON CONFLICT (id) DO UPDATE SET
         pages = CASE WHEN cardinality(EXCLUDED.pages) > cardinality(site_visits.pages) THEN EXCLUDED.pages ELSE site_visits.pages END,
+        wa_clicks = CASE WHEN jsonb_array_length(EXCLUDED.wa_clicks) > jsonb_array_length(site_visits.wa_clicks) THEN EXCLUDED.wa_clicks ELSE site_visits.wa_clicks END,
         page_views = GREATEST(site_visits.page_views, EXCLUDED.page_views),
         seconds = GREATEST(site_visits.seconds, EXCLUDED.seconds),
         updated_at = now()
@@ -123,6 +129,10 @@ export async function handleVisit(request: Request): Promise<Response> {
   }
   return done;
 }
+
+const isProject = (slug: string) => PROJECTS.some((p) => p.slug === slug);
+const projectName = (slug: string | null) => { const p = slug ? PROJECTS.find((x) => x.slug === slug) : null; return p ? projectLabel(p) : null; };
+const placeName = (place: string) => (Object.hasOwn(WA_PLACES, place) ? WA_PLACES[place as WaPlace] : place);
 
 const toRanked = (rows: { name: string | null; visits: number | string }[], rename: (n: string) => string = (n) => n): Ranked[] =>
   rows.map((r) => ({ name: r.name ? String(rename(String(r.name))) : "Unknown", visits: Number(r.visits) }));
@@ -143,9 +153,10 @@ export async function visitStats(days: number): Promise<Omit<VisitStats, "enquir
     const sql = await connect(url);
     await withTimeout(ensureVisitsTable(sql), 6000);
     const range = (q: Promise<unknown>) => withTimeout(q, 10_000) as Promise<Record<string, unknown>[]>;
-    const [totals, prev, daily, pages, sources, countries, devices, start] = await Promise.all([
+    const [totals, prev, daily, pages, sources, countries, devices, start, waRecent, waByProject, waByPlace] = await Promise.all([
       range(sql`
         SELECT count(*) AS visits, count(DISTINCT (day, visitor)) AS visitors, coalesce(sum(page_views), 0) AS page_views,
+               coalesce(sum(jsonb_array_length(wa_clicks)), 0) AS wa_clicks, count(*) FILTER (WHERE jsonb_array_length(wa_clicks) > 0) AS wa_visits,
                count(*) FILTER (WHERE seconds >= ${STAYED_SECONDS}) AS stayed,
                coalesce(percentile_cont(0.5) WITHIN GROUP (ORDER BY seconds), 0) AS median_seconds
         FROM site_visits WHERE day BETWEEN ${from} AND ${to}`),
@@ -167,6 +178,17 @@ export async function visitStats(days: number): Promise<Omit<VisitStats, "enquir
       range(sql`SELECT country AS name, count(*) AS visits FROM site_visits WHERE day BETWEEN ${from} AND ${to} GROUP BY country ORDER BY 2 DESC, 1 LIMIT 8`),
       range(sql`SELECT device AS name, count(*) AS visits FROM site_visits WHERE day BETWEEN ${from} AND ${to} GROUP BY device ORDER BY 2 DESC, 1`),
       range(sql`SELECT min(day)::text AS first FROM site_visits`),
+      // Each WhatsApp tap with the visit it belongs to, newest first.
+      range(sql`
+        SELECT c->>'at' AS at, c->>'page' AS page, c->>'place' AS place, c->>'project' AS project, source, country, device
+        FROM site_visits, jsonb_array_elements(wa_clicks) AS c
+        WHERE day BETWEEN ${from} AND ${to} ORDER BY c->>'at' DESC LIMIT 100`),
+      range(sql`
+        SELECT coalesce(c->>'project', '') AS name, count(*) AS visits FROM site_visits, jsonb_array_elements(wa_clicks) AS c
+        WHERE day BETWEEN ${from} AND ${to} GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 10`),
+      range(sql`
+        SELECT c->>'place' AS name, count(*) AS visits FROM site_visits, jsonb_array_elements(wa_clicks) AS c
+        WHERE day BETWEEN ${from} AND ${to} GROUP BY 1 ORDER BY 2 DESC, 1`),
     ]);
     await cleanOldVisits(sql, to);
     const t = totals[0] ?? {};
@@ -181,6 +203,14 @@ export async function visitStats(days: number): Promise<Omit<VisitStats, "enquir
       visits: Number(t["visits"] ?? 0),
       pageViews: Number(t["page_views"] ?? 0),
       stayed: Number(t["stayed"] ?? 0),
+      waClicks: Number(t["wa_clicks"] ?? 0),
+      waVisits: Number(t["wa_visits"] ?? 0),
+      waRecent: waRecent.map((r) => ({
+        at: String(r["at"]), page: pageName(String(r["page"])), project: projectName(r["project"] ? String(r["project"]) : null),
+        place: placeName(String(r["place"])), source: String(r["source"] ?? ""), country: r["country"] ? countryName(String(r["country"])) : "Unknown", device: String(r["device"] ?? ""),
+      })),
+      waByProject: (waByProject as { name: string; visits: number }[]).map((r) => ({ name: projectName(r.name) ?? "No project named (general enquiry)", visits: Number(r.visits) })),
+      waByPlace: toRanked(waByPlace as { name: string; visits: number }[], placeName),
       medianSeconds: Math.round(Number(t["median_seconds"] ?? 0)),
       previous,
       daily: daily.map((r) => ({ day: String(r["day"]), visitors: Number(r["visitors"]), visits: Number(r["visits"]), stayed: Number(r["stayed"]) })),

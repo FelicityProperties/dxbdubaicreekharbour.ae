@@ -27,6 +27,43 @@ const lastReport = async () => {
   return JSON.parse(await read(sent.at(-1)!)) as { pages: string[]; views: number; seconds: number };
 };
 
+describe("WhatsApp taps", () => {
+  it("records which button, on which page and about which project, and reports at once", async () => {
+    window.history.replaceState(null, "", "/ar/projects/creek-haven");
+    path = "/ar/projects/creek-haven";
+    render(<SiteAnalytics />);
+    const wa = document.createElement("a");
+    wa.href = "https://wa.me/971500000000?text=" + encodeURIComponent("Hi, I'm interested in Creek Haven at Dubai Creek Harbour.");
+    wa.addEventListener("click", (e) => e.preventDefault());
+    const floating = document.createElement("div"); floating.className = "floating-wa"; floating.append(wa); document.body.append(floating);
+    act(() => { wa.click(); });
+    const r = JSON.parse(await (async () => { expect(sent.length).toBeGreaterThan(0); vi.useRealTimers(); return read(sent.at(-1)!); })()) as { pages: string[]; wa: { page: string; place: string; project: string | null; at: number }[] };
+    expect(r.wa).toHaveLength(1);
+    expect(r.wa[0]).toMatchObject({ page: "/ar/projects/creek-haven", place: "floating", project: "creek-haven" });
+    expect(r.pages).toContain("/ar/projects/creek-haven");
+    floating.remove();
+  });
+  it("names the project from the message on a page that isn't a project's, and ignores other links", async () => {
+    window.history.replaceState(null, "", "/payment-plans");
+    path = "/payment-plans";
+    render(<SiteAnalytics />);
+    const card = document.createElement("article"); card.className = "project-card";
+    const wa = document.createElement("a");
+    wa.href = "https://wa.me/971500000000?text=" + encodeURIComponent("Hi, I'm interested in Creek Haven at Dubai Creek Harbour.");
+    wa.addEventListener("click", (e) => e.preventDefault());
+    const other = document.createElement("a"); other.href = "/market"; other.addEventListener("click", (e) => e.preventDefault());
+    card.append(wa, other); document.body.append(card);
+    act(() => { other.click(); });
+    expect(sent).toHaveLength(0);
+    act(() => { wa.click(); });
+    expect(sent.length).toBeGreaterThan(0);
+    vi.useRealTimers();
+    const r = JSON.parse(await read(sent.at(-1)!)) as { wa: { place: string; project: string | null }[] };
+    expect(r.wa).toEqual([expect.objectContaining({ place: "card", project: "creek-haven" })]);
+    card.remove();
+  });
+});
+
 describe("Visit counting in the browser", () => {
   it("reports the pages and the time in use when the visitor switches away", async () => {
     const view = render(<SiteAnalytics />);

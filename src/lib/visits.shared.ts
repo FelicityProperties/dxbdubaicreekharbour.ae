@@ -9,9 +9,34 @@ export type VisitReport = {
   ref: string;       // the referring site's address when the visit began ("" if none)
   src: string;       // the utm_source tag of the first page, if any
   touch?: boolean;   // a touch screen (tells iPads, which describe themselves as Macs, from computers)
+  wa?: WaClick[];    // taps on a WhatsApp button, oldest first
 };
 
-export const VISIT_LIMITS = { maxPages: 40, maxViews: 500, maxSeconds: 4 * 3600 } as const;
+/** A tap on a WhatsApp button: where, which button, and the project its message names. Never the message itself. */
+export type WaClick = {
+  at: number;             // when, milliseconds since 1970 (the visitor's clock; the server keeps it within the visit)
+  page: string;           // the page it was on, as the browser shows it ("/ar/projects/valia")
+  place: WaPlace;         // which button
+  project: string | null; // the project's slug, when the page or the message is about one
+};
+/** The WhatsApp buttons, by where they sit. */
+export const WA_PLACES = {
+  floating: "Floating button",
+  bar: "Phone bottom bar",
+  menu: "Menu",
+  footer: "Footer",
+  card: "Project card",
+  project: "Project page",
+  plans: "Payment plans",
+  band: "Talk-to-us band",
+  enquiry: "Enquiry form",
+  bot: "FelicityBot",
+  viewing: "AI viewing",
+  page: "Other button on the page",
+} as const;
+export type WaPlace = keyof typeof WA_PLACES;
+
+export const VISIT_LIMITS = { maxPages: 40, maxViews: 500, maxSeconds: 4 * 3600, maxWaClicks: 20 } as const;
 
 /** Visits of at least this many seconds count as "stayed". */
 export const STAYED_SECONDS = 30;
@@ -25,6 +50,11 @@ export type VisitStats = {
   visits: number;
   pageViews: number;
   stayed: number;          // visits of STAYED_SECONDS or more
+  waClicks: number;        // taps on a WhatsApp button
+  waVisits: number;        // visits with at least one
+  waRecent: { at: string; page: string; project: string | null; place: string; source: string; country: string; device: string }[]; // newest first
+  waByProject: Ranked[];   // "visits" here counts taps
+  waByPlace: Ranked[];
   medianSeconds: number;   // typical visit length
   enquiries: number | null; // null when they couldn't be read
   previous: { visitors: number; visits: number } | null; // the same stretch of time just before; null before tracking covered it
@@ -42,8 +72,25 @@ export const BUSY_VISITS_PER_DAY = 120;
 const VISIT_ID = /^[A-Za-z0-9-]{16,40}$/;
 const clampInt = (v: unknown, max: number) => (typeof v === "number" && Number.isFinite(v) ? Math.max(0, Math.min(max, Math.round(v))) : 0);
 
+/** The WhatsApp taps as the browser sent them: known pages, buttons and projects only, at most VISIT_LIMITS.maxWaClicks. */
+function cleanWa(raw: unknown, isPage: (path: unknown) => string | null, isProject: (slug: string) => boolean): WaClick[] {
+  if (!Array.isArray(raw)) return [];
+  const out: WaClick[] = [];
+  for (const c of raw.slice(0, VISIT_LIMITS.maxWaClicks)) {
+    if (!c || typeof c !== "object") continue;
+    const r = c as Record<string, unknown>;
+    const page = isPage(r["page"]);
+    const place = typeof r["place"] === "string" && Object.hasOwn(WA_PLACES, r["place"]) ? (r["place"] as WaPlace) : null;
+    const at = typeof r["at"] === "number" && Number.isFinite(r["at"]) ? Math.round(r["at"]) : null;
+    if (!page || !place || at === null) continue;
+    const project = typeof r["project"] === "string" && isProject(r["project"]) ? r["project"] : null;
+    out.push({ at, page, place, project });
+  }
+  return out;
+}
+
 /** The report as the browser sent it, or null if it isn't one we accept. */
-export function cleanReport(raw: unknown, isPage: (path: unknown) => string | null): VisitReport | null {
+export function cleanReport(raw: unknown, isPage: (path: unknown) => string | null, isProject: (slug: string) => boolean = () => false): VisitReport | null {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
   if (typeof r["id"] !== "string" || !VISIT_ID.test(r["id"]) || !Array.isArray(r["pages"])) return null;
@@ -61,6 +108,7 @@ export function cleanReport(raw: unknown, isPage: (path: unknown) => string | nu
     ref: typeof r["ref"] === "string" ? r["ref"].slice(0, 300) : "",
     src: typeof r["src"] === "string" ? r["src"].toLowerCase().replace(/[^a-z0-9 ._-]/g, "").slice(0, 40) : "",
     touch: r["touch"] === true,
+    wa: cleanWa(r["wa"], isPage, isProject),
   };
 }
 

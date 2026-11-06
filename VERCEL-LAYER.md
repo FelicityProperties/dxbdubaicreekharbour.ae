@@ -169,7 +169,10 @@ by hand.
   seconds on screen and in use; localStorage keeps only where the latest
   visit came from, for tabs it opens) and reports it to `POST /api/visit`
   (`src/routes/api.visit.ts` → `src/lib/visits.server.ts`) when the visitor
-  leaves or switches away. One row per visit in `site_visits` (creates
+  leaves or switches away. A tap on any WhatsApp button is recorded with
+  its visit (when, which button, which page, the project its message names;
+  never the message) and reported at once; /leads lists each tap with that
+  visit's country, source and device. One row per visit in `site_visits` (creates
   itself; rows older than 13 months are deleted), so the database is woken
   about once per visit, never per page. No IP address is stored: "visitor"
   is a code from IP + browser that changes daily. `/leads` reads it through

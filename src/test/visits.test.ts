@@ -20,13 +20,30 @@ beforeEach(() => { writes.length = 0; process.env["DATABASE_URL"] = "postgresql:
 
 describe("Visit reports", () => {
   it("keeps only the site's own pages, once each, and sane totals", () => {
-    expect(cleanReport(report, sitePath)).toEqual({ ...report, pages: ["/", "/projects/creek-haven"], src: "", touch: false });
+    expect(cleanReport(report, sitePath)).toEqual({ ...report, pages: ["/", "/projects/creek-haven"], src: "", touch: false, wa: [] });
     // Names every object has are not pages (they once crashed /leads).
     for (const fake of ["__proto__", "constructor", "toString", "hasOwnProperty"]) expect(sitePath(fake), fake).toBeNull();
     expect(cleanReport({ ...report, pages: ["__proto__", "constructor"] }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, id: "x" }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, pages: ["/leads"] }, sitePath)).toBeNull();
     expect(cleanReport({ ...report, seconds: 1e9, views: -5 }, sitePath)).toMatchObject({ seconds: 4 * 3600, views: 2 });
+  });
+  it("keeps WhatsApp taps on the site's pages, known buttons and known projects only", () => {
+    const isProject = (s: string) => s === "creek-haven";
+    const wa = [
+      { at: 1793900000000, page: "/ar/projects/creek-haven", place: "floating", project: "creek-haven" },
+      { at: 1793900001000, page: "/payment-plans", place: "card", project: "made-up" },     // unknown project: kept without it
+      { at: 1793900002000, page: "/leads", place: "menu", project: null },                  // not a public page
+      { at: 1793900003000, page: "/", place: "__proto__", project: null },                  // not a button
+      { at: "soon", page: "/", place: "bar", project: null },                               // no time
+      "junk",
+    ];
+    expect(cleanReport({ ...report, wa }, sitePath, isProject)!.wa).toEqual([
+      { at: 1793900000000, page: "/ar/projects/creek-haven", place: "floating", project: "creek-haven" },
+      { at: 1793900001000, page: "/payment-plans", place: "card", project: null },
+    ]);
+    const many = Array.from({ length: 50 }, (_, i) => ({ at: i, page: "/", place: "bar", project: null }));
+    expect(cleanReport({ ...report, wa: many }, sitePath)!.wa).toHaveLength(20);
   });
   it("names where a visit came from", () => {
     expect(sourceName("https://www.google.com/", "", "dxbdubaicreekharbour.ae")).toBe("Google");
@@ -66,6 +83,17 @@ describe("Visit reports", () => {
     expect(String(visitor)).toHaveLength(16);
     expect(String(conn)).toHaveLength(16);
     expect(JSON.stringify(insert.values)).not.toContain("203.0.113.7");
+    expect(insert.values[10]).toBe("[]");
+  });
+  it("stores WhatsApp taps with the visit, at times no later than now", async () => {
+    const future = Date.now() + 3_600_000;
+    await post({ ...report, wa: [{ at: future, page: "/projects/creek-haven", place: "project", project: "creek-haven" }] });
+    const insert = writes.find((w) => w.q.includes("INSERT INTO site_visits"))!;
+    const taps = JSON.parse(String(insert.values[10])) as { at: string; page: string; place: string; project: string }[];
+    expect(taps).toHaveLength(1);
+    expect(taps[0]).toMatchObject({ page: "/projects/creek-haven", place: "project", project: "creek-haven" });
+    expect(Date.parse(taps[0]!.at)).toBeLessThanOrEqual(Date.now());
+    expect(insert.q).toContain("wa_clicks");
   });
   it("gives one connection the same connection code whatever browser it claims", async () => {
     const codes = async (ua: string, ip = "198.51.100.9") => {

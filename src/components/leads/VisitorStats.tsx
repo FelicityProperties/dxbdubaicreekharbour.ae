@@ -1,6 +1,7 @@
 /**
  * The visitor numbers on /leads: a range picker, headline figures, visits per
- * day, and where visitors went, came from, live and browse on. Data from
+ * day, where visitors went, came from, live and browse on, and every tap on a
+ * WhatsApp button. Data from
  * getVisitStats (src/lib/visits.functions.ts), behind the /leads password.
  */
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
@@ -13,6 +14,7 @@ const thousands = new Intl.NumberFormat("en-GB");
 const n = (v: number) => thousands.format(v);
 const pct = (part: number, whole: number) => (whole ? `${Math.round((part / whole) * 100)}%` : "–");
 const duration = (s: number) => (s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")} s`);
+const tapTime = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dubai", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
 const dayLabel = (iso: string, long = false) => new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", day: "numeric", month: "short", ...(long ? { weekday: "short" } : {}) }).format(new Date(`${iso}T00:00:00Z`));
 
 /** Change on the same stretch of time just before, cut at the same clock time (null: nothing to compare with yet). */
@@ -148,6 +150,32 @@ function List({ title, rows, total, empty, note }: { title: string; rows: Ranked
   );
 }
 
+/** Every tap on a WhatsApp button in the period, newest first, with what is known about that visit. */
+function WhatsAppTaps({ s }: { s: VisitStats }) {
+  const [all, setAll] = useState(false);
+  const shown = all ? s.waRecent : s.waRecent.slice(0, 10);
+  return (
+    <section className="viz-card">
+      <h2 className="viz-head"><strong>WhatsApp taps</strong> <span className="viz-muted">Dubai time, newest first</span></h2>
+      {s.waRecent.length === 0 ? <p className="viz-muted">No one tapped a WhatsApp button in this period.</p> : (
+        <div className="viz-table-wrap">
+          <table className="viz-table">
+            <thead><tr><th scope="col">When</th><th scope="col">Project</th><th scope="col">Button</th><th scope="col">Page</th><th scope="col">Came from</th><th scope="col">Country</th><th scope="col">Device</th></tr></thead>
+            <tbody>{shown.map((r, i) => (
+              <tr key={`${r.at}-${i}`}><td>{tapTime.format(new Date(r.at))}</td><td>{r.project ?? <span className="viz-muted">General</span>}</td><td>{r.place}</td><td>{r.page}</td><td>{r.source}</td><td>{r.country}</td><td>{r.device}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+      {s.waRecent.length > 10 && <button type="button" className="viz-link mt-3" onClick={() => setAll(!all)}>{all ? "Show the latest 10" : `Show all ${n(s.waRecent.length)}${s.waRecent.length >= 100 ? " (latest 100)" : ""}`}</button>}
+      <p className="viz-foot mt-3">
+        A tap opens WhatsApp with a message ready to send; whether they pressed send, and who they are, only shows in WhatsApp
+        itself. Match a tap's time and project with the chats you received.
+      </p>
+    </section>
+  );
+}
+
 export function VisitorStats({ password, onSignedOut, onCountingChange }: { password: string; onSignedOut: () => void; onCountingChange?: () => void }) {
   const [days, setDays] = useState<number>(7);
   const [stats, setStats] = useState<VisitStats | null>(null);
@@ -208,13 +236,17 @@ export function VisitorStats({ password, onSignedOut, onCountingChange }: { pass
               value={s.enquiries === null ? "–" : n(s.enquiries)}
               note={s.enquiries === null ? "Couldn't read the enquiries" : s.enquiries && s.visits >= 2 * s.enquiries ? `1 for every ${n(Math.round(s.visits / s.enquiries))} visits` : "Form and FelicityBot"}
             />
+            <Tile label="WhatsApp taps" value={n(s.waClicks)} note={s.waVisits ? `in ${n(s.waVisits)} visits · ${pct(s.waVisits, s.visits)} of visits` : "Taps on any WhatsApp button"} />
           </div>
           {s.days > 1 && <DailyChart daily={s.daily} />}
+          <WhatsAppTaps s={s} />
           <div className="viz-lists">
             <List title="Pages they opened" rows={s.pages} total={s.visits} empty="No visits yet in this period." />
             <List title="Where they came from" rows={s.sources} total={s.visits} empty="No visits yet in this period." note="Direct: typed in, bookmarked, or opened from an app that doesn't say where from (WhatsApp often doesn't)." />
             <List title="Countries" rows={s.countries} total={s.visits} empty="No visits yet in this period." />
             <List title="Devices" rows={s.devices} total={s.visits} empty="No visits yet in this period." />
+            <List title="WhatsApp taps by project" rows={s.waByProject} total={s.waClicks} empty="No WhatsApp taps yet in this period." />
+            <List title="WhatsApp taps by button" rows={s.waByPlace} total={s.waClicks} empty="No WhatsApp taps yet in this period." />
           </div>
           <p className="viz-foot">
             Time counts only while the site is on screen and in use; half an hour without use ends a visit. Visits show here once the

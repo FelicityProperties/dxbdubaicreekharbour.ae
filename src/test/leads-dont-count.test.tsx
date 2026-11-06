@@ -9,6 +9,9 @@ const stats: VisitStats = {
   previous: { visitors: 30, visits: 40 },
   daily: Array.from({ length: 7 }, (_, i) => ({ day: `2026-10-${String(8 + i).padStart(2, "0")}`, visitors: 6, visits: 8, stayed: 4 })),
   pages: [{ name: "Creek Haven", visits: 20 }], sources: [{ name: "Google", visits: 30 }], countries: [{ name: "United Arab Emirates", visits: 40 }], devices: [{ name: "Phone", visits: 45 }],
+  waClicks: 3, waVisits: 2,
+  waRecent: [{ at: "2026-10-14T10:05:00.000Z", page: "Creek Haven · Arabic", project: "Creek Haven", place: "Floating button", source: "Instagram", country: "Saudi Arabia", device: "Phone" }],
+  waByProject: [{ name: "Creek Haven", visits: 2 }], waByPlace: [{ name: "Floating button", visits: 3 }],
 };
 const asked: unknown[] = [];
 let leadsAnswer: unknown = { status: "ok", leads: [] };
@@ -54,6 +57,11 @@ describe("/leads", () => {
     expect(screen.getByText("54%")).toBeTruthy(); // 31 of 57 stayed 30 s+
     expect(screen.getByText("1 min 14 s")).toBeTruthy();
     expect(screen.getByText(/▲ 40% on the 7 days before · each person counted once a day/)).toBeTruthy();
+    // WhatsApp taps: the figure, and each tap with the visit it came from (Dubai time).
+    expect(screen.getByText("in 2 visits · 4% of visits")).toBeTruthy();
+    expect(screen.getByText("14 Oct, 14:05")).toBeTruthy();
+    expect(screen.getByText("Creek Haven · Arabic")).toBeTruthy();
+    expect(screen.getByText("Saudi Arabia")).toBeTruthy();
     expect(asked[0]).toEqual({ password: "x".repeat(24), days: 7 });
     expect(isCountingThisDevice()).toBe(false);
     await screen.findByText(/Your own visits from this browser are not counted/);
