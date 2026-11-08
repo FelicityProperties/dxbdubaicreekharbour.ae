@@ -62,6 +62,50 @@ describe("WhatsApp taps", () => {
     expect(r.wa).toEqual([expect.objectContaining({ place: "card", project: "creek-haven" })]);
     card.remove();
   });
+  it("counts the phone menu sheet as the menu and a project page's contact bar as the bar", async () => {
+    window.history.replaceState(null, "", "/projects/creek-haven");
+    render(<SiteAnalytics />);
+    const tap = (container: HTMLElement) => {
+      const wa = document.createElement("a");
+      wa.href = "https://wa.me/971500000000?text=" + encodeURIComponent("Hi, I'm interested in Emaar's projects at Dubai Creek Harbour.");
+      wa.addEventListener("click", (e) => e.preventDefault());
+      container.append(wa); document.body.append(container);
+      act(() => { wa.click(); });
+      container.remove();
+    };
+    // The sheet opens in a layer of its own at the end of the page, outside the header.
+    const sheet = document.createElement("div"); sheet.className = "app-menu"; sheet.setAttribute("role", "dialog");
+    tap(sheet);
+    const bar = document.createElement("nav"); bar.className = "mobile-bar project-bar";
+    tap(bar);
+    vi.useRealTimers();
+    const r = JSON.parse(await read(sent.at(-1)!)) as { wa: { place: string; project: string | null }[] };
+    expect(r.wa).toEqual([expect.objectContaining({ place: "menu", project: "creek-haven" }), expect.objectContaining({ place: "bar", project: "creek-haven" })]);
+  });
+  it("credits a related project's card on a project page to that card's project", async () => {
+    window.history.replaceState(null, "", "/projects/valia");
+    path = "/projects/valia";
+    render(<SiteAnalytics />);
+    const tap = (container: HTMLElement, message: string) => {
+      const wa = document.createElement("a");
+      wa.href = "https://wa.me/971500000000?text=" + encodeURIComponent(message);
+      wa.addEventListener("click", (e) => e.preventDefault());
+      container.append(wa); document.body.append(container);
+      act(() => { wa.click(); });
+      container.remove();
+    };
+    // A card in the related-projects row at the end of Valia's page.
+    const related = document.createElement("article"); related.className = "project-card";
+    tap(related, "Hi, I'm interested in Creek Haven at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan.");
+    // The page's own buttons stay Valia's, and so does a card whose message names no project.
+    const band = document.createElement("section"); band.className = "cta-band";
+    tap(band, "Hi, I'm interested in Valia at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan.");
+    const plain = document.createElement("article"); plain.className = "project-card";
+    tap(plain, "Hi, I'm interested in Emaar's projects at Dubai Creek Harbour.");
+    vi.useRealTimers();
+    const r = JSON.parse(await read(sent.at(-1)!)) as { wa: { place: string; project: string | null }[] };
+    expect(r.wa).toEqual([expect.objectContaining({ place: "card", project: "creek-haven" }), expect.objectContaining({ place: "band", project: "valia" }), expect.objectContaining({ place: "card", project: "valia" })]);
+  });
 });
 
 describe("Visit counting in the browser", () => {

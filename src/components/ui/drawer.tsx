@@ -3,11 +3,23 @@ import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * A bottom sheet you can swipe down (vaul, on Radix Dialog: title, focus trap, Escape and focus return).
+ *
+ * Defaults for this site's phone sheets. On iPhones vaul would otherwise hold the page still its own way: pin the
+ * body with position:fixed (noBodyStyles) and scroll the window to the top while a sheet is open (its iOS scroll
+ * lock, which disablePreventScroll={false} turns off; the name reads backwards). Either way the page behind the
+ * sheet jumps, is put back at the wrong place, and a page opened from the sheet starts part-way down. Radix
+ * Dialog already stops the page behind the sheet from scrolling, so the page is left alone.
+ * shouldScaleBackground is off: nothing on the site is wrapped for that effect.
+ */
 const Drawer = ({
-  shouldScaleBackground = true,
+  shouldScaleBackground = false,
+  noBodyStyles = true,
+  disablePreventScroll = false,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
+  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} noBodyStyles={noBodyStyles} disablePreventScroll={disablePreventScroll} {...props} />
 );
 Drawer.displayName = "Drawer";
 
@@ -23,7 +35,7 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    className={cn("fixed inset-0 z-50 bg-black/40", className)}
     {...props}
   />
 ));
@@ -31,19 +43,20 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> & { overlayClassName?: string | undefined }
+>(({ className, overlayClassName, children, ...props }, ref) => (
   <DrawerPortal>
-    <DrawerOverlay />
+    <DrawerOverlay className={overlayClassName} />
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
+        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[var(--app-radius-sheet,16px)] border bg-background",
         className,
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      {/* The grab handle: a short bar, as on the phone's own sheets (dragging anywhere on the sheet works too). */}
+      <div className="mx-auto mt-2 h-[5px] w-9 shrink-0 rounded-full bg-foreground/20" aria-hidden="true" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

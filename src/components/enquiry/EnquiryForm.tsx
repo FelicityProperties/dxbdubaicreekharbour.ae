@@ -1,7 +1,8 @@
 /**
  * The enquiry form that saves to Neon (see src/lib/enquiries.functions.ts).
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { CircleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
 import { whatsappUrl, mailtoUrl, WhatsAppIcon } from "@/components/showcase/shared";
@@ -9,6 +10,7 @@ import { projectLabel } from "@/lib/format";
 import { LOCALE_META, localizePath, type Locale, ltrLabel } from "@/i18n/locales";
 import { useT, type T } from "@/i18n/messages";
 import { Rich } from "@/i18n/rich";
+import { isPhone } from "@/lib/phone";
 import {
   ANY_PROJECT,
   BEDROOMS,
@@ -54,13 +56,25 @@ function optionText(o: string, t: T): string {
  */
 const Choice = ({ value, label }: { value: string; label: string }) => <option value={label === value ? undefined : value}>{label}</option>;
 
+/**
+ * The field each of the server's messages is about (enquiries.functions.ts: enquiryProblem and the consent check),
+ * so on phones the message shows under that field and the field gets focus. A message not listed here shows above
+ * the send button, as before.
+ */
+const PROBLEM_FIELD: Record<string, "name" | "phone" | "email" | "consent"> = {
+  "Please tell us your name.": "name",
+  "Please enter a phone number we can call or WhatsApp.": "phone",
+  "That email address doesn't look right — or leave it blank.": "email",
+  "Please tick the box so we may contact you about your enquiry.": "consent",
+};
+
 /** "(optional)" after a label, without the label's capitals and letter-spacing. */
 const NOTE = { note: (s: string) => <span className="normal-case tracking-normal">{s}</span> };
 
 // tracking/weight reset: inputs inherit the label's uppercase letter-spacing otherwise.
-// 16px on phones so iOS doesn't zoom into the field.
+// 16px on phones so iOS doesn't zoom into the field (enq-field: 48px tall there, styles.css PHONE APP: SHELL).
 const field =
-  "w-full min-h-11 rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] max-sm:text-[16px] font-normal tracking-normal normal-case text-foreground focus:border-[color:var(--brass)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brass)]/30";
+  "enq-field w-full min-h-11 rounded-[2px] border border-border bg-background px-3 py-2.5 text-[14px] max-sm:text-[16px] font-normal tracking-normal normal-case text-foreground focus:border-[color:var(--brass)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brass)]/30";
 const labelCls = "grid gap-1.5 text-[12px] font-medium uppercase tracking-[1px] text-muted-foreground";
 
 type State =
@@ -91,12 +105,41 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
     page: "",
   });
   const [state, setState] = useState<State>({ kind: "idle" });
+  const uid = useId();
+  const problem = state.kind === "invalid" ? PROBLEM_FIELD[state.message] : undefined;
+  // Phones: the field the message is about takes focus (its message shows right under it).
+  useEffect(() => {
+    if (state.kind !== "invalid" || !isPhone()) return;
+    const at = PROBLEM_FIELD[state.message];
+    if (at) document.getElementById(`${uid}-${at}`)?.focus();
+  }, [state, uid]);
   // Guards double submits without disabling the button, which would drop keyboard focus to the page.
   const sending = useRef(false);
   // The form is replaced by the thank-you box: move focus there so it isn't lost.
   const doneRef = useRef<HTMLDivElement>(null);
   useEffect(() => { if (state.kind === "done") doneRef.current?.focus(); }, [state.kind]);
   const set = (k: keyof EnquiryInput) => (e: { target: { value: string } }) => setV({ ...v, [k]: e.target.value });
+  /** The field's error state: marked invalid and described by its message. */
+  const invalid = (k: "name" | "phone" | "email" | "consent") => (problem === k ? { "aria-invalid": true, "aria-describedby": `${uid}-error` } : {});
+  /** Phones only: the message under the field it is about (wider screens keep it above the send button). */
+  const fieldError = (k: "name" | "phone" | "email" | "consent") =>
+    problem === k && state.kind === "invalid" ? (
+      <span id={`${uid}-error`} className="enq-error hidden" role="alert">
+        <CircleAlert aria-hidden="true" />
+        {t(state.message)}
+      </span>
+    ) : null;
+  /** Touch keyboards: the "next" key moves to the next field instead of sending a half-filled form. */
+  const nextOnEnter = (e: KeyboardEvent<HTMLFormElement>) => {
+    const el = e.target;
+    if (e.key !== "Enter" || e.nativeEvent.isComposing || !(el instanceof HTMLInputElement) || el.enterKeyHint !== "next" || !window.matchMedia("(pointer: coarse)").matches) return;
+    const fields = [...e.currentTarget.querySelectorAll<HTMLElement>("input, select, textarea")].filter((f) => f.tabIndex >= 0 && !(f instanceof HTMLInputElement && f.type === "checkbox"));
+    const next = fields[fields.indexOf(el) + 1];
+    if (next) {
+      e.preventDefault();
+      next.focus();
+    }
+  };
 
   // The broker's record of the enquiry (WhatsApp and email): English on every page, like the values it lists.
   const summary = () =>
@@ -168,6 +211,7 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
   return (
     <form
       onSubmit={onSubmit}
+      onKeyDown={nextOnEnter}
       className={`relative grid gap-4 rounded-[3px] border border-border bg-background p-5 sm:p-6 ${
         // No inner card where the form is narrow: phones, and project pages below xl.
         compact ? "max-xl:border-0 max-xl:bg-transparent max-xl:p-0" : "max-sm:border-0 max-sm:bg-transparent max-sm:p-0"
@@ -177,25 +221,28 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
       <div className={cols}>
         <label className={labelCls}>
           {t("Name")}
-          <input className={field} value={v.name} onChange={set("name")} autoComplete="name" required maxLength={120} />
+          <input id={`${uid}-name`} className={field} value={v.name} onChange={set("name")} type="text" autoComplete="name" autoCapitalize="words" enterKeyHint="next" required maxLength={120} {...invalid("name")} />
         </label>
+        {fieldError("name")}
         <label className={labelCls}>
           {t("Phone / WhatsApp")}
-          <input className={field} value={v.phone} onChange={set("phone")} type="tel" autoComplete="tel" required maxLength={40} placeholder="+971 …" />
+          <input id={`${uid}-phone`} className={field} value={v.phone} onChange={set("phone")} type="tel" inputMode="tel" autoComplete="tel" enterKeyHint="next" required maxLength={40} placeholder="+971 …" {...invalid("phone")} />
         </label>
+        {fieldError("phone")}
       </div>
       <div className={cols}>
         <label className={labelCls}>
           <span>
             <Rich text={t("Email <note>(optional)</note>")} tags={NOTE} />
           </span>
-          <input className={field} value={v.email} onChange={set("email")} type="email" autoComplete="email" maxLength={200} />
+          <input id={`${uid}-email`} className={field} value={v.email} onChange={set("email")} type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" maxLength={200} {...invalid("email")} />
         </label>
+        {fieldError("email")}
         <label className={labelCls}>
           <span>
             <Rich text={t("Country you live in <note>(optional)</note>")} tags={NOTE} />
           </span>
-          <input className={field} value={v.country} onChange={set("country")} autoComplete="country-name" maxLength={80} />
+          <input className={field} value={v.country} onChange={set("country")} type="text" autoComplete="country-name" autoCapitalize="words" enterKeyHint="next" maxLength={80} />
         </label>
       </div>
       <div className={cols}>
@@ -220,23 +267,25 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
         <span>
           <Rich text={t("Anything else? <note>(optional)</note>")} tags={NOTE} />
         </span>
-        <textarea className={`${field} min-h-24`} value={v.message} onChange={set("message")} maxLength={2000} />
+        <textarea className={`${field} min-h-24`} value={v.message} onChange={set("message")} autoCapitalize="sentences" maxLength={2000} />
       </label>
       {/* Honeypot — hidden from people, filled by bots. Its name matches nothing
           a browser or password manager autofills. */}
-      <div aria-hidden="true" className="absolute -start-[9999px] h-0 w-0 overflow-hidden">
+      <div aria-hidden="true" className="enq-hp absolute -start-[9999px] h-0 w-0 overflow-hidden">
         <label>
           {t("Leave this empty")}
           <input name="hp_ref" tabIndex={-1} autoComplete="off" value={v.hp_ref} onChange={set("hp_ref")} />
         </label>
       </div>
-      <label className="flex items-start gap-2.5 text-[13px] text-muted-foreground">
+      <label className="enq-consent flex items-start gap-2.5 text-[13px] text-muted-foreground">
         <input
+          id={`${uid}-consent`}
           type="checkbox"
           checked={v.consent}
           onChange={(e) => setV({ ...v, consent: e.target.checked })}
           required
-          className="mt-0.5 size-4 shrink-0 accent-[color:var(--brass)]"
+          className="enq-check mt-0.5 size-4 shrink-0 accent-[color:var(--brass)]"
+          {...invalid("consent")}
         />
         <span>
           <Rich
@@ -245,8 +294,9 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           />
         </span>
       </label>
+      {fieldError("consent")}
       {state.kind === "invalid" && (
-        <div className="rounded-[2px] bg-red-50 px-3 py-2.5 text-[13px] text-red-800" role="alert">
+        <div className={`rounded-[2px] bg-red-50 px-3 py-2.5 text-[13px] text-red-800${problem ? " enq-error-summary" : ""}`} role="alert">
           {t(state.message)}
         </div>
       )}
@@ -258,8 +308,8 @@ export function EnquiryForm({ project, compact = false }: { project?: string | u
           </a>
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" aria-disabled={state.kind === "sending"} className="min-h-11 aria-disabled:cursor-wait aria-disabled:opacity-50">
+      <div className="enq-actions flex flex-wrap items-center gap-3">
+        <Button type="submit" aria-disabled={state.kind === "sending"} className="enq-submit min-h-11 aria-disabled:cursor-wait aria-disabled:opacity-50">
           {state.kind === "sending" ? t("Sending…") : t("Send enquiry")}
         </Button>
         <a

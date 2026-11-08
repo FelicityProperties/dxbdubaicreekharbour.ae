@@ -22,10 +22,10 @@ import { askFelicityBot } from "@/lib/felicitybot.functions";
 import { BOT_LIMITS, historyFor, safeHref, shownReply, storedTurns, type BotResult, type BotTurn } from "@/lib/felicitybot.shared";
 import { localizePath, splitLocale, type Locale } from "@/i18n/locales";
 import { msg, useT } from "@/i18n/messages";
+import { PHONE_QUERY, isPhone } from "@/lib/phone";
 
 const STORE = "felicitybot:v2";
 const GREETING = msg("Hi, I'm FelicityBot, the AI assistant of {company}. Ask me anything about Emaar's projects in Dubai Creek Harbour: prices, payment plans, handover dates, what homes have sold and rented for, or how buying works.");
-const PHONE = "(max-width: 640px)";
 
 function load(): BotTurn[] {
   try { return storedTurns(JSON.parse(sessionStorage.getItem(STORE) ?? "[]")); } catch { return []; }
@@ -33,7 +33,6 @@ function load(): BotTurn[] {
 function save(turns: BotTurn[]) {
   try { sessionStorage.setItem(STORE, JSON.stringify(turns)); } catch { /* private mode: keep in memory */ }
 }
-const isPhone = () => window.matchMedia(PHONE).matches;
 /** A plain left click; anything else (new tab, new window, download) is left to the browser. */
 const plainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 
@@ -144,7 +143,7 @@ export function FelicityBot() {
   // Follow the layout while open: turning a phone upright makes the panel full-screen, so it gets its Back entry then.
   useEffect(() => {
     if (!open) return;
-    const mq = window.matchMedia(PHONE);
+    const mq = window.matchMedia(PHONE_QUERY);
     const onChange = () => {
       setPhoneNow(mq.matches);
       if (mq.matches && !sheet) pushChat();
@@ -164,6 +163,27 @@ export function FelicityBot() {
     others.forEach((el) => el.setAttribute("inert", ""));
     return () => others.forEach((el) => el.removeAttribute("inert"));
   }, [modal]);
+  // Phones: the launcher slides away while the page scrolls down, so it doesn't sit over the ends of rows, and comes back
+  // on a scroll up or once the scrolling stops (styles.css, PHONE APP: SHELL).
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    if (open) return;
+    const mq = window.matchMedia(PHONE_QUERY);
+    let lastY = 0, frame = 0, rest = 0;
+    const step = () => {
+      frame = 0;
+      const y = window.scrollY;
+      if (y > lastY + 4) { setTucked(true); lastY = y; } else if (y < lastY - 4) { setTucked(false); lastY = y; }
+      window.clearTimeout(rest);
+      rest = window.setTimeout(() => setTucked(false), 600);
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(step); };
+    const stop = () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(frame); frame = 0; window.clearTimeout(rest); setTucked(false); };
+    const follow = () => { stop(); if (!mq.matches) return; lastY = window.scrollY; window.addEventListener("scroll", onScroll, { passive: true }); };
+    follow();
+    mq.addEventListener?.("change", follow);
+    return () => { mq.removeEventListener?.("change", follow); stop(); };
+  }, [open]);
 
   if (path.toLowerCase().startsWith("/leads")) return null;
 
@@ -199,7 +219,8 @@ export function FelicityBot() {
   const go = (href: string) => {
     if (sheet) { setOpen(false); setSheet(false); }
     // On the phone sheet the "#chat" entry is replaced, so Back from the new page returns to the page itself.
-    void router.navigate({ href, replace: sheet && window.location.hash === "#chat" });
+    // No page transition: the chat closing is the change the visitor sees.
+    void router.navigate({ href, replace: sheet && window.location.hash === "#chat", viewTransition: false });
   };
   /** Keep focus inside the panel when the control that had it disappears: the question box with a mouse, the panel itself on touch screens (no keyboard pop-up). */
   function keepFocus() {
@@ -245,7 +266,7 @@ export function FelicityBot() {
   const handoff = lastQuestion ? waMessage(t, `Hi, I have a question about Dubai Creek Harbour: ${lastQuestion}`, msg("Hi, I have a question about Dubai Creek Harbour: {question}"), { question: lastQuestion }) : genericMessage(t);
 
   return <>
-    {!open && <button ref={launcherRef} type="button" className="bot-launcher" onClick={openPanel} aria-haspopup="dialog" aria-label={t("Ask FelicityBot, our AI assistant")}><Sparkles aria-hidden="true" /><span>{t("Ask FelicityBot")}</span></button>}
+    {!open && <button ref={launcherRef} type="button" className={`bot-launcher${tucked ? " tucked" : ""}`} onClick={openPanel} aria-haspopup="dialog" aria-label={t("Ask FelicityBot, our AI assistant")}><Sparkles aria-hidden="true" /><span>{t("Ask FelicityBot")}</span></button>}
     {open && <div ref={panelRef} tabIndex={-1} className="bot-panel" role="dialog" aria-modal={modal} aria-label={t("FelicityBot, AI assistant")}>
       <div className="bot-head">
         <img src="/favicon.svg?v=dhow" alt="" width={34} height={34} />
@@ -269,7 +290,7 @@ export function FelicityBot() {
       </div>
       <form className="bot-form" onSubmit={(e) => { e.preventDefault(); void ask(input); }}>
         <input className="bot-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" value={hp} onChange={(e) => setHp(e.target.value)} />
-        <textarea ref={inputRef} value={input} rows={1} dir="auto" maxLength={BOT_LIMITS.maxUserChars} placeholder={t("Ask about prices, plans, rents…")} aria-label={t("Your question for FelicityBot")}
+        <textarea ref={inputRef} value={input} rows={1} dir="auto" enterKeyHint="send" maxLength={BOT_LIMITS.maxUserChars} placeholder={t("Ask about prices, plans, rents…")} aria-label={t("Your question for FelicityBot")}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void ask(input); } }} />
         <button type="submit" disabled={busy || !input.trim()} aria-label={t("Send")}><ArrowUp /></button>

@@ -13,6 +13,7 @@ import { AiViewings } from "@/components/showcase/AiViewings";
 import { AI_VIEWINGS, videoObjectNode } from "@/data/ai-viewings";
 import { dateLong, dateText } from "@/lib/format";
 import { gap, tFor, useT } from "@/i18n/messages";
+import { usePhoneScrollRegion } from "@/lib/phone";
 
 export const Route = createFileRoute("/")({
   head: ({ match }) => {
@@ -39,14 +40,17 @@ function Home() {
   const places = DISTRICT.places.slice(0, 3);
   const downtown = DISTRICT.driveTimes.find((d) => d.place.startsWith("Downtown"))?.minutes ?? "";
   const airport = DISTRICT.driveTimes.find((d) => d.place.includes("DXB"))?.minutes ?? "";
-  return <main>
+  // Phones: the places swipe row can be scrolled from the keyboard. Its data-scroll-restoration-id lets the router put it
+  // back where it was after a sheet closes (see ProjectCollection.tsx).
+  const placeRow = usePhoneScrollRegion<HTMLDivElement>("district-h");
+  return <main className="page-home">
     <section className="hero">{hero && <Picture img={hero} className="hero-image" sizes="100vw" width={1600} priority />}<div className="container hero-content"><span className="eyebrow">{t("Dubai Creek Harbour · an independent broker's showcase")}</span><h1><TwoLines em text={t("Emaar's Dubai Creek Harbour projects,|side by side.")} /></h1><p className="hero-description">{t("{n} projects, with Emaar's published prices, payment plans and handover dates wherever Emaar publishes them — plus the sales and rents actually registered with the Dubai Land Department. Independent broker; ask anything on WhatsApp.", { n: PROJECTS.length })}</p><div className="hero-actions"><Button asChild variant="brass"><Link to="/" hash="projects">{t("View projects")} <ArrowDown /></Link></Button><WhatsApp variant="heroOutline" /></div></div><div className="container hero-bottom"><span>{t("Dubai Creek Harbour · {n} projects · prices checked {date}", { n: PROJECTS.length, date: dateText(SITE.pricesCheckedOn, t.locale) })}</span><span>{hero && t(hero.caption)}</span></div></section>
 
     <AiViewings />
 
     <section className="snapshot-section" aria-labelledby="snapshot-h"><div className="container"><div className="snapshot-head"><div><span className="eyebrow">{t("Registered with the Dubai Land Department")}</span><h2 id="snapshot-h">{t("The Creek Harbour market, 12 months to {date}", { date: dateLong(TX.window.to, t.locale) })}</h2></div><Link to="/market" className="teaser-link">{t("All market data")} <ArrowRight className="size-3.5" /></Link></div><MarketSnapshot /><SourceNote compact /></div></section>
 
-    <ProjectCollection />
+    <ProjectCollection shelf />
 
     <WhyCreekHarbour compact />
 
@@ -54,7 +58,7 @@ function Home() {
 
     <section className="section" id="market"><div className="container"><div className="section-heading"><div><span className="eyebrow">{t("What actually changed hands")}</span><h2>{t("Latest registered sales and rents")}</h2></div><p className="section-intro">{t("Ready homes, off-plan and tenancy contracts across Dubai Creek Harbour, straight from the Land Department register.")}</p></div><LatestTransactions initial={10} /><SourceNote compact /><Link to="/market" className="teaser-link">{t("Full market data: by bedroom, by building, all recent rows")} <ArrowRight className="size-3.5" /></Link></div></section>
 
-    <section className="section district-section" id="district"><div className="container"><div className="section-heading"><div><span className="eyebrow">{t("Beyond your front door")}</span><h2>{t("About Dubai Creek Harbour")}</h2></div><p className="section-intro">{t(DISTRICT.intro)}</p></div><div className="place-grid">{places.map((place) => { const img = districtImage(place.image); return <article className="place-card" key={place.title}>{img && <Picture img={img} />}<div className="place-body"><h3>{t(place.title)}</h3><p>{t(place.body)}</p></div></article>; })}</div><div className="stat-strip mt-6">{DISTRICT.stats.map((s) => <div className="stat" key={s.label}><p className="stat-value">{t(s.value)}</p><p className="stat-label">{t(s.label)}</p></div>)}<div className="stat"><p className="stat-value">{t("{n} min", { n: downtown })}</p><p className="stat-label">{t("to Downtown Dubai by car")}</p><p className="stat-note">{t("{n} min to DXB airport", { n: airport })}</p></div></div><p className="source-note">{t(DISTRICT.statsNote)}{gap(t)}{t(DISTRICT.driveTimesNote)}</p><Link to="/area" className="teaser-link">{t("The three quarters, every landmark, drive times and the metro")} <ArrowRight className="size-3.5" /></Link></div></section>
+    <section className="section district-section" id="district"><div className="container"><div className="section-heading"><div><span className="eyebrow">{t("Beyond your front door")}</span><h2 id="district-h">{t("About Dubai Creek Harbour")}</h2></div><p className="section-intro">{t(DISTRICT.intro)}</p></div><div ref={placeRow} data-scroll-restoration-id="district-row" className="place-grid app-shelf">{places.map((place) => { const img = districtImage(place.image); return <article className="place-card" key={place.title}>{img && <Picture img={img} sizes="(max-width: 640px) 82vw, (max-width: 1000px) 50vw, 33vw" />}<div className="place-body"><h3>{t(place.title)}</h3><p>{t(place.body)}</p></div></article>; })}</div><div className="stat-strip mt-6">{DISTRICT.stats.map((s) => <div className="stat" key={s.label}><p className="stat-value">{t(s.value)}</p><p className="stat-label">{t(s.label)}</p></div>)}<div className="stat"><p className="stat-value">{t("{n} min", { n: downtown })}</p><p className="stat-label">{t("to Downtown Dubai by car")}</p><p className="stat-note">{t("{n} min to DXB airport", { n: airport })}</p></div></div><p className="source-note">{t(DISTRICT.statsNote)}{gap(t)}{t(DISTRICT.driveTimesNote)}</p><Link to="/area" className="teaser-link">{t("The three quarters, every landmark, drive times and the metro")} <ArrowRight className="size-3.5" /></Link></div></section>
 
     <section className="section guide-teaser" id="guide"><div className="container two-col"><div><span className="eyebrow">{t("How buying works")}</span><h2><TwoLines text={t("From reservation|to title deed")} /></h2><p className="district-intro">{t("Reserve a unit, pay the down payment into escrow, sign Emaar's sale agreement, register with the Land Department, then handover and your electronic title deed. Non-residents buy with a passport. Our step-by-step guide uses Emaar's published terms.")}</p><Link to="/guide" className="teaser-link">{t("Read the buying guide")} <ArrowRight className="size-3.5" /></Link></div><div className="costs-box"><h3>{t(COSTS.title)}</h3><p className="block-note">{t(COSTS.note)}</p>{COSTS.items.slice(0, 4).map((c) => <div className="cost-row" key={c.label}><span>{t(c.label)}</span><span className="cost-value">{t(c.value)}</span></div>)}<Link to="/guide" hash="costs" className="teaser-link">{t("All costs, with Emaar's sources")} <ArrowRight className="size-3.5" /></Link></div></div></section>
 

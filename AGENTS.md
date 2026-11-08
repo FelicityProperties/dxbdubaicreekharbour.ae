@@ -55,6 +55,19 @@
 - English pages must not change when you touch translations or the language
   plumbing.
 
+## Phones: the app layer
+
+- On screens up to 640px wide the site behaves like an app: a slim top bar that shows the page title once the
+  heading scrolls away, a bottom-sheet menu, a bottom tab bar (a price and contact bar on project pages), swipe rows,
+  DLD tables as list rows, filters in a sheet, and short page transitions. Tablets and computers are unaffected.
+- Its styles live in `src/styles/phone.css`, linked with `media="(max-width: 640px)"` after `styles.css`; every rule
+  there also sits inside `@media (max-width:640px)`. Scripts use `PHONE_QUERY` / `isPhone()` and the helpers in
+  `src/lib/phone.ts`: phone Back closes a sheet or viewer (`useBackCloses`), the sheet code loads only on phones
+  (`loadDrawer`), and swipe rows with nothing focusable are keyboard-reachable (`usePhoneScrollRegion`). Swipe rows
+  carry a `data-scroll-restoration-id` and are listed in the router's `scrollToTopSelectors`.
+- A change meant for phones must leave wider screens pixel-identical: compare full-page screenshots at 1280, 1024
+  and 768px before and after.
+
 ## Showcase architecture
 
 - Shared showcase components (`src/components/showcase/shared.tsx`) own the

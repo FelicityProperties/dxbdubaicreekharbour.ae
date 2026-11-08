@@ -50,7 +50,8 @@ const WHATSAPP_LINK = /^(https:\/\/(wa\.me|api\.whatsapp\.com)\/|whatsapp:)/i;
 function waPlace(a: Element, page: string): WaPlace {
   const inside = (selector: string) => !!a.closest(selector);
   if (inside(".floating-wa")) return "floating";
-  if (inside(".mobile-bar")) return "bar";
+  if (inside(".app-menu")) return "menu"; // the phone menu sheet (it opens outside the header)
+  if (inside(".mobile-bar")) return "bar"; // the phone tab bar, and a project page's contact bar
   if (inside(".site-header")) return "menu";
   if (inside(".site-footer")) return "footer";
   if (inside("[class*='bot-']")) return "bot";
@@ -63,13 +64,18 @@ function waPlace(a: Element, page: string): WaPlace {
   return "page";
 }
 const BY_LENGTH = [...PROJECTS].sort((a, b) => b.name.length - a.name.length);
-/** The project the tap is about: the project page it was on, else the project its message names. */
-function waProject(href: string, page: string): string | null {
+/**
+ * The project the tap is about: a project card's or table row's own project (a related project on another project's
+ * page), else the project page it was on, else the project its message names.
+ */
+function waProject(a: Element, href: string, page: string): string | null {
+  let text = "";
+  try { text = new URL(href).searchParams.get("text") ?? ""; } catch { /* not a link with a message */ }
+  const named = BY_LENGTH.find((p) => text.includes(p.name))?.slug ?? null;
+  if (named && a.closest(".project-card, .project-table")) return named;
   const onPage = /^\/projects\/([^/]+)$/.exec(page)?.[1];
   if (onPage && PROJECTS.some((p) => p.slug === onPage)) return onPage;
-  let text = "";
-  try { text = new URL(href).searchParams.get("text") ?? ""; } catch { return null; }
-  return BY_LENGTH.find((p) => text.includes(p.name))?.slug ?? null;
+  return named;
 }
 
 /** A new visit. Arriving from this site itself (a project opened in a new tab), it keeps the opener's source. */
@@ -182,7 +188,7 @@ export function SiteAnalytics() {
       const taps = (v.wa ??= []);
       if (taps.length < VISIT_LIMITS.maxWaClicks) {
         const page = splitLocale(shown).path;
-        taps.push({ at: Date.now(), page: shown, place: waPlace(a, page), project: waProject(a.getAttribute("href") ?? "", page) });
+        taps.push({ at: Date.now(), page: shown, place: waPlace(a, page), project: waProject(a, a.getAttribute("href") ?? "", page) });
       }
       v.last = Date.now();
       seen = true;

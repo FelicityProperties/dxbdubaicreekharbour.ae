@@ -83,6 +83,6 @@ Chinese pages until it is translated, and `npm test` says which keys are missing
 | payment plan | خطة الدفع | 付款计划 |
 | Golden Visa | الإقامة الذهبية | 黄金签证 |
 | freehold | تملّك حر | 永久产权 |
-| sq ft | قدم مربع | 平方英尺 |
+| sq ft | قدم مربعة | 平方英尺 |
 
 The legal pages carry a line that the English version is the legally binding one.

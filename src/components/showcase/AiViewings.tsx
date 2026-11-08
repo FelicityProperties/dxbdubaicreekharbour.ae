@@ -3,7 +3,9 @@
  * Emaar's renders. A video downloads nothing until it is at least half on
  * screen; then it plays muted and inline — the only way iPhones let a page
  * start a video — and pauses again below half. Visitors who ask their device
- * for reduced motion get the poster and a play button instead.
+ * for reduced motion get the poster and a play button instead. On phones the
+ * viewings sit in one swipe row, and only one plays at a time: the one that
+ * last came into view or was tapped.
  */
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -11,14 +13,20 @@ import { ArrowUpRight, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { WhatsApp } from "@/components/showcase/shared";
 import { AI_VIEWINGS, INSTAGRAM_REELS, permitLine, posterSrc, videoLabel, videoSrc, viewingLine, viewingMessage, type AiViewing } from "@/data/ai-viewings";
 import { msg, useT } from "@/i18n/messages";
+import { isPhone } from "@/lib/phone";
 
 const HEADING = msg("Walk through it before it's built");
 const SUB = msg("AI viewings of Dubai off-plan homes, built from the developers' own plans.");
 
 /** Every mounted viewing, so turning one's sound on silences the others. */
 const players = new Set<HTMLVideoElement>();
+/** Viewings paused because another one started (phones): that pause is not the visitor's. */
+const yielded = new WeakSet<HTMLVideoElement>();
 
 function start(video: HTMLVideoElement) {
+  if (isPhone()) {
+    for (const other of players) if (other !== video && !other.paused) { yielded.add(other); other.pause(); }
+  }
   video.play().catch((e: unknown) => {
     // The browser wants a tap before it plays sound: carry on muted. Any other refusal
     // (Low Power Mode, data saver) leaves the play button for the visitor; an AbortError
@@ -107,8 +115,10 @@ export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewi
           aria-label={videoLabel(viewing, t)}
           onClick={togglePlay}
           onPlay={() => setPlaying(true)}
-          onPause={() => {
+          onPause={(e) => {
             setPlaying(false);
+            // Another viewing took over (phones): it starts again when it next comes into view.
+            if (yielded.delete(e.currentTarget)) return;
             // Paused on screen by something other than scrolling (the lock screen, a headphone
             // button): treat it as the visitor's pause. A pause because the tab went to the
             // background is not one.
@@ -161,7 +171,8 @@ export function AiViewings({ viewings = AI_VIEWINGS }: { viewings?: AiViewing[] 
           </div>
           <p className="section-intro">{t(SUB)}</p>
         </div>
-        <div className="aiv-grid" data-count={viewings.length}>
+        {/* The restoration id lets the router put the row back where it was after a sheet closes (ProjectCollection.tsx). */}
+        <div className="aiv-grid app-shelf" data-count={viewings.length} data-scroll-restoration-id="aiv-row">
           {viewings.map((v) => (
             <ViewingCard key={v.slug} viewing={v} linkProject />
           ))}

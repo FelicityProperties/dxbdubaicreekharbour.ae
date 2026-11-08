@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import phoneCss from "../styles/phone.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/shared";
 import { SITE } from "@/data/projects";
@@ -81,6 +82,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      // The phone app layer: render-blocking on phones only; tablets and computers fetch it without waiting for it.
+      { rel: "stylesheet", href: phoneCss, media: "(max-width: 640px)" },
       { rel: "icon", href: "/favicon.ico?v=dhow", sizes: "32x32" },
       { rel: "icon", href: "/favicon.svg?v=dhow", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=dhow" },

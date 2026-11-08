@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { ArrowUpRight, ArrowRight, ArrowDown, ArrowLeft, BedDouble, CalendarDays, Menu, X, PenLine, Mail, Home, Building2, TrendingUp, Share2, Smartphone, Languages } from "lucide-react";
+import { PHONE_QUERY, isPhone, loadDrawer, reloadForMissingCode, useBackCloses, type DrawerKit } from "@/lib/phone";
+import { ArrowUpRight, ArrowRight, ArrowDown, ArrowLeft, BedDouble, CalendarDays, Menu, X, PenLine, Mail, Home, Building2, TrendingUp, Share2, Smartphone, Languages, ChevronRight, Wallet, MapPin, BookOpen, CircleHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SITE, PROJECTS, imageSrc, imageSrcSet, type Project, type ProjectImage, type PlanStep } from "@/data/projects";
 import { dateShort, dateText, brandLine } from "@/lib/format";
@@ -46,16 +47,17 @@ export function Wordmark() { return <Link to="/" className="dxbch-lockup" lang="
  * The same page in the other languages. Plain links, so switching is a full page load: the page comes back
  * already in the new language, and search engines see real links between the language versions.
  */
-export function LanguageLinks({ compact = false, onPick }: { compact?: boolean; onPick?: () => void }) {
+export function LanguageLinks({ compact = false, onPick }: { compact?: boolean; onPick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   const locale = useLocale();
   const at = useRouterState({ select: (s) => `${s.location.pathname}${s.location.searchStr}` });
   const hash = useRouterState({ select: (s) => s.location.hash });
   // The server never sees an address's #hash, so the first render leaves it out (as the server's HTML did: React keeps
-  // the server's href when hydrating) and adds it once the page is live.
-  const [live, setLive] = useState(false);
-  useEffect(() => setLive(true), []);
+  // the server's href when hydrating) and adds it once the page is live. While the phone menu is open the address ends
+  // in "#menu" (so phone Back closes it): the links keep the hash of the page under the menu.
+  const [pageHash, setPageHash] = useState("");
+  useEffect(() => { if (hash !== "menu") setPageHash(hash); }, [hash]);
   // An address the router could not take a language off (/zh/leads, a mistyped /ar/ar/…) has no other-language version: offer the home pages.
-  const here = /^\/(ar|zh)(\/|$)/.test(at) ? "/" : `${at}${live && hash ? `#${hash}` : ""}`;
+  const here = /^\/(ar|zh)(\/|$)/.test(at) ? "/" : `${at}${pageHash ? `#${pageHash}` : ""}`;
   // Nor has an English-only page (/leads): its Arabic and Chinese links go to those home pages too.
   const hrefFor = (l: Locale) => { const href = localizePath(here, l); return l !== "en" && href === here ? localizePath("/", l) : href; };
   const shown: readonly Locale[] = compact ? LOCALES.filter((l) => l !== locale) : LOCALES;
@@ -93,36 +95,178 @@ function InstallHint() {
     return () => window.removeEventListener("beforeinstallprompt", onPrompt);
   }, []);
   if (mode === "installed") return null;
-  if (prompt) return <button type="button" className="nav-link install-hint" onClick={() => { const p = prompt; deferredInstall = null; setPrompt(null); void p.prompt(); }}><Smartphone className="inline size-3.5 me-1.5" />{t("Add to home screen")}</button>;
-  if (mode === "ios") return <span className="install-hint nav-note"><Smartphone className="inline size-3.5 me-1.5" />{t("Add to your home screen: tap Share, then \"Add to Home Screen\".")}</span>;
+  if (prompt) return <div className="app-menu-group"><button type="button" className="app-menu-row install-hint" onClick={() => { const p = prompt; deferredInstall = null; setPrompt(null); void p.prompt(); }}><Smartphone aria-hidden="true" /><span className="app-menu-label">{t("Add to home screen")}</span></button></div>;
+  if (mode === "ios") return <p className="app-menu-note install-hint"><Smartphone aria-hidden="true" /><span>{t("Add to your home screen: tap Share, then \"Add to Home Screen\".")}</span></p>;
   return null;
 }
+
+/* ── The phone app shell: top bar, menu sheet, bottom bar ───────────────────────────────────────────────────── */
+/** A plain tap or left click; a new tab or window is left to the browser. */
+const plainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+const scrollToTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+/** The open menu sheet, for the menu button's aria-controls. */
+const MENU_ID = "app-menu-sheet";
+
+/**
+ * iOS-style large title: once an inner page's heading has scrolled up under the top bar, the bar shows it in place
+ * of the logo (phones only; the home page keeps the logo). Watches the page's own h1 again after every navigation.
+ */
+function useBarTitle(path: string) {
+  const [bar, setBar] = useState({ text: "", shown: false });
+  useEffect(() => {
+    setBar({ text: "", shown: false });
+    if (path === "/" || !isPhone() || typeof IntersectionObserver === "undefined") return;
+    let observer: IntersectionObserver | undefined;
+    let frame = 0;
+    let tries = 0;
+    const watch = () => {
+      const h1 = document.querySelector<HTMLElement>("main h1");
+      if (!h1) { if (++tries < 60) frame = requestAnimationFrame(watch); return; }
+      const text = h1.innerText.replace(/\s+/g, " ").trim();
+      const top = Math.round(document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 56);
+      observer = new IntersectionObserver(([entry]) => { if (entry) setBar({ text, shown: !entry.isIntersecting && entry.boundingClientRect.top < top }); }, { rootMargin: `-${top}px 0px 0px 0px` });
+      observer.observe(h1);
+    };
+    watch();
+    return () => { cancelAnimationFrame(frame); observer?.disconnect(); };
+  }, [path]);
+  return bar;
+}
+
+type MenuPage = "/projects" | "/payment-plans" | "/market" | "/area" | "/guide" | "/terms" | "/privacy";
+/**
+ * The phone menu: a bottom sheet of the site's pages, the ways to reach us, the languages and the legal pages.
+ * Phone Back closes it (the "#menu" history entry, see Header). A row that leaves the page calls leave() first, and the
+ * next page or "#…" jump takes the place of that entry, so Back from it returns to the page the menu was opened on.
+ */
+function AppMenu({ kit, open, onOpenChange, onClosed, leave }: { kit: DrawerKit; open: boolean; onOpenChange: (open: boolean) => void; onClosed: () => void; leave: () => boolean }) {
+  const t = useT();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const router = useRouter();
+  const content = useRef<HTMLDivElement>(null);
+  const { Drawer, DrawerContent, DrawerTitle, DrawerClose } = kit;
+  const close = () => onOpenChange(false);
+  // A "#…" jump waits until the sheet has gone: while it is open the page behind it is held still, which would cancel the scroll.
+  const jump = useRef<(() => void) | null>(null);
+  const after = (go: (replace: boolean) => void) => (e: MouseEvent) => { if (!plainClick(e)) return; e.preventDefault(); const replace = leave(); jump.current = () => go(replace); close(); };
+  const toEnquire = (replace: boolean) => { if (window.location.hash === "#enquire") document.getElementById("enquire")?.scrollIntoView(); else if (replace) window.location.replace("#enquire"); else window.location.hash = "enquire"; };
+  // The router ignores a link to the address already shown, so on /guide#faq the FAQs row scrolls there itself.
+  const toFaq = (replace: boolean) => { const l = router.state.location; if (l.pathname === "/guide" && l.hash === "faq") document.getElementById("faq")?.scrollIntoView(); else void router.navigate({ to: "/guide", hash: "faq", replace, viewTransition: false }); };
+  // Another page: the sheet itself is the transition (the page changes under it as it slides away). This page's own row only closes the sheet.
+  const goTo = (to: MenuPage) => (e: MouseEvent) => {
+    if (plainClick(e)) { e.preventDefault(); if (to !== path) void router.navigate({ to, replace: leave(), viewTransition: false }); }
+    close();
+  };
+  const chevron = <ChevronRight className="app-menu-end" aria-hidden="true" />;
+  const outward = <ArrowUpRight className="app-menu-end" aria-hidden="true" />;
+  const row = (to: MenuPage, icon: ReactNode, label: string) => <li><Link to={to} className="app-menu-row" onClick={goTo(to)}>{icon}<span className="app-menu-label">{label}</span>{chevron}</Link></li>;
+  const enquire = <><PenLine aria-hidden="true" /><span className="app-menu-label">{t("Enquire")}</span>{chevron}</>;
+  return <Drawer open={open} onOpenChange={onOpenChange}>
+    <DrawerContent ref={content} id={MENU_ID} className="app-menu" overlayClassName="app-menu-overlay" aria-describedby={undefined}
+      onOpenAutoFocus={(e) => { e.preventDefault(); content.current?.focus({ preventScroll: true }); }}
+      onCloseAutoFocus={(e) => { e.preventDefault(); const go = jump.current; jump.current = null; if (go) go(); else onClosed(); }}>
+      <div className="app-menu-head"><DrawerTitle className="app-menu-title">{t("Menu")}</DrawerTitle><DrawerClose className="app-menu-close" aria-label={t("Close navigation")}><X aria-hidden="true" /></DrawerClose></div>
+      <div className="app-menu-body">
+        <nav aria-label={t("Mobile navigation")}><ul className="app-menu-group">
+          {row("/projects", <Building2 aria-hidden="true" />, t("Projects"))}
+          {row("/payment-plans", <Wallet aria-hidden="true" />, t("Payment plans"))}
+          {row("/market", <TrendingUp aria-hidden="true" />, t("Market data"))}
+          {row("/area", <MapPin aria-hidden="true" />, t("The area"))}
+          {row("/guide", <BookOpen aria-hidden="true" />, t("Buying guide"))}
+          <li><Link to="/guide" hash="faq" activeProps={{}} activeOptions={{ includeHash: true }} className="app-menu-row" onClick={after(toFaq)}><CircleHelp aria-hidden="true" /><span className="app-menu-label">{t("FAQs")}</span>{chevron}</Link></li>
+        </ul></nav>
+        <ul className="app-menu-group">
+          <li><a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" className="app-menu-row app-menu-wa" onClick={close}><WhatsAppIcon /><span className="app-menu-label">{t("WhatsApp us")}<span className="app-menu-sub"><span dir="ltr">{SITE.whatsappDisplay}</span></span></span>{outward}</a></li>
+          <li><a href={mailtoUrl()} className="app-menu-row" onClick={close}><Mail aria-hidden="true" /><span className="app-menu-label">{t("Email")}<span className="app-menu-sub"><span dir="ltr">{SITE.email}</span></span></span>{outward}</a></li>
+          <li>{pageHasForm(path) ? <a href="#enquire" className="app-menu-row" onClick={after(toEnquire)}>{enquire}</a> : <Link to="/" hash="enquire" activeProps={{}} className="app-menu-row" onClick={after((replace) => void router.navigate({ to: "/", hash: "enquire", replace, viewTransition: false }))}>{enquire}</Link>}</li>
+        </ul>
+        {/* A full page load: it too takes the place of the "#menu" entry. */}
+        <div className="app-menu-lang"><Languages aria-hidden="true" /><LanguageLinks onPick={(e) => { if (plainClick(e) && leave()) { e.preventDefault(); window.location.replace(e.currentTarget.href); } else close(); }} /></div>
+        <InstallHint />
+        <p className="app-menu-legal"><Link to="/terms" onClick={goTo("/terms")}>{t("Terms")}</Link><Link to="/privacy" onClick={goTo("/privacy")}>{t("Privacy")}</Link></p>
+      </div>
+    </DrawerContent>
+  </Drawer>;
+}
+
 export function Header() {
   const t = useT();
   const [open, setOpen] = useState(false);
+  const [kit, setKit] = useState<DrawerKit | null>(null);
+  const [used, setUsed] = useState(false); // the sheet is only mounted once it has been opened
   const path = useRouterState({ select: (s) => s.location.pathname });
+  // The page on screen (the address changes before the next page has rendered).
+  const shown = useRouterState({ select: (s) => (s.resolvedLocation ?? s.location).pathname });
   const router = useRouter();
+  const toggle = useRef<HTMLButtonElement>(null);
+  const bar = useBarTitle(shown);
+  // The fixed pages show their short menu names in the bar (their headings are whole sentences); project pages and the rest show their heading.
+  const short: Partial<Record<string, string>> = { "/projects": t("Projects"), "/payment-plans": t("Payment plans"), "/market": t("Market data"), "/area": t("The area"), "/guide": t("Buying guide"), "/terms": t("Terms"), "/privacy": t("Privacy") };
+  // Phone Back closes the open menu instead of leaving the page.
+  const { leave } = useBackCloses("menu", open, () => setOpen(false));
   // Any navigation closes the phone menu: wordmark, back arrow and bottom bar all change the path.
   useEffect(() => { setOpen(false); }, [path]);
-  return <header className="site-header"><div className="container header-inner">{path !== "/" && <button type="button" className="mobile-back" aria-label={t("Back")} onClick={() => { if (router.history.canGoBack() || window.history.state == null) router.history.back(); else void router.navigate({ to: "/" }); }}><ArrowLeft /></button>}<Wordmark /><nav className="main-nav" aria-label={t("Main navigation")}><NavLinks /><LanguageLinks compact /><WhatsApp variant="outline" className="header-wa">{t("Let's talk")} <ArrowUpRight /></WhatsApp></nav><Button variant="ghost" size="icon" className="mobile-toggle" aria-label={open ? t("Close navigation") : t("Open navigation")} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</Button></div>{open && <nav className="mobile-nav" aria-label={t("Mobile navigation")}><NavLinks onPick={() => setOpen(false)} /><WhatsApp /><a href={mailtoUrl()} className="nav-link"><Mail className="inline size-3.5 me-1.5" /><span dir="ltr">{SITE.email}</span></a><InstallHint /><LanguageLinks onPick={() => setOpen(false)} /><div className="nav-small"><Link to="/terms" onClick={() => setOpen(false)}>{t("Terms")}</Link><Link to="/privacy" onClick={() => setOpen(false)}>{t("Privacy")}</Link></div></nav>}</header>;
+  // Phones fetch the menu sheet once the page is idle, so the first tap opens it at once.
+  useEffect(() => {
+    if (!isPhone()) return;
+    const fetchKit = () => { loadDrawer().then(setKit, () => {}); };
+    if (typeof window.requestIdleCallback === "function") { const id = window.requestIdleCallback(fetchKit, { timeout: 4000 }); return () => window.cancelIdleCallback(id); }
+    const id = window.setTimeout(fetchKit, 2000);
+    return () => window.clearTimeout(id);
+  }, []);
+  // Turned past the phone layout (a tablet rotated), the sheet closes: the full navigation shows again.
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia(PHONE_QUERY);
+    const onChange = () => { if (!mq.matches) setOpen(false); };
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, [open]);
+  // The sheet's code did not arrive (a patchy connection, or a site update since this page loaded removed the old file).
+  // The browser keeps that failure for this page, so only a reload brings the code: reloadForMissingCode() reloads once
+  // per visit, and never while something typed into a form would be lost.
+  const openMenu = () => {
+    if (kit) { setUsed(true); setOpen(true); return; }
+    loadDrawer().then((k) => { setKit(k); setUsed(true); setOpen(true); }, () => { reloadForMissingCode(); });
+  };
+  return <header className={`site-header${bar.shown ? " has-title" : ""}`}><div className="container header-inner">{path !== "/" && <button type="button" className="mobile-back" aria-label={t("Back")} onClick={() => { if (router.history.canGoBack() || window.history.state == null) router.history.back(); else void router.navigate({ to: "/" }); }}><ArrowLeft /></button>}<Wordmark /><nav className="main-nav" aria-label={t("Main navigation")}><NavLinks /><LanguageLinks compact /><WhatsApp variant="outline" className="header-wa">{t("Let's talk")} <ArrowUpRight /></WhatsApp></nav><p className="app-bar-title hidden" aria-hidden="true"><span>{short[shown] ?? bar.text}</span></p><Button ref={toggle} variant="ghost" size="icon" className="mobile-toggle" aria-label={t("Open navigation")} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? MENU_ID : undefined} onClick={openMenu}><Menu /></Button></div>{kit && used && <AppMenu kit={kit} open={open} onOpenChange={setOpen} onClosed={() => toggle.current?.focus({ preventScroll: true })} leave={leave} />}</header>;
 }
 export function Footer() {
   const t = useT();
   return <><footer className="site-footer"><div className="container"><div className="footer-top"><Wordmark /><nav className="footer-nav" aria-label={t("Footer navigation")}><Link to="/projects">{t("Projects")}</Link><Link to="/payment-plans">{t("Payment plans")}</Link><Link to="/market">{t("Market data")}</Link><Link to="/area">{t("The area")}</Link><Link to="/guide">{t("Buying guide")}</Link><Link to="/guide" hash="faq">{t("FAQs")}</Link><Link to="/terms">{t("Terms")}</Link><Link to="/privacy">{t("Privacy")}</Link><a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight className="inline size-3" /></a><a href={mailtoUrl()}>{t("Email")} <ArrowUpRight className="inline size-3" /></a></nav></div><LanguageLinks /><p className="disclaimer">{disclaimer(t)}</p><p className="disclaimer"><Rich text={t("We use the details you send us to answer your enquiry and to follow up on it — see the <privacy>Privacy Notice</privacy> and <terms>Terms of Use</terms>.")} tags={{ privacy: (s) => <Link to="/privacy">{s}</Link>, terms: (s) => <Link to="/terms">{s}</Link> }} />{SITE.company && `${gap(t)}${SITE.licence ? t("Operated by {company} ({licence}).", { company: SITE.company, licence: t(SITE.licence) }) : t("Operated by {company}.", { company: SITE.company })}`}</p>{SITE.dldPermit && <p className="disclaimer">{t("Advertising permit (Trakheesi) No. {permit}", { permit: SITE.dldPermit })}</p>}<div className="footer-bottom"><span>DXB Creek Harbour · {SITE.company} · WhatsApp <span dir="ltr">{SITE.whatsappDisplay}</span> · <a href={mailtoUrl()}>{SITE.email}</a></span><span>{t("{address}, United Arab Emirates", { address: t(SITE.address) })}</span></div></div></footer><Button asChild className="floating-wa" size="icon"><a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" aria-label={t("Chat on WhatsApp")} title={t("Chat on WhatsApp")}><WhatsAppIcon /></a></Button><Button asChild className="floating-mail" size="icon"><a href={mailtoUrl()} aria-label={t("Email us at {email}", { email: SITE.email })} title={t("Email us: {email}", { email: SITE.email })}><Mail /></a></Button></>;
 }
-/** Phone-only bottom tab bar, app style: the three places people go plus the two things they do. */
+/**
+ * Phone-only bottom tab bar, app style: the three places people go plus the two things they do. Tapping the tab
+ * you are on scrolls back to the top. On a project's page it becomes that project's contact bar.
+ */
 export function MobileBar() {
   const t = useT();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const cls = (active: boolean) => `tab${active ? " active" : ""}`;
+  const project = PROJECTS.find((p) => path === `/projects/${p.slug}`);
+  if (project) return <ProjectBar project={project} />;
   const hasForm = pageHasForm(path);
-  // activeProps={{}} keeps the router from adding its own "active" class, so only cls() decides the highlight.
+  // activeProps={{}} keeps the router from adding its own "active" class, so only tab() decides the highlight
+  // (the router still marks the active link aria-current="page").
+  const tab = (active: boolean, here: boolean) => ({ className: `tab${active ? " active" : ""}`, onClick: (e: MouseEvent) => { if (here && plainClick(e)) { e.preventDefault(); scrollToTop(); } } });
+  const icon = (glyph: ReactNode, label: string) => <><span className="tab-icon">{glyph}</span><span className="tab-label">{label}</span></>;
   return <nav className="mobile-bar" aria-label={t("Quick navigation")}>
-    <Link to="/" activeProps={{}} className={cls(path === "/")}><Home />{t("Home")}</Link>
-    <Link to="/projects" activeProps={{}} className={cls(path.startsWith("/projects"))}><Building2 />{t("Projects")}</Link>
-    <Link to="/market" activeProps={{}} className={cls(path.startsWith("/market"))}><TrendingUp />{t("Market")}</Link>
-    {hasForm ? <a href="#enquire" className="tab"><PenLine />{t("Enquire")}</a> : <Link to="/" hash="enquire" className="tab"><PenLine />{t("Enquire")}</Link>}
-    <a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" className="tab tab-wa"><WhatsAppIcon />WhatsApp</a>
+    <Link to="/" activeProps={{}} {...tab(path === "/", path === "/")}>{icon(<Home />, t("Home"))}</Link>
+    <Link to="/projects" activeProps={{}} {...tab(path.startsWith("/projects"), path === "/projects")}>{icon(<Building2 />, t("Projects"))}</Link>
+    <Link to="/market" activeProps={{}} {...tab(path.startsWith("/market"), path === "/market")}>{icon(<TrendingUp />, t("Market"))}</Link>
+    {hasForm ? <a href="#enquire" className="tab">{icon(<PenLine />, t("Enquire"))}</a> : <Link to="/" hash="enquire" className="tab">{icon(<PenLine />, t("Enquire"))}</Link>}
+    <a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" className="tab tab-wa">{icon(<WhatsAppIcon />, "WhatsApp")}</a>
+  </nav>;
+}
+/** A project's page: its price line and name, then Enquire and WhatsApp. Still the .mobile-bar, so a WhatsApp tap here counts as the bar's. */
+function ProjectBar({ project }: { project: Project }) {
+  const t = useT();
+  // The bar has no room for the price's note, so it shows a figure only when it is today's price (units Emaar lists, or a
+  // project Emaar is selling now). A resale project's launch price stays on the page, with its note.
+  const current = !!project.pricesFrom || project.status === "Now selling";
+  return <nav className="mobile-bar project-bar" aria-label={t("Quick navigation")}>
+    <p className="pbar-info"><span className="pbar-price">{current ? priceSummary(project, t).main : t("Price on request")}</span><span className="pbar-name">{project.name}</span></p>
+    <a href="#enquire" className="pbar-enquire"><PenLine aria-hidden="true" />{t("Enquire")}</a>
+    <a href={whatsappUrl(projectMessage(project.name, t))} target="_blank" rel="noopener noreferrer" className="pbar-wa" aria-label={t("Chat on WhatsApp")}><WhatsAppIcon /></a>
   </nav>;
 }
 /** Native share sheet on phones; copies the link elsewhere. */
@@ -195,13 +339,19 @@ export function Picture({ img, sizes = "(max-width: 640px) 100vw, (max-width: 10
   const t = useT();
   return <img src={imageSrc(img, width)} srcSet={imageSrcSet(img)} sizes={sizes} alt={t(img.caption)} width={img.w} height={img.h} loading={priority || eager ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : "auto"} className={className} ref={(element) => { if (onError && element?.complete && element.naturalWidth === 0) onError(); }} onError={onError} />;
 }
-export function ProjectArt({ project, index = 0, large = false }: { project: Project; index?: number; large?: boolean }) { const t = useT(); return <div className={`project-art ${index % 3 === 1 ? "tone-sand" : index % 3 === 2 ? "tone-ink" : ""} ${large ? "detail-banner" : ""}`}><span className="art-caption">{t("Dubai Creek Harbour")}</span>{!large && <StatusBadge project={project} />}{large ? <p className="art-name">{project.name}</p> : <h3>{project.name}</h3>}{brandLine(project) && <span className="brand">{brandText(project, t)}</span>}</div>; }
-export function ProjectCard({ project, index = 0 }: { project: Project; index?: number }) {
+/** A project's drawn panel: the page banner (`large`), or a card's cover when its photo fails, where the name links to the project. */
+export function ProjectArt({ project, index = 0, large = false }: { project: Project; index?: number; large?: boolean }) { const t = useT(); return <div className={`project-art ${index % 3 === 1 ? "tone-sand" : index % 3 === 2 ? "tone-ink" : ""} ${large ? "detail-banner" : ""}`}><span className="art-caption">{t("Dubai Creek Harbour")}</span>{!large && <StatusBadge project={project} />}{large ? <p className="art-name">{project.name}</p> : <h3><Link to="/projects/$slug" params={{ slug: project.slug }}>{project.name}</Link></h3>}{brandLine(project) && <span className="brand">{brandText(project, t)}</span>}</div>; }
+/**
+ * A project in a list. On phones the whole card opens the project: the name's link is stretched over it in
+ * src/styles.css, and the two buttons sit above that. `sizes` overrides the cover's image sizes (the home page's
+ * swipe row shows cards narrower than the screen).
+ */
+export function ProjectCard({ project, index = 0, sizes }: { project: Project; index?: number; sizes?: string }) {
   const t = useT();
   const [failed, setFailed] = useState(false);
   const image = project.images[0];
   const price = priceSummary(project, t);
-  return <article className="project-card">{image && !failed ? <div className="card-cover"><Picture img={image} onError={() => setFailed(true)} /><StatusBadge project={project} /></div> : <ProjectArt project={project} index={index} />}<div className="card-body">{image && !failed && <><h3 className="card-name"><Link to="/projects/$slug" params={{ slug: project.slug }}>{project.name}</Link></h3>{brandLine(project) && <p className="card-brand">{brandText(project, t)}</p>}</>}{project.district && <div className="card-chips"><span className="chip">{t(project.district)}</span></div>}<p className="card-price">{price.main}</p><p className="price-note">{price.note ?? ""}</p><div className="card-facts"><span><BedDouble />{bedroomsLabel(project, t)}</span><span><CalendarDays />{handoverText(project, t)}</span></div><div className="card-actions"><Button asChild variant="outline" size="sm"><Link to="/projects/$slug" params={{ slug: project.slug }}>{t("View project")}<span className="sr-only">{t(": {name}@@after the \"View project\" button text, read only by screen readers", { name: project.name })}</span> <ArrowUpRight /></Link></Button><WhatsApp message={projectMessage(project.name, t)} className="card-whatsapp text-xs">WhatsApp</WhatsApp></div></div></article>;
+  return <article className="project-card">{image && !failed ? <div className="card-cover"><Picture img={image} onError={() => setFailed(true)} {...(sizes ? { sizes } : {})} /><StatusBadge project={project} /></div> : <ProjectArt project={project} index={index} />}<div className="card-body">{image && !failed && <><h3 className="card-name"><Link to="/projects/$slug" params={{ slug: project.slug }}>{project.name}</Link></h3>{brandLine(project) && <p className="card-brand">{brandText(project, t)}</p>}</>}{project.district && <div className="card-chips"><span className="chip">{t(project.district)}</span></div>}<p className="card-price">{price.main}</p><p className="price-note">{price.note ?? ""}</p><div className="card-facts"><span><BedDouble />{bedroomsLabel(project, t)}</span><span><CalendarDays />{handoverText(project, t)}</span></div><div className="card-actions"><Button asChild variant="outline" size="sm"><Link to="/projects/$slug" params={{ slug: project.slug }}>{t("View project")}<span className="sr-only">{t(": {name}@@after the \"View project\" button text, read only by screen readers", { name: project.name })}</span> <ArrowUpRight /></Link></Button><WhatsApp message={projectMessage(project.name, t)} className="card-whatsapp text-xs">WhatsApp</WhatsApp></div></div></article>;
 }
 export function PlanBar({ steps }: { steps: PlanStep[] }) { const t = useT(); return <div className="plan-bar" role="img" aria-label={steps.map((s) => t("{place}: {text}", { place: t(s.label), text: `${s.percent}%` })).join(t(", "))}>{steps.map((step) => <div key={step.label} className={`plan-segment ${step.label.startsWith("On booking") ? "booking" : step.label.startsWith("On handover") ? "handover" : "construction"}`} style={{ flexGrow: step.percent, flexBasis: 0 }} title={t("{place}: {text}", { place: t(step.label), text: `${step.percent}%` })}>{step.percent}%</div>)}</div>; }
 export function CtaBand({ project }: { project?: Project }) { const t = useT(); return <section className="cta-band"><div className="container cta-inner"><div><span className="eyebrow">{t("A conversation, not a commitment")}</span><h2>{project ? t("Interested in {name}? Let's talk.", { name: project.name }) : t("Tell us your budget and bedrooms — we'll send what's available today.")}</h2></div><div className="flex flex-wrap gap-3"><WhatsApp variant="brass" message={project ? projectMessage(project.name, t) : genericMessage(t)}>{t("WhatsApp us")} <ArrowUpRight /></WhatsApp><Button asChild variant="heroOutline"><a href="#enquire"><PenLine />{t("Leave your details")}</a></Button></div></div></section>; }
