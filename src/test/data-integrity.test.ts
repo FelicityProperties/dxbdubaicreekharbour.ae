@@ -11,6 +11,8 @@ import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/
 import { handoverText } from "@/components/showcase/shared";
 import { LOCALES, LOCALE_META, localizePath } from "@/i18n/locales";
 import sources from "../../design/benefits-sources.json";
+import districtSources from "../../design/business-district-sources.json";
+import { BUSINESS_DISTRICT } from "@/data/business-district";
 
 const PUBLIC = join(process.cwd(), "public");
 
@@ -71,6 +73,29 @@ describe("Project data", () => {
     const ready = TX.summary.sales.find((x) => x.basis === "ready")!;
     const card = BENEFITS.find((b) => b.kind === "dld-snapshot")!;
     expect(card.body).toBe(`Dubai Land Department records for the ${TX.window.label} show ${num(fresh.count)} new tenancy contracts and ${num(renewed.count)} renewals registered for apartments in Dubai Creek Harbour, with a median rent of ${aed(oneBed.medianRent)} across ${num(oneBed.count)} one-bedroom contracts. The same records show ${num(ready.count)} ready-apartment sales registered in that window; these are registered contracts and sales, not valuations or forecasts.`);
+  });
+});
+
+describe("Dubai Square Business District", () => {
+  // Numbers as digits or as words, so "Two metro stations" in the release covers a "2" on the page.
+  const WORDS: Record<string, string> = { one: "1", two: "2", three: "3", four: "4", five: "5", six: "6", seven: "7", eight: "8", nine: "9", ten: "10", eleven: "11", twelve: "12" };
+  const numbersIn = (s: string) => [
+    ...(s.match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((n) => n.replace(/,/g, "")),
+    ...(s.toLowerCase().match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/g) ?? []).map((w) => WORDS[w]!),
+  ];
+  const quoted = new Set(districtSources.quotes.flatMap(numbersIn));
+  const texts = [BUSINESS_DISTRICT.intro, BUSINESS_DISTRICT.note, BUSINESS_DISTRICT.image.caption, ...BUSINESS_DISTRICT.points, ...BUSINESS_DISTRICT.facts.flatMap((f) => [f.value, f.label])];
+
+  it("shows only figures Emaar's release states", () => {
+    for (const text of texts) for (const n of numbersIn(text)) expect(quoted.has(n), `${n} in "${text}"`).toBe(true);
+  });
+  it("records the release it comes from", () => {
+    expect(BUSINESS_DISTRICT.sourceUrl).toBe(districtSources.sourceUrl);
+    expect(BUSINESS_DISTRICT.announced).toBe(districtSources.date);
+  });
+  it("credits Emaar and never claims a price, launch or completion date", () => {
+    expect(BUSINESS_DISTRICT.intro.startsWith("Emaar has announced")).toBe(true);
+    expect(texts.join(" ")).not.toMatch(/\b(20(2[7-9]|3\d))\b|starting (price|from)|price[sd]? from|handover|complet(ed|ion) in/i);
   });
 });
 

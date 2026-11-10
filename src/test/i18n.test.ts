@@ -24,8 +24,8 @@ const LANGS = ["ar", "zh"] as const;
 const dict = (l: string, part: string) => JSON.parse(readFileSync(join(ROOT, `src/i18n/${l}/${part}.json`), "utf8")) as Record<string, string>;
 const keysFile = () => JSON.parse(readFileSync(join(ROOT, "src/i18n/keys.json"), "utf8")) as Record<(typeof PARTS)[number], string[]>;
 
-const SCALE: [RegExp, number][] = [[/(\d+(?:\.\d+)?)\s*million\b/gi, 1e6], [/(\d+(?:\.\d+)?)\s*(?:مليون|ملايين)/g, 1e6], [/(\d+(?:\.\d+)?)\s*万/g, 1e4], [/(\d+(?:\.\d+)?)\s*亿/g, 1e8]];
-/** Every number in a text: "AED 1,960,000" → "1960000", "1,2 & 3" → 1, 2, 3, and "7.4 million" = "740万" = 7400000. */
+const SCALE: [RegExp, number][] = [[/(\d+(?:\.\d+)?)\s*billion\b/gi, 1e9], [/(\d+(?:\.\d+)?)\s*(?:مليار|مليارات)/g, 1e9], [/(\d+(?:\.\d+)?)\s*million\b/gi, 1e6], [/(\d+(?:\.\d+)?)\s*(?:مليون|ملايين)/g, 1e6], [/(\d+(?:\.\d+)?)\s*万/g, 1e4], [/(\d+(?:\.\d+)?)\s*亿/g, 1e8]];
+/** Every number in a text: "AED 1,960,000" → "1960000", "1,2 & 3" → 1, 2, 3, "7.4 million" = "740万" = 7400000, "12 billion" = "120亿". */
 const numbers = (s: string) => {
   for (const [re, k] of SCALE) s = s.replace(re, (_, n: string) => String(Math.round(Number(n) * k)));
   return (s.match(/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/g) ?? []).map((n) => n.replace(/,/g, "")).sort();

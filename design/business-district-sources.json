@@ -1,0 +1,28 @@
+{
+  "release": "Dubai Square Business District: The Address of Ambition",
+  "publisher": "Emaar Properties PJSC (media enquiries PR@emaar.ae)",
+  "date": "2026-11-09",
+  "sourceUrl": "https://www.emaar.com/en/press-release-listing/dubai-square-business-district-the-address-of-ambition",
+  "fullTextUrl": "https://www.zawya.com/en/press-release/companies-news/dubai-square-business-district-the-address-of-ambition-2127879",
+  "image": {
+    "file": "public/img/business-district/1-1600.webp (and -960, -480), from the release's image",
+    "sourceUrl": "https://media.zawya.com/prod/images/original/2ff592b760e6-eyelevel.jpg",
+    "credit": "Image Courtesy: Emaar",
+    "size": "1881x1050"
+  },
+  "quotes": [
+    "Dubai, United Arab Emirates – 9 November 2026",
+    "A new commercial and office district of 300,000 square metres, with a total development value of AED 12 billion",
+    "Rising beside Dubai Square in the heart of Dubai Creek Harbour, a new commercial and office district of 300,000 square metres, with a total development value of AED 12 billion, is set to become the most connected, most coveted and most extraordinary place to work on the planet.",
+    "The new Dubai Creek Tower, envisioned as an iconic global landmark, will give this address a defining presence on the world stage.",
+    "At the centre of Dubai Creek Harbour sits Dubai Square, and wrapped around it rises 300,000 sqm of premium commercial and office space",
+    "The office towers frame the square on every side.",
+    "Two metro stations serve the district directly, and the office buildings are linked straight into them.",
+    "Your team steps off the train, crosses a climate-controlled link and arrives in the lobby",
+    "Unlike a traditional enclosed mall, Dubai Square extends into the city. Its boulevards spill out into the streets where your offices stand",
+    "Shopping, dining, entertainment, hospitality, residences and offices, all woven into one living district.",
+    "Four hotels stand around Dubai Square itself, and eight across the masterplan.",
+    "Three park \"hearts\" sit inside the district, part of 15 parks, 4 ecological green corridors and 13% open space across the masterplan."
+  ],
+  "notes": "The press release gives no launch date, office prices or completion date. The site shows none and says so. Every figure in src/data/business-district.ts must appear in these quotes (written as digits or as a word); src/test/data-integrity.test.ts checks it."
+}

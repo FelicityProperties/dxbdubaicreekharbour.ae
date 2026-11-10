@@ -32,6 +32,7 @@ export const WA_PLACES = {
   enquiry: "Enquiry form",
   bot: "FelicityBot",
   viewing: "AI viewing",
+  offices: "Offices (Dubai Square Business District)",
   page: "Other button on the page",
 } as const;
 export type WaPlace = keyof typeof WA_PLACES;

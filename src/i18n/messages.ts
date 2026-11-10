@@ -44,7 +44,9 @@ export function translate(locale: Locale, text: string, vars?: Vars): string {
   const found = locale === "en" ? undefined : DICTS[locale]?.[text];
   const out = fill(found ?? english(text), vars);
   // In Arabic and Chinese text an amount must not break between "AED" and its figure.
-  return locale === "en" ? out : out.replace(/\bAED (?=\d)/g, "AED\u00a0");
+  if (locale === "en") return out;
+  // An amount never breaks across lines: not after "AED", not inside "12 مليار درهم", not inside "120亿迪拉姆" (word joiners are invisible).
+  return out.replace(/\bAED (?=\d)/g, "AED\u00a0").replace(/(\d) (مليار|مليون) درهم/g, "$1\u00a0$2\u00a0درهم").replace(/\d[\d,.]*[万亿]?迪拉姆/g, (a) => [...a].join("\u2060"));
 }
 
 /**

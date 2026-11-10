@@ -466,4 +466,28 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
 /* A phone number set left to right inside Arabic or Chinese text stays on one line rather than split between lines. */
 :root:is([dir="rtl"],:lang(zh)) span[dir="ltr"] {white-space:nowrap;}
 
+/* Dubai Square Business District (src/components/showcase/BusinessDistrict.tsx): the office district Emaar announced.
+   Home: photo beside the announcement on a tinted band. /area: the full section with Emaar's figures and points. */
+.bd-band {background:var(--muted);}
+.bd-layout {display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:56px;align-items:center;}
+.bd-figure {margin:0;min-width:0;}
+.bd-figure img {display:block;width:100%;height:auto;aspect-ratio:1881/1050;object-fit:cover;border-radius:3px;}
+.bd-area .bd-figure {margin-bottom:28px;}
+.bd-copy {min-width:0;}
+.bd-intro {margin-top:18px;font-size:13px;line-height:1.85;color:var(--muted-foreground);max-width:560px;}
+.bd-facts {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px;}
+.bd-area .bd-facts {grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:0;}
+.bd-facts .stat-value {font-size:30px;text-wrap:balance;overflow-wrap:normal;}
+.bd-points {max-width:860px;}
+.bd-status {margin-top:18px;font-size:12px;line-height:1.8;color:var(--muted-foreground);max-width:760px;}
+.bd-actions {display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
+/* One column below 1024px: between 1001 and 1023px the site's container is only 768px wide. */
+@media(max-width:1023px) {.bd-layout {grid-template-columns:1fr;gap:28px;}.bd-area .bd-facts {grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(min-width:641px) and (max-width:900px) {.bd-area .section-heading {display:block;}.bd-area .section-intro {max-width:560px;margin-top:15px;}}
+/* Headings break between whole words or names; the Chinese one only where its translation marks it. */
+.business-district h2 {text-wrap:balance;}
+:root:lang(zh) .business-district h2 {word-break:keep-all;}
+/* Arabic and Chinese tile labels keep "Dubai Square" as written and break between words. */
+:root:is(:lang(ar),:lang(zh)) .bd-facts .stat-label {text-transform:none;text-wrap:balance;}
+
 /* Phones: the app layer is in styles/phone.css, loaded only on screens up to 640px wide (src/routes/__root.tsx). */

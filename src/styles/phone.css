@@ -697,3 +697,19 @@
  }
 }
 /* ===== END PHONE APP: DATA ===== */
+
+/* ===== PHONE APP: BUSINESS DISTRICT (the Dubai Square Business District announcement, home and /area) ===== */
+@media (max-width:640px) {
+ .bd-layout {gap:20px;}
+ .bd-figure {margin-inline:calc(-1 * var(--app-gutter));}
+ .bd-figure img {border-radius:0;}
+ .bd-figure figcaption {padding-inline:var(--app-gutter);}
+ .bd-intro {font-size:14px;line-height:1.7;}
+ .bd-facts {gap:10px;margin-top:20px;}
+ .bd-facts .stat {padding:16px;}
+ .bd-facts .stat-value {font-size:24px;}
+ .bd-status {font-size:13px;line-height:1.7;}
+ .bd-actions {display:grid;grid-template-columns:minmax(0,1fr);gap:10px;}
+ .bd-actions a {width:100%;min-height:48px;height:auto;justify-content:center;white-space:normal;text-align:center;}
+}
+/* ===== END PHONE APP: BUSINESS DISTRICT ===== */

@@ -82,6 +82,23 @@ describe("WhatsApp taps", () => {
     const r = JSON.parse(await read(sent.at(-1)!)) as { wa: { place: string; project: string | null }[] };
     expect(r.wa).toEqual([expect.objectContaining({ place: "menu", project: "creek-haven" }), expect.objectContaining({ place: "bar", project: "creek-haven" })]);
   });
+  it("counts the business district's WhatsApp button as offices", async () => {
+    window.history.replaceState(null, "", "/area");
+    path = "/area";
+    render(<SiteAnalytics />);
+    const section = document.createElement("section"); section.className = "section bd-area business-district";
+    const wa = document.createElement("a");
+    wa.href = "https://wa.me/971500000000?text=" + encodeURIComponent("Hi, I'm interested in offices at Dubai Square Business District in Dubai Creek Harbour. Please keep me updated.");
+    wa.addEventListener("click", (e) => e.preventDefault());
+    section.append(wa); document.body.append(section);
+    act(() => { wa.click(); });
+    expect(sent.length).toBeGreaterThan(0);
+    vi.useRealTimers();
+    const r = JSON.parse(await read(sent.at(-1)!)) as { wa: { place: string; project: string | null }[] };
+    expect(r.wa).toEqual([expect.objectContaining({ place: "offices", project: null })]);
+    section.remove();
+  });
+
   it("credits a related project's card on a project page to that card's project", async () => {
     window.history.replaceState(null, "", "/projects/valia");
     path = "/projects/valia";

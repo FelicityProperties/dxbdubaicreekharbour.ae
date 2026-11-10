@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { PROJECTS, DISTRICT, districtImage } from "@/data/projects";
 import { CtaBand, Picture, SourceCredit, statusLabel } from "@/components/showcase/shared";
 import { EnquirySection } from "@/components/enquiry/EnquirySection";
+import { BusinessDistrict } from "@/components/showcase/BusinessDistrict";
 import { pageHead } from "@/lib/seo";
 import { gap, tFor, useT } from "@/i18n/messages";
 import { Rich } from "@/i18n/rich";
@@ -34,6 +35,8 @@ function AreaPage() {
     <section className="page-hero"><div className="container"><span className="eyebrow">{t("The neighbourhood")}</span><h1>{t("Dubai Creek Harbour, quarter by quarter")}</h1><p>{t(DISTRICT.intro)}</p></div></section>
     <section className="section"><div className="container">{hero && <figure className="project-cover"><Picture img={hero} sizes="(max-width: 1160px) 100vw, 1160px" width={1600} priority className="w-full rounded-[3px]" /><figcaption className="image-note">{t(hero.caption)}</figcaption></figure>}
       <div className="stat-strip mt-8">{DISTRICT.stats.map((s) => <div className="stat" key={s.label}><p className="stat-value">{t(s.value)}</p><p className="stat-label">{t(s.label)}</p></div>)}<div className="stat"><p className="stat-value">{PROJECTS.length}</p><p className="stat-label">{t("Emaar projects on this site")}</p><p className="stat-note">{t("{n} shown as completed in Dubai Land Department records", { n: PROJECTS.filter((p) => p.construction === "completed").length })}</p></div></div><p className="source-note">{t(DISTRICT.statsNote)}{gap(t)}<SourceCredit>{t("Source: Emaar")}</SourceCredit></p></div></section>
+
+    <BusinessDistrict variant="area" />
 
     <section className="section plans-section" id="quarters"><div className="container"><div className="section-heading"><div><span className="eyebrow">{t("Three quarters, three characters")}</span><h2>{t("Where in the district?")}</h2></div><p className="section-intro">{t("Each quarter has its own feel and its own price points. Projects are grouped as Emaar describes them.")}</p></div><div className="hood-grid">{DISTRICT.neighbourhoods.map((n) => { const list = PROJECTS.filter((p) => p.district === n.name); return <article className="hood" key={n.name}><h3>{t(n.name)}</h3><p>{t(n.body)}</p><ul>{list.map((p) => <li key={p.slug}><Link to="/projects/$slug" params={{ slug: p.slug }} className="chip hood-link"><span className="hood-row"><span className="hood-name">{p.name}</span><span className="hood-sep"> · </span><span className="hood-status">{statusLabel(p, t)}</span></span></Link></li>)}</ul></article>; })}</div><div className="two-col mt-10">{beach && <figure className="project-cover"><Picture img={beach} sizes="(max-width: 1000px) 100vw, 560px" /><figcaption className="image-note">{t(beach.caption)}</figcaption></figure>}{green && <figure className="project-cover"><Picture img={green} sizes="(max-width: 1000px) 100vw, 560px" /><figcaption className="image-note">{t(green.caption)}</figcaption></figure>}</div></div></section>
 

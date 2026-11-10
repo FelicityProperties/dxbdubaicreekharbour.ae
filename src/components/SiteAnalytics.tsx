@@ -57,6 +57,7 @@ function waPlace(a: Element, page: string): WaPlace {
   if (inside("[class*='bot-']")) return "bot";
   if (inside("#enquire")) return "enquiry";
   if (inside("[class*='aiv-']")) return "viewing";
+  if (inside(".business-district")) return "offices";
   if (inside(".cta-band")) return "band";
   if (inside(".project-card, .project-table")) return "card";
   if (/^\/projects\/[^/]+$/.test(page)) return "project";

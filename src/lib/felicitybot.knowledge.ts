@@ -9,6 +9,7 @@
  */
 import { PROJECTS, DISTRICT, GUIDE, COSTS, FAQ, SITE, type Project } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
+import { BUSINESS_DISTRICT as BD } from "@/data/business-district";
 import { TX, LATEST_ROW, buildingsFor } from "@/data/transactions";
 import { aed, num, dateLong, projectLabel } from "@/lib/format";
 import { statusLabel, handoverText, noPlanText } from "@/components/showcase/shared";
@@ -132,6 +133,11 @@ function areaBlock(): string {
     `Drive times (Emaar): ${DISTRICT.driveTimes.map((d) => `${d.place} ${d.minutes} min`).join("; ")}. ${DISTRICT.driveTimesNote}`,
     ...DISTRICT.places.map((p) => `- ${p.title}: ${p.body}`),
     DISTRICT.everyday,
+    `## Coming: ${BD.name} (Emaar's press release of ${dateLong(BD.announced)}) — /area#business-district`,
+    BD.intro,
+    `Figures Emaar gives: ${BD.facts.map((f) => `${f.label}: ${f.value}`).join("; ")}.`,
+    ...BD.points.map((p) => `- ${p}`),
+    BD.note,
   );
 }
 

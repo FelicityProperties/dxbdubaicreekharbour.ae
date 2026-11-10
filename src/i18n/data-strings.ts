@@ -10,6 +10,7 @@
  */
 import { PROJECTS, DISTRICT, GUIDE, COSTS, FAQ, SITE } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
+import { BUSINESS_DISTRICT } from "@/data/business-district";
 import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, UNASSIGNED } from "@/data/transactions";
 
@@ -38,6 +39,8 @@ export function dataStrings(): string[] {
   walk(GUIDE, out);
   walk(COSTS, out);
   walk(FAQ, out);
+  walk(BUSINESS_DISTRICT, out); // its image is skipped as a whole: only the caption is text
+  out.add(BUSINESS_DISTRICT.image.caption);
   // The DLD figures card is rebuilt from the snapshot on every refresh: it is translated as a template instead.
   walk(BENEFITS.map((b) => (b.kind === "dld-snapshot" ? { title: b.title } : b)), out);
   for (const v of [SITE.licence, SITE.address, SITE.constructionSource]) if (v) out.add(v);

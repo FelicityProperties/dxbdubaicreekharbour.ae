@@ -18,6 +18,9 @@
   the Dubai Land Department and to nobody else; the supplier is named only
   in `VERCEL-LAYER.md` and the generators. Do not add supplier names or
   links to page code or to the data files.
+- An Emaar announcement the site reports (`src/data/business-district.ts`: Dubai Square Business District)
+  quotes Emaar's release and says it is an announced plan. The release's exact sentences are kept in
+  `design/business-district-sources.json`, and a test checks every figure on the page against them.
 - If a figure is missing, show "on request" or leave the row out. A
   plausible-sounding number is wrong even when it is close.
 - The area page and the buying guide quote Emaar's published figures with

@@ -14,6 +14,7 @@ import { AI_VIEWINGS, videoObjectNode } from "@/data/ai-viewings";
 import { dateLong, dateText } from "@/lib/format";
 import { gap, tFor, useT } from "@/i18n/messages";
 import { usePhoneScrollRegion } from "@/lib/phone";
+import { BusinessDistrict } from "@/components/showcase/BusinessDistrict";
 
 export const Route = createFileRoute("/")({
   head: ({ match }) => {
@@ -45,6 +46,8 @@ function Home() {
   const placeRow = usePhoneScrollRegion<HTMLDivElement>("district-h");
   return <main className="page-home">
     <section className="hero">{hero && <Picture img={hero} className="hero-image" sizes="100vw" width={1600} priority />}<div className="container hero-content"><span className="eyebrow">{t("Dubai Creek Harbour · an independent broker's showcase")}</span><h1><TwoLines em text={t("Emaar's Dubai Creek Harbour projects,|side by side.")} /></h1><p className="hero-description">{t("{n} projects, with Emaar's published prices, payment plans and handover dates wherever Emaar publishes them — plus the sales and rents actually registered with the Dubai Land Department. Independent broker; ask anything on WhatsApp.", { n: PROJECTS.length })}</p><div className="hero-actions"><Button asChild variant="brass"><Link to="/" hash="projects">{t("View projects")} <ArrowDown /></Link></Button><WhatsApp variant="heroOutline" /></div></div><div className="container hero-bottom"><span>{t("Dubai Creek Harbour · {n} projects · prices checked {date}", { n: PROJECTS.length, date: dateText(SITE.pricesCheckedOn, t.locale) })}</span><span>{hero && t(hero.caption)}</span></div></section>
+
+    <BusinessDistrict variant="home" />
 
     <AiViewings />
 
