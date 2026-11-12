@@ -483,6 +483,7 @@
  "to Downtown Dubai by car": "إلى وسط مدينة دبي بالسيارة",
  "{address}, United Arab Emirates": "{address}، الإمارات العربية المتحدة",
  "{brand}-branded": "بعلامة {brand}",
+ "{caption} · {n} photos": "{caption} · عدد الصور: {n}",
  "{company} · RERA ORN {orn} · DLD Permit No. {permit}": "{company} · رقم تسجيل المكتب لدى ريرا {orn} · رقم تصريح دائرة الأراضي والأملاك {permit}",
  "{name} at Dubai Creek Harbour": "{name} في مرسى خور دبي",
  "{name} by Emaar at Dubai Creek Harbour — {price}": "{name} من إعمار في مرسى خور دبي — {price}",

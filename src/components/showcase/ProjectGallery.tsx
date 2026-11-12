@@ -98,7 +98,7 @@ export function ProjectGallery({ project }: { project: Project }) {
   }, [selected, failed, project.images]);
   return <>
     {cover && !failed.includes(cover.base) ? <figure className="project-cover">
-      <Button variant="ghost" className="image-open cover-open" aria-label={t(cover.caption)} onClick={(event) => show(cover, event.currentTarget)}>
+      <Button variant="ghost" className="image-open cover-open" aria-label={images.length > 1 ? t("{caption} · {n} photos", { caption: t(cover.caption), n: images.length }) : t(cover.caption)} onClick={(event) => show(cover, event.currentTarget)}>
         <Picture img={cover} sizes="(max-width: 1160px) 100vw, 1160px" width={1600} priority onError={() => fail(cover.base)} />
         {images.length > 1 && <span className="cover-count hidden" aria-hidden="true"><Images />{images.length}</span>}
       </Button><figcaption className="image-note">{t(cover.caption)}</figcaption>
