@@ -36,6 +36,8 @@ Department only; the supplier is named here and in `VERCEL-LAYER.md`, never in p
    - Run `npm run sitemap`, `npm test` and `NITRO_PRESET=vercel npm run build`.
    - Grep `src/`, `public/` and the build output for the supplier's name; it must be absent.
    - Commit and push, check the live site, and report in three lines.
+   - Once the live site shows the new figures, run `NODE_USE_ENV_PROXY=1 npm run indexnow`, so Bing and the other
+     IndexNow search engines fetch the pages again (`/llms.txt` updates itself).
 
 Rows are ordered newest first, then by building, then by price (sales) or by start date (rentals). The latest-row
 lists keep the 200 newest registrations of each kind. Related-party transfers and completion re-registrations are

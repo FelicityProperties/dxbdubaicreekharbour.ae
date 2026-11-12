@@ -106,8 +106,12 @@ export const organizationNode = (t: T = EN) => ({
   employee: { "@type": "Person", name: SITE.broker, jobTitle: t("Real estate broker"), identifier: { "@type": "PropertyValue", propertyID: "RERA BRN", value: SITE.brokerBrn } },
 });
 
-/** The site, as seen in the page's language (inLanguage is that page's language: "en" on English pages). */
-export const websiteNode = (locale: Locale = "en") => ({ "@type": "WebSite", "@id": WEBSITE_ID, name: SITE.name, url: SITE.url, inLanguage: LOCALE_META[locale].hreflang, publisher: { "@id": ORG_ID } });
+/**
+ * The site, as seen in the page's language (inLanguage is that page's language: "en" on English pages). The domain
+ * (SITE.url without "https://www.") is the alternate name: Google shows the site's name above each result and falls
+ * back to an alternate when it cannot use the first.
+ */
+export const websiteNode = (locale: Locale = "en") => ({ "@type": "WebSite", "@id": WEBSITE_ID, name: SITE.name, alternateName: new URL(SITE.url).hostname.replace(/^www\./, ""), url: SITE.url, inLanguage: LOCALE_META[locale].hreflang, publisher: { "@id": ORG_ID } });
 
 const bedroomsText = (p: Project, t: T) => (p.bedrooms.includes("bedroom") ? t(p.bedrooms) : t("{range} bedrooms", { range: p.bedrooms }));
 

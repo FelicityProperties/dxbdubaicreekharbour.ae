@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sitemap": "node --experimental-strip-types --no-warnings scripts/sitemap.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
     "ai-viewings": "node scripts/ai-viewings.mjs",
     "felicitypro-snippets": "node scripts/felicitypro-snippets.mjs",
     "i18n:keys": "node scripts/i18n-keys.mjs"

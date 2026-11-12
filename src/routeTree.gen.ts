@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AreaRouteImport } from './routes/area'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as LeadsRouteImport } from './routes/leads'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as PaymentPlansRouteImport } from './routes/payment-plans'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -39,6 +40,11 @@ const GuideRoute = GuideRouteImport.update({
 const LeadsRoute = LeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/area': typeof AreaRoute
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/market': typeof MarketRoute
   '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/area': typeof AreaRoute
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/market': typeof MarketRoute
   '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/area': typeof AreaRoute
   '/guide': typeof GuideRoute
   '/leads': typeof LeadsRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/market': typeof MarketRoute
   '/payment-plans': typeof PaymentPlansRoute
   '/privacy': typeof PrivacyRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/area'
     | '/guide'
     | '/leads'
+    | '/llms.txt'
     | '/market'
     | '/payment-plans'
     | '/privacy'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/area'
     | '/guide'
     | '/leads'
+    | '/llms.txt'
     | '/market'
     | '/payment-plans'
     | '/privacy'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/area'
     | '/guide'
     | '/leads'
+    | '/llms.txt'
     | '/market'
     | '/payment-plans'
     | '/privacy'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   AreaRoute: typeof AreaRoute
   GuideRoute: typeof GuideRoute
   LeadsRoute: typeof LeadsRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   MarketRoute: typeof MarketRoute
   PaymentPlansRoute: typeof PaymentPlansRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/leads'
       fullPath: '/leads'
       preLoaderRoute: typeof LeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   AreaRoute: AreaRoute,
   GuideRoute: GuideRoute,
   LeadsRoute: LeadsRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   MarketRoute: MarketRoute,
   PaymentPlansRoute: PaymentPlansRoute,
   PrivacyRoute: PrivacyRoute,

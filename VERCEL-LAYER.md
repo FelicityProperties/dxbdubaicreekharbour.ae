@@ -62,6 +62,20 @@ starting point but is now behind this repo and should not be copied over it.
   License), so no page loads anything from Google.
 - `SITE.googleSiteVerification` in the generator — paste the Search Console
   "HTML tag" code there (or verify by DNS instead) and regenerate.
+- `/llms.txt` — the site described for AI assistants (the llmstxt.org
+  format), built on each request by `src/lib/llms.server.ts` from the data
+  files: who runs the site, where each figure comes from, the 12-month
+  registered figures, the announced business district, the buying costs, and
+  one line per project with a link.
+- `scripts/indexnow.mjs` (`npm run indexnow`) — tells Bing and the other
+  IndexNow search engines (Yandex, Naver, Seznam, Yep) that pages are new or
+  changed; Bing's index is also where ChatGPT search and Copilot look pages
+  up. Run it once a deploy is live. `public/d081041fd75d921c81c01396105cf250.txt`
+  is the IndexNow key: the scheme has the site publish it to prove the list
+  comes from its owner, so it is not a secret and must stay in `public/`.
+- Bing Webmaster Tools is the owner's to sign up to; it can import the site
+  from Google Search Console, whose verification code the owner supplied on
+  12 October 2026 (`SITE.googleSiteVerification`).
 - `src/components/showcase/` — header, footer, cards, gallery, shared helpers
   and the exact footer disclaimer. `src/components/market/` — the
   transaction tables and summaries. `src/components/enquiry/` — the form.

@@ -93,6 +93,16 @@
   `transactions.json` — it would put the whole snapshot in every page's
   JavaScript. After adding a page, run `npm run sitemap`; a test fails if the
   sitemap misses a page or project.
+- AI assistants and Bing: `/llms.txt` (`src/lib/llms.server.ts`, served by
+  `src/routes/llms[.]txt.ts`) describes the site for AI assistants, built
+  from the data files in the site's own wording. The numbers rules above
+  hold there too (Emaar or the Land Department, dated, no other source, no
+  link to Emaar's website); `src/test/llms.test.ts` enforces them. Once a
+  deploy that adds pages or changes figures is live, run `npm run indexnow`
+  (in a cloud session, `NODE_USE_ENV_PROXY=1 npm run indexnow`): it tells
+  Bing and the other IndexNow search engines to fetch the pages (Google
+  reads the sitemap). `public/<32 hex characters>.txt` is that scheme's
+  proof of ownership, public by design; keep it.
 - Canonical social-image metadata goes through the shared helper in each
   content route's head, never at the root or on missing projects. Project
   pages use their own `og.jpg`.

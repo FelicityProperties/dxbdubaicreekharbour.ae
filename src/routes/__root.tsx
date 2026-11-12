@@ -75,6 +75,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "DXB Creek Harbour" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#0E2A3B" },
+      // Search results may show the page's large photo and a full-length snippet. A page that sets its own robots tag (/leads, a missing project: noindex) replaces this one.
+      { name: "robots", content: "max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
       ...(SITE.googleSiteVerification ? [{ name: "google-site-verification", content: SITE.googleSiteVerification }] : []),
     ],
     links: [
