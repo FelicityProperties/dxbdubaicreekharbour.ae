@@ -6,11 +6,16 @@
 //     the same for felicitypro.com (built on Durable; it plays these files from here): into
 //     public/felicitypro, recorded in design/felicitypro-ai-viewings/videos.json;
 //     then `npm run felicitypro-snippets` rewrites the code pasted into Durable.
+//   npm run ai-viewings -- --posters      re-take only the posters, from the videos already encoded
+//                                         (add --set felicitypro for that set)
 // Needs ffmpeg and ffprobe. Output: H.264 1080x1920 (padded, never cropped, if a
 // source isn't 9:16), at most 30 fps, CRF 26, +faststart, at most 8 MB — when CRF 26
 // alone comes out larger, a two-pass encode aimed at the 8 MB budget replaces it.
-// Sound is kept only where `audio` is true. Poster: the frame at 1 s. Nothing in
-// public/videos or the JSON changes unless every source succeeds. Then commit both.
+// Sound is kept only where `audio` is true. Poster: the frame at 1 s, at the set's
+// poster size: 720x1280 for this site, whose pages load it before anything plays and
+// show it at most 370px wide (twice that on a sharp screen); the full 1080x1920 frame
+// for felicitypro.com's copies, as pasted into Durable. Nothing in public/<dir> or
+// the JSON changes unless every source succeeds. Then commit both.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -23,14 +28,15 @@ const PARKWOOD = { slug: "parkwood", audio: true, url: "https://d2ol7oe51mr4n9.c
 const ALBERO = { slug: "albero", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/95b5bacd-311e-4d0c-a37f-75a648c4944a.mp4" };
 const LYVIA = { slug: "lyvia-by-palace", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/8462be8f-3033-4f24-89ca-0c360e0c69c4.mp4" };
 const SETS = {
-  site: { sources: [LYVIA, VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json" },
-  felicitypro: { sources: [VALIA, PARKWOOD, ALBERO], dir: "felicitypro", manifest: "design/felicitypro-ai-viewings/videos.json" },
+  site: { sources: [LYVIA, VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json", poster: { width: 720, height: 1280, quality: "5" } },
+  felicitypro: { sources: [VALIA, PARKWOOD, ALBERO], dir: "felicitypro", manifest: "design/felicitypro-ai-viewings/videos.json", poster: { width: 1080, height: 1920, quality: "4" } },
 };
 const MAX_BYTES = 8_000_000;
 const AUDIO_KBPS = 128;
 
 const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : null);
 const from = arg("--from");
+const postersOnly = process.argv.includes("--posters");
 const set = SETS[arg("--set") ?? "site"];
 if (!set) throw new Error(`--set must be one of: ${Object.keys(SETS).join(", ")}`);
 const SOURCES = set.sources;
@@ -55,11 +61,29 @@ function boxes(file) {
 }
 const dubaiNow = () => `${new Date(Date.now() + 4 * 3600e3).toISOString().slice(0, 19)}+04:00`;
 
+/** The frame at 1 s (or the middle of a shorter clip), at the set's poster size (ffmpeg's JPEG scale: 2 is best, 31 worst). */
+function takePoster(slug, video, seconds, poster) {
+  const { width, height, quality } = set.poster;
+  run("ffmpeg", ["-y", "-v", "error", "-ss", String(Math.min(1, seconds / 2)), "-i", video, "-frames:v", "1", "-vf", `scale=${width}:${height}:flags=lanczos`, "-q:v", quality, poster]);
+  if (!existsSync(poster)) throw new Error(`${slug}: no poster frame could be taken`);
+}
+const fileHash = (video, poster) => createHash("sha256").update(readFileSync(video)).update(readFileSync(poster)).digest("hex").slice(0, 10);
 const previous = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : { note: "Written by scripts/ai-viewings.mjs; do not hand-edit.", videos: [] };
 const work = mkdtempSync(join(tmpdir(), "ai-viewings-"));
 const videos = [];
 try {
   for (const s of SOURCES) {
+    if (postersOnly) {
+      // The video stays as it is: only its poster and the hash that names the pair change.
+      const was = previous.videos.find((p) => p.slug === s.slug);
+      const kept = join(root, "public", `${set.dir}/${s.slug}-ai-viewing.mp4`);
+      if (!was || !existsSync(kept)) throw new Error(`${s.slug}: no encoded video to take a poster from — run without --posters first`);
+      const poster = join(work, `${s.slug}-ai-viewing.jpg`);
+      takePoster(s.slug, kept, Number(probe(kept).format.duration), poster);
+      videos.push({ ...was, hash: fileHash(kept, poster) });
+      console.log(`${s.slug}: poster ${set.poster.width}x${set.poster.height}, ${(statSync(poster).size / 1e3).toFixed(0)} KB (the video is unchanged)`);
+      continue;
+    }
     const src = from ? join(from, `${s.slug}.mp4`) : join(work, `${s.slug}-source.mp4`);
     if (!from) run("curl", ["-fsSL", "--retry", "3", "-o", src, s.url]);
     const info = probe(src);
@@ -86,8 +110,7 @@ try {
       run("ffmpeg", [...common, ...rate, "-pass", "2", ...sound, ...tail], work);
       encoding = `H.264 two-pass at ${kbps} kb/s (CRF 26 came out over 8 MB)`;
     }
-    run("ffmpeg", ["-y", "-v", "error", "-ss", String(Math.min(1, seconds / 2)), "-i", video, "-frames:v", "1", "-q:v", "4", poster]);
-    if (!existsSync(poster)) throw new Error(`${s.slug}: no poster frame could be taken`);
+    takePoster(s.slug, video, seconds, poster);
     const order = boxes(video);
     if (order.indexOf("moov") < 0 || order.indexOf("moov") > order.indexOf("mdat")) throw new Error(`${s.slug}: index is not at the front (${order.join(",")})`);
     const out = probe(video), ov = out.streams.find((x) => x.codec_type === "video");
@@ -100,7 +123,7 @@ try {
       width: ov.width,
       height: ov.height,
       audio: out.streams.some((x) => x.codec_type === "audio"),
-      hash: createHash("sha256").update(readFileSync(video)).update(readFileSync(poster)).digest("hex").slice(0, 10),
+      hash: fileHash(video, poster),
       // First published on the site; a later re-encode keeps the date.
       uploadDate: previous.videos.find((p) => p.slug === s.slug)?.uploadDate ?? dubaiNow(),
       encoding: `${encoding}${s.audio ? `, AAC ${AUDIO_KBPS} kb/s` : ", no sound"}`,
@@ -111,7 +134,7 @@ try {
   // Every source succeeded: only now replace what the site serves.
   mkdirSync(outDir, { recursive: true });
   mkdirSync(dirname(manifestPath), { recursive: true });
-  for (const v of videos) for (const file of [v.video, v.poster]) copyFileSync(join(work, basename(file)), join(root, "public", file));
+  for (const v of videos) for (const file of postersOnly ? [v.poster] : [v.video, v.poster]) copyFileSync(join(work, basename(file)), join(root, "public", file));
   writeFileSync(manifestPath, `${JSON.stringify({ note: previous.note, videos }, null, 2)}\n`);
 } finally {
   rmSync(work, { recursive: true, force: true });

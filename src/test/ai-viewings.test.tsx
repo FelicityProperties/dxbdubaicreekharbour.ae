@@ -74,8 +74,12 @@ describe("AI viewings: what the owner asked for", () => {
   });
 });
 
-/** A recorded file is what its record says: fast-start H.264 1080x1920, at most 8 MB, sound only where wanted, its own poster. */
-function expectEncoded(v: EncodedViewing, audio: boolean) {
+/**
+ * A recorded file is what its record says: fast-start H.264 1080x1920, at most 8 MB, sound only where wanted, its own
+ * poster at its set's size (this site's: 720x1280 and light, since a page loads it before anything plays;
+ * felicitypro.com's: the full frame, as pasted into Durable).
+ */
+function expectEncoded(v: EncodedViewing, audio: boolean, posterSize: [number, number]) {
   const video = join(PUBLIC, v.video), poster = join(PUBLIC, v.poster);
   expect(existsSync(video) && existsSync(poster)).toBe(true);
   expect(statSync(video).size).toBe(v.bytes);
@@ -91,7 +95,8 @@ function expectEncoded(v: EncodedViewing, audio: boolean) {
   expect(handlers.includes("soun")).toBe(audio);
   expect(v.audio).toBe(audio);
   expect(readFileSync(poster).subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
-  expect(jpegSize(poster)).toEqual([1080, 1920]);
+  expect(jpegSize(poster)).toEqual(posterSize);
+  if (posterSize[0] < 1080) expect(statSync(poster).size, "a poster loads with the page, before anything plays").toBeLessThanOrEqual(150_000);
   expect(createHash("sha256").update(readFileSync(video)).update(readFileSync(poster)).digest("hex").slice(0, 10)).toBe(v.hash);
   expect(v.uploadDate).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+04:00$/);
 }
@@ -110,7 +115,7 @@ describe("AI viewings: the encoded files", () => {
   });
 
   it.each(recorded.map((v) => [v.slug, v] as const))("%s is a fast-start 1080x1920 H.264 file of at most 8 MB, with its poster", (slug, v) => {
-    expectEncoded(v, AI_VIEWING_SPECS.find((s) => s.slug === slug)!.audio);
+    expectEncoded(v, AI_VIEWING_SPECS.find((s) => s.slug === slug)!.audio, [720, 1280]);
   });
 
   it("leaves no stray files in public/videos", () => {
@@ -129,7 +134,7 @@ describe("AI viewings: felicitypro.com's copies", () => {
   });
 
   it.each(felicity.map((v) => [v.slug, v] as const))("%s is a fast-start 1080x1920 H.264 file of at most 8 MB, with its poster", (slug, v) => {
-    expectEncoded(v, slug !== "valia");
+    expectEncoded(v, slug !== "valia", [1080, 1920]);
   });
 
   it("leaves no stray files in public/felicitypro", () => {
