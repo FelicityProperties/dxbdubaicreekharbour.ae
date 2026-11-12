@@ -9,7 +9,7 @@ import { LOCALES, LOCALE_META, localizePath } from "../src/i18n/locales.ts";
 
 const tx = JSON.parse(readFileSync(new URL("../src/data/transactions.json", import.meta.url), "utf8"));
 // Content pages change when either snapshot or the shared footer changes; keep this date in step with real edits.
-const CONTENT_UPDATED = "2026-10-12";
+const CONTENT_UPDATED = "2026-11-12";
 const later = (a, b) => (a > b ? a : b);
 const content = later(tx.source.snapshotDate, CONTENT_UPDATED);
 // Every page exists in English, Arabic (/ar/…) and Chinese (/zh/…); each entry names all three versions

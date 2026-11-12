@@ -11,6 +11,8 @@ import { codeFiles } from "@/i18n/code-files";
 import { FELICITYBOT_SYSTEM } from "@/lib/felicitybot.knowledge";
 import { safeHref } from "@/lib/felicitybot.shared";
 import { SITE } from "@/data/projects";
+import { dubaiHillsUrl } from "@/components/showcase/shared";
+import { LOCALES } from "@/i18n/locales";
 
 const ROOT = process.cwd();
 /** Data fields that hold addresses of pages on Emaar's website (brochureUrl and floorPlanUrl are PDF files, allowed). */
@@ -36,5 +38,19 @@ describe("no links to the developer's website", () => {
     expect(addresses.filter((a) => /emaar\.com/i.test(a) && !/^https:\/\/www\.emaar\.com\/cms-media\/[^?#]+\.pdf$/i.test(a))).toEqual([]);
     expect(safeHref("https://www.emaar.com/en/properties/valia", SITE.whatsapp)).toBeNull();
     expect(safeHref("https://www.emaar.com/cms-media/uploads/valia-floor-plan.pdf", SITE.whatsapp)).not.toBeNull();
+  });
+});
+
+// The one other website the pages link to is the operator's own, for Dubai Hills Estate (the owner, 12 Nov 2026).
+describe("the footer's link to the operator's Dubai Hills site", () => {
+  it("goes to that site in the page's language", () => {
+    expect(dubaiHillsUrl()).toBe("https://www.dubaihillsoffplan.com");
+    expect(LOCALES.map((l) => dubaiHillsUrl(l))).toEqual(["https://www.dubaihillsoffplan.com", "https://www.dubaihillsoffplan.com/ar", "https://www.dubaihillsoffplan.com/zh"]);
+  });
+
+  it("is an ordinary link search engines follow, in a new tab, that keeps the referrer", () => {
+    const footer = readFileSync(join(ROOT, "src/components/showcase/shared.tsx"), "utf8");
+    const links = footer.match(/<a href=\{dubaiHillsUrl\(t\.locale\)\}[^>]*>/g) ?? [];
+    expect(links).toEqual(['<a href={dubaiHillsUrl(t.locale)} target="_blank" rel="noopener" className="underline underline-offset-4">']);
   });
 });
