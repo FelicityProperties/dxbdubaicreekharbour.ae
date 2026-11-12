@@ -32,3 +32,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Raw PropertyIndex results for the DLD snapshot: local only (tools/pix/README.md)
+tools/pix/raw/

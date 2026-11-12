@@ -1,0 +1,744 @@
+{
+ "sales_existing_p1.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "market_basis",
+     "operator": "eq",
+     "value": "existing"
+    }
+   ],
+   "select": [
+    "sale_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "floor",
+    "bedrooms",
+    "size_sqft",
+    "sale_price",
+    "sale_psf",
+    "market_basis",
+    "prior_sale_relation",
+    "price_tier"
+   ],
+   "orderBy": [
+    {
+     "field": "sale_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "sale_price",
+     "direction": "desc"
+    }
+   ],
+   "limit": 100
+  }
+ },
+ "sales_existing_p2.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "market_basis",
+     "operator": "eq",
+     "value": "existing"
+    }
+   ],
+   "select": [
+    "sale_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "floor",
+    "bedrooms",
+    "size_sqft",
+    "sale_price",
+    "sale_psf",
+    "market_basis",
+    "prior_sale_relation",
+    "price_tier"
+   ],
+   "orderBy": [
+    {
+     "field": "sale_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "sale_price",
+     "direction": "desc"
+    }
+   ],
+   "limit": 100,
+   "offset": 100
+  }
+ },
+ "sales_offplan_p1.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "market_basis",
+     "operator": "eq",
+     "value": "off_plan"
+    }
+   ],
+   "select": [
+    "sale_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "floor",
+    "bedrooms",
+    "size_sqft",
+    "sale_price",
+    "sale_psf",
+    "market_basis",
+    "prior_sale_relation",
+    "price_tier"
+   ],
+   "orderBy": [
+    {
+     "field": "sale_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "sale_price",
+     "direction": "desc"
+    }
+   ],
+   "limit": 100
+  }
+ },
+ "sales_offplan_p2.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "market_basis",
+     "operator": "eq",
+     "value": "off_plan"
+    }
+   ],
+   "select": [
+    "sale_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "floor",
+    "bedrooms",
+    "size_sqft",
+    "sale_price",
+    "sale_psf",
+    "market_basis",
+    "prior_sale_relation",
+    "price_tier"
+   ],
+   "orderBy": [
+    {
+     "field": "sale_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "sale_price",
+     "direction": "desc"
+    }
+   ],
+   "limit": 100,
+   "offset": 100
+  }
+ },
+ "rentals_p1.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "rentals",
+   "select": [
+    "registration_date",
+    "start_date",
+    "end_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "bedrooms",
+    "size_sqft",
+    "annual_rent",
+    "annual_rent_psf",
+    "is_new_contract",
+    "url"
+   ],
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "property_type",
+     "operator": "in",
+     "value": [
+      "Apartment",
+      "Hotel Apartment"
+     ]
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "registration_date",
+     "direction": "desc"
+    },
+    {
+     "field": "start_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    }
+   ],
+   "limit": 100
+  }
+ },
+ "rentals_p2.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "rentals",
+   "select": [
+    "registration_date",
+    "start_date",
+    "end_date",
+    "location_name",
+    "location_slug",
+    "tower",
+    "bedrooms",
+    "size_sqft",
+    "annual_rent",
+    "annual_rent_psf",
+    "is_new_contract",
+    "url"
+   ],
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "property_type",
+     "operator": "in",
+     "value": [
+      "Apartment",
+      "Hotel Apartment"
+     ]
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "registration_date",
+     "direction": "desc"
+    },
+    {
+     "field": "start_date",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    }
+   ],
+   "limit": 100,
+   "offset": 100
+  }
+ },
+ "sales_12m_by_building_p1.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "sale_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "no_party_link"
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "prior_buyer_retained"
+    }
+   ],
+   "select": [
+    "location_slug",
+    "location_name",
+    "market_basis"
+   ],
+   "groupBy": [
+    "location_slug",
+    "location_name",
+    "market_basis"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "sale_psf",
+     "aggregate": "median"
+    },
+    {
+     "field": "sale_price",
+     "aggregate": "median"
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "rows",
+     "aggregate": "count",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "market_basis",
+     "direction": "asc"
+    }
+   ],
+   "limit": 100
+  }
+ },
+ "sales_12m_by_building_p2.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "sale_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "no_party_link"
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "prior_buyer_retained"
+    }
+   ],
+   "select": [
+    "location_slug",
+    "location_name",
+    "market_basis"
+   ],
+   "groupBy": [
+    "location_slug",
+    "location_name",
+    "market_basis"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "sale_psf",
+     "aggregate": "median"
+    },
+    {
+     "field": "sale_price",
+     "aggregate": "median"
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "rows",
+     "aggregate": "count",
+     "direction": "desc"
+    },
+    {
+     "field": "location_slug",
+     "direction": "asc"
+    },
+    {
+     "field": "market_basis",
+     "direction": "asc"
+    }
+   ],
+   "limit": 100,
+   "offset": 100
+  }
+ },
+ "rentals_12m_by_building.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "rentals",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "registration_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    }
+   ],
+   "select": [
+    "location_slug",
+    "location_name"
+   ],
+   "groupBy": [
+    "location_slug",
+    "location_name"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "annual_rent",
+     "aggregate": "median"
+    },
+    {
+     "field": "annual_rent_psf",
+     "aggregate": "median"
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "rows",
+     "aggregate": "count",
+     "direction": "desc"
+    }
+   ],
+   "limit": 100
+  }
+ },
+ "sales_12m_by_basis.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "sale_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "no_party_link"
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "prior_buyer_retained"
+    },
+    {
+     "field": "property_type",
+     "operator": "eq",
+     "value": "Apartment"
+    }
+   ],
+   "select": [
+    "market_basis"
+   ],
+   "groupBy": [
+    "market_basis"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "sale_psf",
+     "aggregate": "median"
+    },
+    {
+     "field": "sale_price",
+     "aggregate": "median"
+    },
+    {
+     "field": "sale_price",
+     "aggregate": "sum"
+    }
+   ],
+   "limit": 50
+  }
+ },
+ "sales_12m_by_basis_bedrooms.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "sales",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "sale_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "no_party_link"
+    },
+    {
+     "field": "prior_sale_relation",
+     "operator": "neq",
+     "value": "prior_buyer_retained"
+    },
+    {
+     "field": "property_type",
+     "operator": "eq",
+     "value": "Apartment"
+    }
+   ],
+   "select": [
+    "market_basis",
+    "bedrooms"
+   ],
+   "groupBy": [
+    "market_basis",
+    "bedrooms"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "sale_psf",
+     "aggregate": "median"
+    },
+    {
+     "field": "sale_price",
+     "aggregate": "median"
+    },
+    {
+     "field": "size_sqft",
+     "aggregate": "median"
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "market_basis",
+     "direction": "asc"
+    },
+    {
+     "field": "bedrooms",
+     "direction": "asc"
+    }
+   ],
+   "limit": 50
+  }
+ },
+ "rentals_12m_by_bedrooms.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "rentals",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "registration_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "property_type",
+     "operator": "eq",
+     "value": "Apartment"
+    }
+   ],
+   "select": [
+    "bedrooms"
+   ],
+   "groupBy": [
+    "bedrooms"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "annual_rent",
+     "aggregate": "median"
+    },
+    {
+     "field": "annual_rent_psf",
+     "aggregate": "median"
+    },
+    {
+     "field": "size_sqft",
+     "aggregate": "median"
+    }
+   ],
+   "orderBy": [
+    {
+     "field": "bedrooms",
+     "direction": "asc"
+    }
+   ],
+   "limit": 50
+  }
+ },
+ "rentals_12m_new_vs_renewal.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "rentals",
+   "filters": [
+    {
+     "field": "location_id",
+     "operator": "eq",
+     "value": "71"
+    },
+    {
+     "field": "registration_date",
+     "operator": "between",
+     "value": [
+      "2025-11-01",
+      "2026-10-31"
+     ]
+    },
+    {
+     "field": "property_type",
+     "operator": "eq",
+     "value": "Apartment"
+    }
+   ],
+   "select": [
+    "is_new_contract"
+   ],
+   "groupBy": [
+    "is_new_contract"
+   ],
+   "measures": [
+    {
+     "field": "rows",
+     "aggregate": "count"
+    },
+    {
+     "field": "annual_rent",
+     "aggregate": "median"
+    },
+    {
+     "field": "annual_rent_psf",
+     "aggregate": "median"
+    }
+   ],
+   "limit": 50
+  }
+ },
+ "projects_completion.json": {
+  "tool": "mcp__PropertyIndex__propertyindex_query",
+  "input": {
+   "entity": "projects",
+   "filters": [
+    {
+     "field": "location_slug",
+     "operator": "starts_with",
+     "value": "dubai-creek-harbour-the-lagoons"
+    }
+   ],
+   "select": [
+    "location_slug",
+    "location_name",
+    "completion_status"
+   ],
+   "limit": 100
+  }
+ }
+}
