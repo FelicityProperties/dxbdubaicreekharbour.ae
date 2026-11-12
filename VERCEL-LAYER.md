@@ -134,6 +134,15 @@ by hand.
 
 - `vercel.json` tells Vercel how to install and build (npm, not bun: Lovable's
   `bun.lock` points at Lovable's private package registry).
+- Response headers: every response, page or file, carries the security
+  headers in `vite.config.ts` (`SECURITY_HEADERS`): no MIME sniffing, the
+  pages can be framed by this site only (so another site cannot lay the
+  enquiry form or `/leads` under its own buttons), a referrer policy and a
+  permissions policy. Nitro writes them into `.vercel/output/config.json` as
+  the first route; `vercel.json`'s `headers` are not read for a prebuilt
+  output. They limit no script, style, image or video: felicitypro.com's
+  videos still play from `public/felicitypro`. To check a deployment:
+  `curl -sI https://www.dxbdubaicreekharbour.ae/ | grep -i -E "x-frame|content-security|x-content-type|referrer|permissions"`.
 - Environment variables:
   - `DATABASE_URL` — from the Neon integration. Enquiries are saved here.
     One connection can send 5 enquiries per 10 minutes and 10 per day
@@ -221,6 +230,11 @@ by hand.
 `NITRO_PRESET=node-server npm run build` and
 `PORT=4700 node .output/server/index.mjs`. `npx tsc --noEmit` and
 `npm test` must pass before pushing.
+
+An accessibility scan (axe-core, WCAG 2.x A and AA) of every page type, in
+the three languages, on a phone and a desktop, came back clean on 12 Nov
+2026; `src/test/accessibility.test.tsx` holds what it took. After changing
+markup, run the scan again against the local build before pushing.
 
 ## Rules the content follows
 

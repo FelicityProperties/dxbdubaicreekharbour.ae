@@ -111,6 +111,17 @@
   keep the gallery's lightbox, failure state and focus return.
 - Visual tokens and reusable layout styles live in the global stylesheet;
   plan-bar proportions come solely from the supplied percentages.
+- Accessibility: an automated scan (axe, WCAG 2.x A/AA) of every page type
+  is clean in the three languages; keep it so. Headings never skip a level
+  (on `/projects` a heading for screen readers sits between the page's h1
+  and the cards' h3 titles); a control's spoken name contains the words or
+  number printed on it, in every language (FelicityBot's launcher, the
+  gallery cover's photo count); the floating WhatsApp and e-mail buttons sit
+  inside the footer. `src/test/accessibility.test.tsx` holds these.
+- Every response carries the security headers in `vite.config.ts`
+  (`SECURITY_HEADERS`; see `VERCEL-LAYER.md`). They limit no script, style
+  or media, so felicitypro.com still plays the videos in `public/felicitypro`
+  from here; add no script policy without checking every page in a browser.
 - Enquiries save to Neon through `src/lib/enquiries.functions.ts` with a
   WhatsApp fallback; the private `/leads` page is password-protected on the
   server. Nothing is emailed to visitors; with `RESEND_API_KEY` set, each new
