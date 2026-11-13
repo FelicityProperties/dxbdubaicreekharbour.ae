@@ -3,7 +3,7 @@
   "name": "Dubai Land Department",
   "basis": "Dubai Land Department registration records",
   "coverage": "DLD registrations loaded through October 2026",
-  "snapshotDate": "2026-11-12",
+  "snapshotDate": "2026-11-13",
   "filters": "Market sales only: related-party transfers and completion re-registrations of the same purchase are left out. Apartments only in the 12-month summaries."
  },
  "window": {
@@ -15,18 +15,18 @@
   "readySales": {
    "count": 190,
    "from": "2026-08-27",
-   "to": "2026-11-10"
+   "to": "2026-11-11"
   },
   "offplanSales": {
    "count": 200,
    "from": "2026-09-30",
-   "to": "2026-11-09"
+   "to": "2026-11-11"
   },
   "rentals": {
    "count": 200,
-   "from": "2026-11-02",
-   "to": "2026-11-10",
-   "newContracts": 133
+   "from": "2026-11-03",
+   "to": "2026-11-11",
+   "newContracts": 134
   }
  },
  "summary": {
@@ -1198,6 +1198,16 @@
     "medianPrice": 1750944
    },
    {
+    "building": "Moor at Creek Beach Building 3",
+    "project": null,
+    "basis": "offplan",
+    "count": 4,
+    "medianPsf": 2515,
+    "p25Psf": 2441,
+    "p75Psf": 2559,
+    "medianPrice": 2206199
+   },
+   {
     "building": "Sunset at Creek Beach Building 1",
     "project": null,
     "basis": "ready",
@@ -1266,16 +1276,6 @@
     "p25Psf": 2215,
     "p75Psf": 2368,
     "medianPrice": 2550000
-   },
-   {
-    "building": "Moor at Creek Beach Building 3",
-    "project": null,
-    "basis": "offplan",
-    "count": 3,
-    "medianPsf": 2484,
-    "p25Psf": 2399,
-    "p75Psf": 2515,
-    "medianPrice": 2566510
    },
    {
     "building": "Summer at Creek Beach Building 1",
@@ -1496,16 +1496,6 @@
     "p25Psf": 1367,
     "p75Psf": 1367,
     "medianPrice": 1900000
-   },
-   {
-    "building": "Canopy at Creek Beach Building 3",
-    "project": null,
-    "basis": "offplan",
-    "count": 1,
-    "medianPsf": 2551,
-    "p25Psf": 2551,
-    "p75Psf": 2551,
-    "medianPrice": 1845888
    },
    {
     "building": "Cedar at Creek Beach Building 3",
@@ -2538,6 +2528,32 @@
   ]
  },
  "sales": [
+  {
+   "date": "2026-11-11",
+   "building": "Address Harbour Point Tower 1",
+   "project": "address-harbour-point",
+   "floor": "46",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1669,
+   "price": 5800000,
+   "psf": 3475,
+   "basis": "ready",
+   "kind": "Resale",
+   "tier": "standard"
+  },
+  {
+   "date": "2026-11-11",
+   "building": "Creek Waters 2",
+   "project": "creek-waters-2",
+   "floor": "7",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 757,
+   "price": 1765000,
+   "psf": 2331,
+   "basis": "offplan",
+   "kind": "Off-plan resale",
+   "tier": "entry_level"
+  },
   {
    "date": "2026-11-10",
    "building": "Address Harbour Point Tower 2",
@@ -4897,9 +4913,9 @@
    "project": "the-grand",
    "floor": "59",
    "bedrooms": "2 Bed",
-   "sizeSqft": 1251,
+   "sizeSqft": 1282,
    "price": 2600000,
-   "psf": 2079,
+   "psf": 2028,
    "basis": "ready",
    "kind": "Resale",
    "tier": "entry_level"
@@ -4910,9 +4926,9 @@
    "project": "the-grand",
    "floor": "59",
    "bedrooms": "2 Bed",
-   "sizeSqft": 1282,
+   "sizeSqft": 1251,
    "price": 2600000,
-   "psf": 2028,
+   "psf": 2079,
    "basis": "ready",
    "kind": "Resale",
    "tier": "entry_level"
@@ -6478,19 +6494,6 @@
    "tier": "standard"
   },
   {
-   "date": "2026-09-30",
-   "building": "New launch — building not yet named in the register",
-   "project": null,
-   "floor": "22",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 821,
-   "price": 2051888,
-   "psf": 2499,
-   "basis": "offplan",
-   "kind": "First registration",
-   "tier": "entry_level"
-  },
-  {
    "date": "2026-09-29",
    "building": "Moor at Creek Beach Building 1",
    "project": null,
@@ -7594,22 +7597,273 @@
    "basis": "ready",
    "kind": "Resale",
    "tier": "entry_level"
-  },
-  {
-   "date": "2026-08-27",
-   "building": "Harbour Gate Tower 1",
-   "project": "harbour-gate",
-   "floor": "12",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 684,
-   "price": 1430000,
-   "psf": 2091,
-   "basis": "ready",
-   "kind": "Resale",
-   "tier": "entry_level"
   }
  ],
  "rentals": [
+  {
+   "registered": "2026-11-11",
+   "start": "2026-12-11",
+   "end": "2027-12-10",
+   "building": "Creek Palace",
+   "project": "creek-palace",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 642,
+   "annualRent": 100000,
+   "rentPsf": 156,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-28",
+   "end": "2027-05-27",
+   "building": "Summer at Creek Beach Building 4",
+   "project": null,
+   "bedrooms": "1 Bed",
+   "sizeSqft": 716,
+   "annualRent": 85704,
+   "rentPsf": 120,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-28",
+   "end": "2027-11-27",
+   "building": "Palace Residences",
+   "project": "palace-residences",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 712,
+   "annualRent": 120000,
+   "rentPsf": 169,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-25",
+   "end": "2027-11-24",
+   "building": "Palace Residences",
+   "project": "palace-residences",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1098,
+   "annualRent": 160000,
+   "rentPsf": 146,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-21",
+   "end": "2027-11-20",
+   "building": "Creek Rise Tower 1",
+   "project": "creek-rise",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1107,
+   "annualRent": 140000,
+   "rentPsf": 126,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-17",
+   "end": "2027-11-16",
+   "building": "Moor at Creek Beach Building 4",
+   "project": null,
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1022,
+   "annualRent": 105000,
+   "rentPsf": 103,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-15",
+   "end": "2027-11-14",
+   "building": "17 Icon Bay",
+   "project": "17-icon-bay",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1132,
+   "annualRent": 130000,
+   "rentPsf": 115,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-15",
+   "end": "2027-11-14",
+   "building": "17 Icon Bay",
+   "project": "17-icon-bay",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1077,
+   "annualRent": 110000,
+   "rentPsf": 102,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-15",
+   "end": "2027-01-04",
+   "building": "Creek Rise Tower 2",
+   "project": "creek-rise",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1109,
+   "annualRent": 120751,
+   "rentPsf": 109,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-15",
+   "end": "2027-11-14",
+   "building": "Palace Residences",
+   "project": "palace-residences",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1187,
+   "annualRent": 160000,
+   "rentPsf": 135,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-13",
+   "end": "2027-11-12",
+   "building": "Dubai Creek Residences North Tower 2",
+   "project": "dubai-creek-residences",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1559,
+   "annualRent": 190000,
+   "rentPsf": 122,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-12",
+   "end": "2027-11-11",
+   "building": "Address Harbour Point Tower 2",
+   "project": "address-harbour-point",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1103,
+   "annualRent": 195000,
+   "rentPsf": 177,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-12",
+   "end": "2027-11-11",
+   "building": "Breeze at Creek Beach Building 1",
+   "project": null,
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1138,
+   "annualRent": 160000,
+   "rentPsf": 141,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-12",
+   "end": "2027-11-11",
+   "building": "Creek Edge Tower 1",
+   "project": "creek-edge",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 725,
+   "annualRent": 90000,
+   "rentPsf": 124,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-12",
+   "end": "2027-11-11",
+   "building": "Palace Residences",
+   "project": "palace-residences",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 700,
+   "annualRent": 100000,
+   "rentPsf": 143,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-12",
+   "end": "2027-11-11",
+   "building": "The Cove II Building 6",
+   "project": "the-cove",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 807,
+   "annualRent": 88000,
+   "rentPsf": null,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-11",
+   "end": "2027-11-10",
+   "building": "Bayshore at Creek Beach Building 4",
+   "project": null,
+   "bedrooms": "1 Bed",
+   "sizeSqft": 673,
+   "annualRent": 85000,
+   "rentPsf": 126,
+   "newContract": false
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-11",
+   "end": "2027-11-10",
+   "building": "Creek Horizon Tower 2",
+   "project": "creek-horizon",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1183,
+   "annualRent": 180000,
+   "rentPsf": 152,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-11",
+   "end": "2027-11-10",
+   "building": "The Cove II Building 9",
+   "project": "the-cove",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 776,
+   "annualRent": 92000,
+   "rentPsf": null,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-10",
+   "end": "2027-11-09",
+   "building": "Breeze at Creek Beach Building 2",
+   "project": null,
+   "bedrooms": "1 Bed",
+   "sizeSqft": 716,
+   "annualRent": 95000,
+   "rentPsf": 133,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-02",
+   "end": "2027-11-01",
+   "building": "Savanna at Creek Beach Tower 1",
+   "project": "savanna",
+   "bedrooms": "1 Bed",
+   "sizeSqft": 692,
+   "annualRent": 75000,
+   "rentPsf": 108,
+   "newContract": true
+  },
+  {
+   "registered": "2026-11-11",
+   "start": "2026-11-02",
+   "end": "2027-11-01",
+   "building": "Vida Residences Creek Beach",
+   "project": "vida-residences-creek-beach",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1173,
+   "annualRent": 145000,
+   "rentPsf": 124,
+   "newContract": true
+  },
   {
    "registered": "2026-11-10",
    "start": "2027-10-16",
@@ -7858,8 +8112,8 @@
    "project": "palace-residences",
    "bedrooms": "2 Bed",
    "sizeSqft": 1101,
-   "annualRent": 155000,
-   "rentPsf": 141,
+   "annualRent": 160000,
+   "rentPsf": 145,
    "newContract": true
   },
   {
@@ -7870,8 +8124,8 @@
    "project": "palace-residences",
    "bedrooms": "2 Bed",
    "sizeSqft": 1101,
-   "annualRent": 160000,
-   "rentPsf": 145,
+   "annualRent": 155000,
+   "rentPsf": 141,
    "newContract": true
   },
   {
@@ -8280,18 +8534,6 @@
    "sizeSqft": 787,
    "annualRent": 155000,
    "rentPsf": 197,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-08",
-   "start": "2026-12-11",
-   "end": "2027-12-10",
-   "building": "Creek Palace",
-   "project": "creek-palace",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 642,
-   "annualRent": 100000,
-   "rentPsf": 156,
    "newContract": false
   },
   {
@@ -9188,10 +9430,10 @@
    "end": "2027-11-04",
    "building": "Address Harbour Point Tower 2",
    "project": "address-harbour-point",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 790,
-   "annualRent": 135000,
-   "rentPsf": 171,
+   "bedrooms": "3 Bed",
+   "sizeSqft": 1598,
+   "annualRent": 300000,
+   "rentPsf": 188,
    "newContract": true
   },
   {
@@ -9200,10 +9442,10 @@
    "end": "2027-11-04",
    "building": "Address Harbour Point Tower 2",
    "project": "address-harbour-point",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1598,
-   "annualRent": 300000,
-   "rentPsf": 188,
+   "bedrooms": "1 Bed",
+   "sizeSqft": 790,
+   "annualRent": 135000,
+   "rentPsf": 171,
    "newContract": true
   },
   {
@@ -9757,258 +9999,6 @@
    "annualRent": 82452,
    "rentPsf": 120,
    "newContract": false
-  },
-  {
-   "registered": "2026-11-03",
-   "start": "2026-08-19",
-   "end": "2027-08-18",
-   "building": "Address Harbour Point Tower 1",
-   "project": "address-harbour-point",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1108,
-   "annualRent": 210000,
-   "rentPsf": 189,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-03",
-   "start": "2026-04-15",
-   "end": "2027-04-14",
-   "building": "Creek Horizon Tower 2",
-   "project": "creek-horizon",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1624,
-   "annualRent": 200000,
-   "rentPsf": 123,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-03",
-   "start": "2026-02-27",
-   "end": "2027-02-26",
-   "building": "Harbour Gate Tower 2",
-   "project": "harbour-gate",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 684,
-   "annualRent": 83000,
-   "rentPsf": 121,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2027-01-01",
-   "end": "2027-12-31",
-   "building": "Grove at Creek Beach Building 4",
-   "project": "grove",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1209,
-   "annualRent": 145000,
-   "rentPsf": 120,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-12-15",
-   "end": "2027-12-14",
-   "building": "Palace Residence North",
-   "project": "palace-residences-north",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1055,
-   "annualRent": 150000,
-   "rentPsf": 142,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-12-01",
-   "end": "2027-11-30",
-   "building": "Grove at Creek Beach Building 4",
-   "project": "grove",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1099,
-   "annualRent": 130000,
-   "rentPsf": 118,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-28",
-   "end": "2027-11-27",
-   "building": "Creek Gate Tower 2",
-   "project": "creek-gate",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1115,
-   "annualRent": 140200,
-   "rentPsf": 126,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-21",
-   "end": "2027-11-20",
-   "building": "Harbour Views 2",
-   "project": "harbour-views",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1218,
-   "annualRent": 155000,
-   "rentPsf": 127,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-20",
-   "end": "2028-11-19",
-   "building": "Creekside 18 B",
-   "project": "creekside-18",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1620,
-   "annualRent": 170766,
-   "rentPsf": 105,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-16",
-   "end": "2027-11-15",
-   "building": "The Grand",
-   "project": "the-grand",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1226,
-   "annualRent": 175000,
-   "rentPsf": 143,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-15",
-   "end": "2027-11-14",
-   "building": "Harbour Gate Tower 1",
-   "project": "harbour-gate",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 684,
-   "annualRent": 85000,
-   "rentPsf": 124,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-14",
-   "end": "2027-05-13",
-   "building": "Vida Residences Creek Beach",
-   "project": "vida-residences-creek-beach",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 692,
-   "annualRent": 120994,
-   "rentPsf": 175,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-13",
-   "end": "2027-01-12",
-   "building": "Surf at Creek Beach Building 1",
-   "project": "surf",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 713,
-   "annualRent": 88198,
-   "rentPsf": 124,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-12",
-   "end": "2027-11-11",
-   "building": "Creek Palace",
-   "project": "creek-palace",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1052,
-   "annualRent": 125000,
-   "rentPsf": 119,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-10",
-   "end": "2027-11-09",
-   "building": "Creek Rise Tower 2",
-   "project": "creek-rise",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 848,
-   "annualRent": 85000,
-   "rentPsf": 100,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-04",
-   "end": "2027-11-03",
-   "building": "Canopy at Creek Beach Building 3",
-   "project": null,
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1023,
-   "annualRent": 119000,
-   "rentPsf": 116,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-04",
-   "end": "2027-11-03",
-   "building": "Creek Horizon Tower 2",
-   "project": "creek-horizon",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1211,
-   "annualRent": 150000,
-   "rentPsf": 124,
-   "newContract": false
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-04",
-   "end": "2027-11-03",
-   "building": "Creekside 18 A",
-   "project": "creekside-18",
-   "bedrooms": "3 Bed",
-   "sizeSqft": 1613,
-   "annualRent": 180000,
-   "rentPsf": 112,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-02",
-   "end": "2027-11-01",
-   "building": "Moor at Creek Beach Building 3",
-   "project": null,
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1044,
-   "annualRent": 105000,
-   "rentPsf": 101,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-02",
-   "end": "2027-11-01",
-   "building": "Summer at Creek Beach Building 3",
-   "project": null,
-   "bedrooms": "1 Bed",
-   "sizeSqft": 686,
-   "annualRent": 95000,
-   "rentPsf": 138,
-   "newContract": true
-  },
-  {
-   "registered": "2026-11-02",
-   "start": "2026-11-02",
-   "end": "2027-11-01",
-   "building": "Creek Edge Tower 1",
-   "project": "creek-edge",
-   "bedrooms": "1 Bed",
-   "sizeSqft": 723,
-   "annualRent": 105000,
-   "rentPsf": 145,
-   "newContract": true
   }
  ]
 }
