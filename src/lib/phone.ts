@@ -22,10 +22,21 @@ export function useBackCloses(key: string, isOpen: boolean, close: () => void): 
   const router = useRouter();
   const hash = useRouterState({ select: (s) => s.location.hash });
   const added = useRef(false); // the overlay holds a "#<key>" entry that has not been removed yet
-  const adopted = useRef(false); // that entry was already in the address when it opened (a copied link), not added by it
+  const adopted = useRef(false); // that entry was already in the address when it opened (a reload), not added by it
   const prevHash = useRef(hash);
   const closeRef = useRef(close);
   closeRef.current = close;
+
+  // A "#<key>" in the address of a closed overlay at history index 0 came with the link the page was opened from (one
+  // copied or shared while the overlay was open, or a bookmark): there is no page of ours behind it to go back to, so
+  // that entry could never close the overlay. Drop the hash where it is (as FelicityBot does for "#chat"); opening then
+  // adds an entry of its own. Further along (a reload while the overlay was open) the entry behind is this page, and
+  // opening takes the entry over.
+  useEffect(() => {
+    const here = router.state.location;
+    if (isOpen || added.current || hash !== key || (here.state.__TSR_index ?? 0) > 0) return;
+    void router.navigate({ href: `${here.pathname}${here.searchStr}`, replace: true, resetScroll: false, hashScrollIntoView: false, viewTransition: false });
+  }, [hash, isOpen, key, router]);
 
   // Opened on a phone: add the entry.
   useEffect(() => {
@@ -55,7 +66,7 @@ export function useBackCloses(key: string, isOpen: boolean, close: () => void): 
     added.current = false;
     if (window.location.hash !== `#${key}`) return;
     if (!adopted.current) { router.history.back(); return; }
-    // Nothing of ours to go back to: drop the hash where it is.
+    // Taken over after a reload: drop the hash where it is (the page underneath may have been scrolled since).
     const here = router.state.location;
     void router.navigate({ href: `${here.pathname}${here.searchStr}`, replace: true, resetScroll: false, hashScrollIntoView: false, viewTransition: false });
   }, [isOpen, key, router]);

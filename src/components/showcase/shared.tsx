@@ -59,10 +59,11 @@ export function LanguageLinks({ compact = false, onPick }: { compact?: boolean; 
   const at = useRouterState({ select: (s) => `${s.location.pathname}${s.location.searchStr}` });
   const hash = useRouterState({ select: (s) => s.location.hash });
   // The server never sees an address's #hash, so the first render leaves it out (as the server's HTML did: React keeps
-  // the server's href when hydrating) and adds it once the page is live. While the phone menu is open the address ends
-  // in "#menu" (so phone Back closes it): the links keep the hash of the page under the menu.
+  // the server's href when hydrating) and adds it once the page is live. While a phone sheet or viewer is open the address
+  // ends in its "#menu", "#filters", "#photo" or "#chat" (so phone Back closes it): the links keep the hash of the page
+  // under it, and never carry those over.
   const [pageHash, setPageHash] = useState("");
-  useEffect(() => { if (hash !== "menu") setPageHash(hash); }, [hash]);
+  useEffect(() => { if (!["menu", "filters", "photo", "chat"].includes(hash)) setPageHash(hash); }, [hash]);
   // An address the router could not take a language off (/zh/leads, a mistyped /ar/ar/…) has no other-language version: offer the home pages.
   const here = /^\/(ar|zh)(\/|$)/.test(at) ? "/" : `${at}${pageHash ? `#${pageHash}` : ""}`;
   // Nor has an English-only page (/leads): its Arabic and Chinese links go to those home pages too.
