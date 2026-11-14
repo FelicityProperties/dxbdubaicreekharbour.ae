@@ -21,10 +21,14 @@ import { withTimeout } from "@/lib/with-timeout";
 import { STAYED_SECONDS, WA_PLACES, cleanReport, deviceName, isRobot, sourceName, type Ranked, type VisitStats, type WaPlace } from "@/lib/visits.shared";
 
 const dbUrl = () => process.env["ANALYTICS_DATABASE_URL"] || process.env["DATABASE_URL"] || process.env["POSTGRES_URL"] || null;
+/** Where an address leads (host, port and database): a Neon database's pooled ("-pooler") and direct addresses, and
+    addresses that differ only in their options, are one database. */
+const dbKey = (u: string) => { try { const x = new URL(u); return `${x.hostname.toLowerCase().replace("-pooler.", ".")}:${x.port || "5432"}${x.pathname}`; } catch { return u; } };
 /** True when the numbers are kept in a database of their own (ANALYTICS_DATABASE_URL), apart from the enquiries. */
 export const ownAnalyticsDb = (): boolean => {
   const own = process.env["ANALYTICS_DATABASE_URL"];
-  return !!own && own !== databaseUrl();
+  const enquiries = databaseUrl();
+  return !!own && (!enquiries || dbKey(own) !== dbKey(enquiries));
 };
 const OWN_HOST = new URL(SITE.url).hostname.replace(/^www\./, "");
 const dubaiDay = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Dubai", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);

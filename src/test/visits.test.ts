@@ -198,6 +198,30 @@ describe("Visit reports", () => {
       delete process.env["ANALYTICS_DATABASE_URL"];
     }
   });
+  it("knows one database under its pooled and direct addresses, whatever their options", async () => {
+    const pooled = "postgresql://u:p@ep-quiet-sea-000000-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+    const direct = "postgresql://u:p@ep-quiet-sea-000000.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+    const handle = await freshHandleVisit();
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      process.env["DATABASE_URL"] = pooled;
+      process.env["ANALYTICS_DATABASE_URL"] = direct;
+      expect(ownAnalyticsDb()).toBe(false);
+      vi.setSystemTime(new Date("2031-04-01T12:00:00Z"));
+      await post({ ...report, id: crypto.randomUUID() }, {}, handle);
+      expect(deletes()).toEqual([direct]); // one delete: it is one database
+      process.env["ANALYTICS_DATABASE_URL"] = "postgresql://u:p@EP-QUIET-SEA-000000.eu-central-1.aws.neon.tech:5432/neondb";
+      expect(ownAnalyticsDb()).toBe(false);
+      // Another Neon project, or another database, is a database of its own.
+      process.env["ANALYTICS_DATABASE_URL"] = "postgresql://u:p@ep-bold-lake-111111-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+      expect(ownAnalyticsDb()).toBe(true);
+      process.env["ANALYTICS_DATABASE_URL"] = "postgresql://u:p@ep-quiet-sea-000000.eu-central-1.aws.neon.tech/visits";
+      expect(ownAnalyticsDb()).toBe(true);
+    } finally {
+      vi.useRealTimers();
+      delete process.env["ANALYTICS_DATABASE_URL"];
+    }
+  });
   it("ignores robots, other sites and junk", async () => {
     await post(report, { "user-agent": "Googlebot/2.1" });
     await post(report, { origin: "https://evil.example" });
