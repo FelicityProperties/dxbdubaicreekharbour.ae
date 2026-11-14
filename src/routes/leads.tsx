@@ -36,13 +36,15 @@ const UAE_COUNTRY = /\b(uae|u\.a\.e\.?|emirates|dubai|abu dhabi|sharjah|ajman|ra
 /**
  * International digits for wa.me and tel: links, or null when the number
  * can't honestly be made international (a national number from abroad).
- * UAE numbers arrive as +971…, 00971…, 05… or a bare 5XXXXXXXX; "+44 (0)20…"
- * drops its (0).
+ * UAE numbers arrive as +971…, 00971…, 971… without the plus, 05… or a bare
+ * 5XXXXXXXX; "+44 (0)20…" drops its (0).
  */
 function intl(phone: string, country: string | null): string | null {
   const d = phone.replace(/\(0\)/g, "").replace(/\D/g, "");
   if (phone.trim().startsWith("+")) return d;
   if (d.startsWith("00")) return d.slice(2);
+  // The UAE's country code without the plus ("971 50 123 4567") is already international, wherever they live.
+  if (/^971(5\d{8}|[2-4679]\d{7})$/.test(d)) return d;
   const abroad = !!country && !UAE_COUNTRY.test(country);
   if (!abroad && UAE_RE.test(d)) return `971${d.replace(/^0/, "")}`;
   return null;

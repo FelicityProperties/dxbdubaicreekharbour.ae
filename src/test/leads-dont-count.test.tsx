@@ -84,6 +84,23 @@ describe("/leads", () => {
     expect(screen.getByRole("button", { name: /^enquiries/i }).getAttribute("aria-pressed")).toBe("true");
     window.history.replaceState(null, "", "/");
   });
+  it("gives a UAE number typed as 971… without the plus its WhatsApp and Call links", async () => {
+    const lead = (id: string, phone: string, country: string | null) => ({
+      id, created_at: "2026-11-14T08:00:00.000Z", name: `Buyer ${id}`, phone, email: null, country, language: null, project: null,
+      looking_for: null, buy_as: null, bedrooms: null, budget: null, timing: null, funding: null, message: null, page: "/",
+    });
+    leadsAnswer = { status: "ok", total: 4, leads: [lead("1", "971 50 123 4567", null), lead("2", "971501234567", "UAE"), lead("3", "971-4-123-4567", "United Kingdom"), lead("4", "020 7946 0018", "United Kingdom")] };
+    window.history.replaceState(null, "", "/leads?tab=enquiries");
+    sessionStorage.setItem("dxbch-leads-password", "x".repeat(24));
+    render(<Page />);
+    await screen.findByText(/4 enquiries, newest first/);
+    const hrefs = (selector: string) => [...document.querySelectorAll(selector)].map((a) => a.getAttribute("href"));
+    expect(hrefs('a[href^="https://wa.me/"]')).toEqual(["https://wa.me/971501234567", "https://wa.me/971501234567", "https://wa.me/97141234567"]);
+    expect(hrefs('a[href^="tel:"]')).toEqual(["tel:+971501234567", "tel:+971501234567", "tel:+97141234567"]);
+    // A national number from abroad still can't be made international: it is shown as typed.
+    expect(screen.getByText("020 7946 0018")).toBeTruthy();
+    window.history.replaceState(null, "", "/");
+  });
   it("marks a browser from the /leads?me=1 link, without the password", async () => {
     window.history.replaceState(null, "", "/leads?me=1");
     render(<Page />);
