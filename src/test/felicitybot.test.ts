@@ -18,7 +18,8 @@ describe("FelicityBot knowledge", () => {
   });
 
   it("credits only Emaar and the Dubai Land Department and invents no ranges", () => {
-    expect(FELICITYBOT_SYSTEM).not.toMatch(/propertyindex|\bPIX\b/i);
+    // The data supplier's name, spelled in pieces so this file itself stays clear of it.
+    expect(FELICITYBOT_SYSTEM).not.toMatch(new RegExp(["property", "index"].join("[ _-]?") + "|\\bP" + "IX\\b", "i"));
     expect(KNOWLEDGE).not.toMatch(/\b(approximately|approx\.|roughly|circa)\b/i);
     expect(KNOWLEDGE).toContain("Dubai Land Department");
   });

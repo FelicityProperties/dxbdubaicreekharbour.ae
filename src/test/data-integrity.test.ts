@@ -126,6 +126,19 @@ describe("Registered transactions", () => {
     for (const r of TX.rentals) expect(r.registered <= LATEST_ROW, r.registered).toBe(true);
     expect(TX.window.to <= LATEST_ROW).toBe(true);
   });
+
+  it("are credited to the Dubai Land Department alone: no file under src/ names the data supplier, comments and tests included", () => {
+    // AGENTS.md: the supplier is named only in VERCEL-LAYER.md and the generators (tools/). Spelled in pieces so this file stays clear of it.
+    const supplier = new RegExp(["property", "index"].join("[ _-]?") + "|\\bp" + "ix\\b", "i");
+    const named: string[] = [];
+    const walk = (dir: string): void => readdirSync(dir, { withFileTypes: true }).forEach((e) => {
+      const path = join(dir, e.name);
+      if (e.isDirectory()) return walk(path);
+      readFileSync(path, "utf8").split("\n").forEach((line, i) => { if (supplier.test(line)) named.push(`${path.slice(process.cwd().length + 1)}:${i + 1}`); });
+    });
+    walk(join(process.cwd(), "src"));
+    expect(named).toEqual([]);
+  });
 });
 
 describe("Search results", () => {
