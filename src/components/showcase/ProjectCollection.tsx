@@ -10,9 +10,13 @@
  *
  * The swipe rows carry a data-scroll-restoration-id: the router finds them by that name when it puts their scroll
  * position back (Back, and a sheet closing), as their place in the page shifts while a sheet is open.
+ *
+ * The filters and the view are kept in the address too (?status=Ready&beds=2&view=table), replacing its history entry:
+ * Back from a project then shows the same list again before the router puts the scroll position back, and the language
+ * links carry them over.
  */
 import { useEffect, useId, useRef, useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { ArrowRight, LayoutGrid, List, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PHONE_QUERY, isPhone, loadDrawer, reloadForMissingCode, useBackCloses, type DrawerKit } from "@/lib/phone";
@@ -38,8 +42,30 @@ const SHELF_SIZES = "(max-width: 640px) 82vw, (max-width: 1000px) 50vw, 33vw";
 
 type Filters = { status: Status | "All"; district: string; beds: string; budget: string };
 type SetFilters = (next: Partial<Filters>) => void;
+type View = "cards" | "table";
 const ANY: Filters = { status: "All", district: "All", beds: "All", budget: "All" };
 const same = (a: Filters, b: Filters) => a.status === b.status && a.district === b.district && a.beds === b.beds && a.budget === b.budget;
+
+/** The address's search parameters that belong to the collection; any others (a campaign tag) are left as they are. */
+const SEARCH_KEYS = ["status", "district", "beds", "budget", "view"];
+const params = (search: unknown) => (search && typeof search === "object" ? (search as Record<string, unknown>) : {});
+const oneOf = (value: unknown, options: readonly string[]) => (options.includes(String(value)) ? String(value) : "All");
+/** The filters an address names; one it leaves out, or names wrongly, is "All". */
+function filtersIn(search: unknown): Filters {
+  const s = params(search);
+  return { status: oneOf(s["status"], ORDER) as Filters["status"], district: oneOf(s["district"], DISTRICTS), beds: oneOf(s["beds"], BEDS), budget: oneOf(s["budget"], BUDGETS.map((b) => b.id)) };
+}
+const viewIn = (search: unknown, fallback: View): View => { const v = params(search)["view"]; return v === "cards" || v === "table" ? v : fallback; };
+/** The address's words for them: only what differs from the defaults (bedrooms as a number, so the address reads beds=2). */
+function searchFor(f: Filters, view: View, defaultView: View): Record<string, string | number> {
+  const out: Record<string, string | number> = {};
+  if (f.status !== "All") out["status"] = f.status;
+  if (f.district !== "All") out["district"] = f.district;
+  if (f.beds !== "All") out["beds"] = /^\d+$/.test(f.beds) ? Number(f.beds) : f.beds;
+  if (f.budget !== "All") out["budget"] = f.budget;
+  if (view !== defaultView) out["view"] = view;
+  return out;
+}
 
 /** The status filter's chip text; the filter itself compares the English status values. */
 function statusChip(s: Status | "All", t: T): string {
@@ -90,12 +116,14 @@ function ProjectTable({ projects, shelf = false, rows }: { projects: Project[]; 
  * `shelf` marks the home page's copy: on phones its cards (or compare cards) become a sideways swipe row with "View all
  * projects" under it, while /projects keeps the vertical feed and pins the filter row under the top bar.
  */
-export function ProjectCollection({ heading = true, defaultView = "cards", shelf = false }: { heading?: boolean; defaultView?: "cards" | "table"; shelf?: boolean }) {
+export function ProjectCollection({ heading = true, defaultView = "cards", shelf = false }: { heading?: boolean; defaultView?: View; shelf?: boolean }) {
   const t = useT();
   const router = useRouter();
-  const [f, setFilters] = useState<Filters>(ANY);
+  // The filters and the view start from the address (the server renders the same list), and the address follows them.
+  const search = useRouterState({ select: (s) => s.location.search });
+  const [f, setFilters] = useState<Filters>(() => filtersIn(search));
   const set: SetFilters = (next) => setFilters((cur) => ({ ...cur, ...next }));
-  const [view, setView] = useState<"cards" | "table">(defaultView);
+  const [view, setView] = useState<View>(() => viewIn(search, defaultView));
   const [sheet, setSheet] = useState(false);
   const [kit, setKit] = useState<DrawerKit | null>(null); // the filter sheet's code, fetched on phones only
   const sheetId = useId();
@@ -185,6 +213,23 @@ export function ProjectCollection({ heading = true, defaultView = "cards", shelf
     if (window.location.hash !== "#filters" && router.state.resolvedLocation?.hash !== "filters") { frames(); return; }
     const off = router.subscribe("onRendered", ({ toLocation }) => { if (toLocation.hash !== "filters") { off(); frames(); } });
   };
+  // The address follows the filters and the view, replacing its history entry (they add no steps to Back). While the
+  // phone sheet is open its "#filters" entry is the current one: the page's own entry gets them once the sheet has gone.
+  const shown = useRef({ f, view });
+  shown.current = { f, view };
+  useEffect(() => {
+    if (sheet || (same(filtersIn(search), f) && viewIn(search, defaultView) === view)) return;
+    const page = router.state.location.pathname;
+    afterRouter(() => {
+      const here = router.latestLocation;
+      const now = shown.current;
+      // Not if the visitor has gone on to another page (or opened the sheet again) meanwhile, or it is there already.
+      if (here.pathname !== page || here.hash === "filters" || (same(filtersIn(here.search), now.f) && viewIn(here.search, defaultView) === now.view)) return;
+      const others = Object.fromEntries(Object.entries(params(here.search)).filter(([k]) => !SEARCH_KEYS.includes(k)));
+      const searchStr = router.options.stringifySearch({ ...others, ...searchFor(now.f, now.view, defaultView) });
+      void router.navigate({ href: `${here.pathname}${searchStr}${here.hash ? `#${here.hash}` : ""}`, replace: true, resetScroll: false, hashScrollIntoView: false, viewTransition: false });
+    });
+  }, [f, view, sheet, search]); // eslint-disable-line react-hooks/exhaustive-deps
   /** Filters: the sheet opens once its code is here. If that code fails to load, the page reloads (once) to get it. */
   const openSheet = () => {
     if (kit) { onSheet(true); return; }
