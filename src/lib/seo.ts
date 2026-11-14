@@ -44,7 +44,8 @@ export function pageHead({ locale, path, title, description, shareDescription, i
       { property: "og:description", content: shareDescription ?? description },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: LOCALE_META[locale].ogLocale },
-      ...(largeCard ? [{ name: "twitter:card", content: "summary_large_image" }] : []),
+      // Always sent: a page without its own would keep the root route's large card.
+      { name: "twitter:card", content: largeCard ? "summary_large_image" : "summary" },
       { property: "og:image", content: image },
       { name: "twitter:image", content: image },
       { property: "og:image:width", content: "1200" },
