@@ -54,6 +54,10 @@ describe("Project data", () => {
     const answer = FAQ.find((f) => f.q === "Are the prices current?")?.a ?? "";
     expect(answer).toContain(`checked on ${SITE.pricesCheckedOn}`);
     expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}`);
+    // The register's figures are refreshed on their own (sales and rents monthly, construction status with the project
+    // data): the footer names the Land Department without one date for both, and each page dates what it shows.
+    expect(DISCLAIMER).toContain("construction status are Dubai Land Department records, each dated where it is shown;");
+    expect(DISCLAIMER).not.toContain(SITE.constructionSource);
     // A project that is not now selling shows Emaar's starting price at launch on its card: the FAQ and the disclaimer say so.
     const launch = PROJECTS.filter((p) => p.status !== "Now selling" && p.startingPrice && !p.pricesFrom);
     for (const p of launch) expect(priceSummary(p).note, p.slug).toBe("Emaar's advertised starting price at launch — resale prices on request");
