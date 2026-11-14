@@ -36,7 +36,9 @@ starting point but is now behind this repo and should not be copied over it.
   cites an Emaar page or the DLD snapshot, with the exact quotes kept in
   `design/benefits-sources.json`.
 - `public/sw.js` + `public/site.webmanifest` — the site installs on phones
-  like an app (standalone display, home-screen icon). Pages are always
+  like an app (standalone display, home-screen icon); the Arabic and Chinese
+  pages link `site.ar.webmanifest` and `site.zh.webmanifest`, so the app
+  installed from them opens in that language. Pages are always
   fetched from the network first; images and hashed build assets are
   cached, and one HTML copy per page is kept only as the offline fallback.
   Bump `VERSION` in `sw.js` to clear old caches (every visitor's browser

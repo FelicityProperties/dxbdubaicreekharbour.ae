@@ -6,6 +6,6 @@
   - C `favicon-wave-1.svg` — sun over two brass water lines
   - D `favicon-anchor-1.svg` — brass anchor
   - E `favicon-star-2.svg` — faceted compass star
-- To switch: render `public/favicon.ico` (16 + 32 px), `apple-touch-icon.png` (180), `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (mark at 80% on navy) and copy the SVG to `public/favicon.svg`; then bump `?v=` on the icon links in `src/routes/__root.tsx` and `public/site.webmanifest`, and `VERSION` in `public/sw.js`, so browsers drop the old icon.
+- To switch: render `public/favicon.ico` (16 + 32 px), `apple-touch-icon.png` (180), `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (mark at 80% on navy) and copy the SVG to `public/favicon.svg`; then bump `?v=` on the icon links in `src/routes/__root.tsx` and `public/site.webmanifest` (and its Arabic and Chinese copies, `site.ar.webmanifest` and `site.zh.webmanifest`), and `VERSION` in `public/sw.js`, so browsers drop the old icon.
 - Rejected earlier: the arch mark on a navy square (October 2026) and the navy seal with a brass rim and a Cormorant "D" (9–12 October 2026).
 - The header lockup lives in code: `Wordmark` in `src/components/showcase/shared.tsx` with the `.dxbch-*` styles.
