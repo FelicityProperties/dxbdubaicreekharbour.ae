@@ -247,7 +247,7 @@ markup, run the scan again against the local build before pushing.
 ## Rules the content follows
 
 - Independent showcase, not Emaar's site; the footer disclaimer says so on
-  every page and names the two data sources and their dates.
+  every page and names the two data sources: Emaar's figures with their check date, the Land Department's registered sales and rents (dated where they are shown), and the construction status with its source and month.
 - Emaar figures come only from `src/data/projects.ts`; registered figures
   only from `src/data/transactions.json`. Don't add numbers anywhere else —
   that includes FelicityBot's rules text.

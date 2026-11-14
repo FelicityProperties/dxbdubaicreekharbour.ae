@@ -54,10 +54,6 @@ describe("Project data", () => {
     const answer = FAQ.find((f) => f.q === "Are the prices current?")?.a ?? "";
     expect(answer).toContain(`checked on ${SITE.pricesCheckedOn}`);
     expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}`);
-    // The register's figures are refreshed on their own (sales and rents monthly, construction status with the project
-    // data): the footer names the Land Department without one date for both, and each page dates what it shows.
-    expect(DISCLAIMER).toContain("construction status are Dubai Land Department records, each dated where it is shown;");
-    expect(DISCLAIMER).not.toContain(SITE.constructionSource);
     // A project that is not now selling shows Emaar's starting price at launch on its card: the FAQ and the disclaimer say so.
     const launch = PROJECTS.filter((p) => p.status !== "Now selling" && p.startingPrice && !p.pricesFrom);
     for (const p of launch) expect(priceSummary(p).note, p.slug).toBe("Emaar's advertised starting price at launch — resale prices on request");
@@ -68,6 +64,13 @@ describe("Project data", () => {
     // A project page that dates a figure on another day (a handover date or plan from Emaar's booking page): the disclaimer allows for it.
     const other = PROJECTS.flatMap((p) => [p.startingPriceNote, p.pricesFromNote, p.sizesNote, p.handover?.note, p.paymentPlan?.note]).flatMap((n) => [...(n ?? "").matchAll(/(?:checked|on) (\d{1,2} [A-Z][a-z]+ \d{4})/g)].map((m) => m[1]!)).filter((d) => d !== SITE.pricesCheckedOn);
     if (other.length) expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}, unless the project page gives another date`);
+  });
+
+  it("credits the Land Department's figures in the footer: sales and rents dated where shown, construction status with its own source", () => {
+    // Sales and rents are refreshed monthly and every table dates them; the construction status comes from the project
+    // data's own capture, and list pages show it undated, so the footer keeps its source and month.
+    expect(DISCLAIMER).toContain("Registered sale and rental figures are Dubai Land Department records, dated where they are shown,");
+    expect(DISCLAIMER).toContain(`construction status is from ${SITE.constructionSource};`);
   });
 
   it("does not date every price on the home page with Emaar's check date", () => {
