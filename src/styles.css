@@ -259,7 +259,7 @@ a.chip:hover {color:var(--brass-text);border-color:var(--brass);}
  .filter-label {min-width:auto;}
  .benefit-grid {grid-template-columns:1fr;gap:12px;}
  .benefit {padding:18px;}
- .mobile-bar {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:6px 4px calc(6px + env(safe-area-inset-bottom));}
+ .mobile-bar {display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;padding:6px 4px calc(6px + env(safe-area-inset-bottom));}
  .mobile-bar .tab {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:50px;font-size:10px;letter-spacing:.2px;color:var(--muted-foreground);border-radius:3px;}
  .mobile-bar .tab svg {width:21px;height:21px;}
  .mobile-bar .tab.active {color:var(--brass-text);}
