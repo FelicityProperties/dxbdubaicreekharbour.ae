@@ -121,6 +121,10 @@ export function ProjectCollection({ heading = true, defaultView = "cards", shelf
   const router = useRouter();
   // The filters and the view start from the address (the server renders the same list), and the address follows them.
   const search = useRouterState({ select: (s) => s.location.search });
+  // The page this collection belongs to, fixed when it mounts: while the visitor goes on to another page, the router's
+  // location is already that page's (and this one is still on screen), and nothing may be written there.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const ownPage = useRef(pathname).current;
   const [f, setFilters] = useState<Filters>(() => filtersIn(search));
   const set: SetFilters = (next) => setFilters((cur) => ({ ...cur, ...next }));
   const [view, setView] = useState<View>(() => viewIn(search, defaultView));
@@ -218,18 +222,17 @@ export function ProjectCollection({ heading = true, defaultView = "cards", shelf
   const shown = useRef({ f, view });
   shown.current = { f, view };
   useEffect(() => {
-    if (sheet || (same(filtersIn(search), f) && viewIn(search, defaultView) === view)) return;
-    const page = router.state.location.pathname;
+    if (sheet || pathname !== ownPage || (same(filtersIn(search), f) && viewIn(search, defaultView) === view)) return;
     afterRouter(() => {
       const here = router.latestLocation;
       const now = shown.current;
       // Not if the visitor has gone on to another page (or opened the sheet again) meanwhile, or it is there already.
-      if (here.pathname !== page || here.hash === "filters" || (same(filtersIn(here.search), now.f) && viewIn(here.search, defaultView) === now.view)) return;
+      if (here.pathname !== ownPage || here.hash === "filters" || (same(filtersIn(here.search), now.f) && viewIn(here.search, defaultView) === now.view)) return;
       const others = Object.fromEntries(Object.entries(params(here.search)).filter(([k]) => !SEARCH_KEYS.includes(k)));
       const searchStr = router.options.stringifySearch({ ...others, ...searchFor(now.f, now.view, defaultView) });
       void router.navigate({ href: `${here.pathname}${searchStr}${here.hash ? `#${here.hash}` : ""}`, replace: true, resetScroll: false, hashScrollIntoView: false, viewTransition: false });
     });
-  }, [f, view, sheet, search]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [f, view, sheet, search, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
   /** Filters: the sheet opens once its code is here. If that code fails to load, the page reloads (once) to get it. */
   const openSheet = () => {
     if (kit) { onSheet(true); return; }
