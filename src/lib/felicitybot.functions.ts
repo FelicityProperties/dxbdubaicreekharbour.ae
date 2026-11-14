@@ -22,7 +22,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP } from "@tanstack/react-start/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { FELICITYBOT_SYSTEM, SAVE_ENQUIRY_TOOL, supportsFallback, supportsSystemMessages } from "@/lib/felicitybot.knowledge";
-import { PROJECT_OPTIONS, enquiryProblem, normalisePhone, recordEnquiry, takeQuota, type EnquiryRecord } from "@/lib/enquiries.functions";
+import { PROJECT_OPTIONS, enquiryProblem, enquiryRefused, normalisePhone, recordEnquiry, takeQuota, type EnquiryRecord } from "@/lib/enquiries.functions";
 import { PROJECTS } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
 import { sitePath } from "@/lib/site-pages";
@@ -33,11 +33,11 @@ export type { BotTurn, BotInput, BotResult } from "@/lib/felicitybot.shared";
 
 const DEFAULT_MODEL = "claude-opus-5-5";
 /* Vercel stops the function at 60 s (vite.config.ts). Model calls end by the deadline; an enquiry is
-   only saved with enough time left for the database insert and the alert email (up to ~10 s), so
-   a saved lead is always reported back to the visitor. */
+   only saved with enough time left for the enquiry allowance check (up to 2.5 s), the database insert
+   and the alert email (up to ~10 s), so a saved lead is always reported back to the visitor. */
 const DEADLINE_MS = 45_000;
 const MIN_CALL_MS = 8_000;
-const MIN_SAVE_MS = 12_000;
+const MIN_SAVE_MS = 14_500;
 const MAX_ROUNDS = 3;
 
 /* Brakes. A short burst limit per visitor lives in this server instance's memory. The database holds
@@ -121,7 +121,10 @@ async function runSaveEnquiry(input: SaveInput, page: string, ip: string): Promi
   // A detail the visitor needs to correct doesn't use up one of their saves.
   const problem = enquiryProblem(row);
   if (problem) return { text: `Not saved: ${problem} Ask the visitor to correct it.`, isError: true, saved: false };
-  if (!allow(saves, ip, SAVES_PER_IP, Date.now())) return { text: "Not saved: too many requests from this visitor. Give them the WhatsApp number and email instead.", isError: true, saved: false };
+  const tooMany = { text: "Not saved: too many requests from this visitor. Give them the WhatsApp number and email instead.", isError: true, saved: false };
+  if (!allow(saves, ip, SAVES_PER_IP, Date.now())) return tooMany;
+  // The connection's enquiry allowance, shared with the enquiry form.
+  if (await enquiryRefused(new Date(), ip)) { console.warn("FelicityBot: too many enquiries from one connection — not saved"); return tooMany; }
   const result = await recordEnquiry(row);
   if (result.ok) return { text: "Saved. The broker has the details and will contact the visitor.", isError: false, saved: true };
   if (result.reason === "invalid") return { text: `Not saved: ${result.message} Ask the visitor to correct it.`, isError: true, saved: false };

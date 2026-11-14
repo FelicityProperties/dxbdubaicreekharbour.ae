@@ -388,13 +388,19 @@ export function connectionOf(ip: string): string {
   return groups.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, "")).join(":") + "::/64";
 }
 let enquiryKey: { from: string; key: Buffer } | null = null;
-/** True when this connection has used up its enquiries for now. */
-async function enquiryRefused(now: Date): Promise<boolean> {
-  let ip = "unknown";
-  try {
-    const { getRequestIP } = await import("@tanstack/react-start/server");
-    ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-  } catch { /* not behind a request */ }
+/**
+ * True when this connection has used up its enquiries for now. The form and FelicityBot both ask here before saving,
+ * so they share one allowance per connection. `sender` is the sender's IP address (FelicityBot has it already); the
+ * form leaves it out and it is read from the request.
+ */
+export async function enquiryRefused(now: Date, sender?: string): Promise<boolean> {
+  let ip = sender ?? "unknown";
+  if (sender === undefined) {
+    try {
+      const { getRequestIP } = await import("@tanstack/react-start/server");
+      ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    } catch { /* not behind a request */ }
+  }
   if (ip === "unknown") return false;
   const conn = connectionOf(ip);
   if (!enquiryAllowed(conn, now.getTime())) return true;

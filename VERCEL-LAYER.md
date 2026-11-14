@@ -145,9 +145,11 @@ by hand.
   `curl -sI https://www.dxbdubaicreekharbour.ae/ | grep -i -E "x-frame|content-security|x-content-type|referrer|permissions"`.
 - Environment variables:
   - `DATABASE_URL` — from the Neon integration. Enquiries are saved here.
-    One connection can send 5 enquiries per 10 minutes and 10 per day
-    (counted only once the details are valid); past that the form shows its
-    WhatsApp fallback, so a script can't bury real leads or flood the inbox.
+    One connection can send 5 enquiries per 10 minutes and 10 per day,
+    through the form and FelicityBot together (counted only once the details
+    are valid); past that the form shows its WhatsApp fallback and FelicityBot
+    gives the WhatsApp number, so a script can't bury real leads or flood the
+    inbox.
     `/leads` lists the newest 500 and says when there are more.
   - `LEADS_PASSWORD` — password for `/leads`, **at least 20 characters**
     (shorter ones are refused, because nothing slows down guessing). Set it

@@ -19,12 +19,16 @@ vi.mock("@tanstack/react-start/server", () => ({ getRequestIP: () => ip }));
 const saved: unknown[] = [];
 let refusedBy: string | null = null;
 let quotaSteps: { key: string; limit: number }[] = [];
+let enquiriesLeft = true;
+const allowanceAsked: (string | undefined)[] = [];
 vi.mock("@/lib/enquiries.functions", async (orig) => {
   const real = await orig<typeof import("@/lib/enquiries.functions")>();
   return {
     ...real,
     recordEnquiry: async (row: unknown) => { saved.push(row); return { ok: true }; },
     takeQuota: async (steps: { key: string; limit: number }[]) => { quotaSteps = steps; return refusedBy; },
+    // The connection's enquiry allowance, shared with the form (src/test/enquiry-limits.test.ts runs the real one).
+    enquiryRefused: async (_now: Date, sender?: string) => { allowanceAsked.push(sender); return !enquiriesLeft; },
   };
 });
 
@@ -44,7 +48,7 @@ const lead = { name: "Ali Hassan", phone: "+971 50 123 4567", email: "", project
 const ask = (turns: BotTurn[], page = "/projects/creek-haven", lang?: unknown) => (askFelicityBot as unknown as (o: { data: unknown }) => Promise<BotResult>)({ data: { turns, page, ...(lang === undefined ? {} : { lang }) } });
 
 beforeEach(() => {
-  sent = []; replies = []; saved.length = 0; refusedBy = null; quotaSteps = [];
+  sent = []; replies = []; saved.length = 0; refusedBy = null; quotaSteps = []; enquiriesLeft = true; allowanceAsked.length = 0;
   ip = `203.0.113.${Math.floor(Math.random() * 250) + 1}`;
   process.env["ANTHROPIC_API_KEY"] = "sk-ant-test";
   delete process.env["FELICITYBOT_MODEL"];
@@ -156,8 +160,19 @@ describe("FelicityBot server", () => {
     const bad = { ...lead, phone: "call me" };
     for (let i = 0; i < 4; i++) replies.push(msg([call(`t${i}`, bad)], "tool_use"), msg([text("Please check the number.")]));
     for (let i = 0; i < 4; i++) await ask([{ role: "user", text: "yes" }]);
+    expect(allowanceAsked).toEqual([]); // nor of the connection's enquiry allowance
     replies = [msg([call("ok", lead)], "tool_use"), msg([text("Saved.")])];
     expect(await ask([{ role: "user", text: "yes" }])).toMatchObject({ saved: true });
+  });
+
+  it("passes a lead on only while the connection has enquiries left, the same allowance as the form", async () => {
+    replies = [msg([call("toolu_1", lead)], "tool_use"), msg([text("Please use WhatsApp.")])];
+    enquiriesLeft = false;
+    const res = await ask([{ role: "user", text: "I'm Ali Hassan, +971 50 123 4567, yes please call me" }]);
+    expect(res).toMatchObject({ ok: true, saved: false });
+    expect(saved).toHaveLength(0);
+    expect(allowanceAsked).toEqual([ip]);
+    expect(sent[1]!.body.messages.at(-1)).toEqual({ role: "user", content: [{ type: "tool_result", tool_use_id: "toolu_1", content: expect.stringContaining("too many requests"), is_error: true }] });
   });
 
   it("answers honestly when the answer was cut off or refused", async () => {
