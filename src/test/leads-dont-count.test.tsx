@@ -15,12 +15,13 @@ const stats: VisitStats = {
 };
 const asked: unknown[] = [];
 let leadsAnswer: unknown = { status: "ok", leads: [] };
+let visitsAnswer: unknown;
 vi.mock("@/lib/enquiries.functions", async (orig) => ({
   ...(await orig<typeof import("@/lib/enquiries.functions")>()),
   getLeads: async () => leadsAnswer,
 }));
 vi.mock("@/lib/visits.functions", () => ({
-  getVisitStats: async (o: { data: unknown }) => { asked.push(o.data); return { status: "ok", stats, emailAlerts: true }; },
+  getVisitStats: async (o: { data: unknown }) => { asked.push(o.data); return visitsAnswer; },
 }));
 
 import { Route } from "@/routes/leads";
@@ -28,7 +29,10 @@ import { isCountingThisDevice } from "@/components/SiteAnalytics";
 
 const Page = Route.options.component as () => React.ReactElement;
 
-beforeEach(() => { localStorage.clear(); sessionStorage.clear(); asked.length = 0; leadsAnswer = { status: "ok", leads: [] }; });
+beforeEach(() => {
+  localStorage.clear(); sessionStorage.clear(); asked.length = 0; leadsAnswer = { status: "ok", leads: [] };
+  visitsAnswer = { status: "ok", stats, emailAlerts: true, separateAnalyticsDb: false };
+});
 
 describe("/leads", () => {
   it("says the password is right and how to connect the database when none is set", async () => {
@@ -100,6 +104,18 @@ describe("/leads", () => {
     // A national number from abroad still can't be made international: it is shown as typed.
     expect(screen.getByText("020 7946 0018")).toBeTruthy();
     window.history.replaceState(null, "", "/");
+  });
+  it("asks for the visitor numbers' own database on a busy site, and stops asking once they have one", async () => {
+    const busy = { ...stats, visits: 1400 }; // 200 a day over 7 days
+    sessionStorage.setItem("dxbch-leads-password", "x".repeat(24));
+    visitsAnswer = { status: "ok", stats: busy, emailAlerts: true, separateAnalyticsDb: false };
+    const first = render(<Page />);
+    await screen.findByText(/Your site is getting busy \(about 200 visits a day\)/);
+    first.unmount();
+    visitsAnswer = { status: "ok", stats: busy, emailAlerts: true, separateAnalyticsDb: true };
+    render(<Page />);
+    await screen.findByText(/each person counted once a day/);
+    expect(screen.queryByText(/Your site is getting busy/)).toBeNull();
   });
   it("marks a browser from the /leads?me=1 link, without the password", async () => {
     window.history.replaceState(null, "", "/leads?me=1");

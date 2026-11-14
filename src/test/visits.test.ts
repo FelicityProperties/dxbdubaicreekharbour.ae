@@ -2,6 +2,15 @@
 /** Visit reports: what is accepted, how sources and devices are named, and what gets stored. */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@tanstack/react-start", () => ({
+  createServerFn: () => {
+    const b = {
+      validator: () => b,
+      handler: (fn: (o: { data: unknown }) => unknown) => (o: { data: unknown }) => fn({ data: o.data }),
+    };
+    return b;
+  },
+}));
 const writes: { url: string; q: string; values: unknown[] }[] = [];
 let noVisitsTable = ""; // a database whose site_visits table doesn't exist
 vi.mock("@neondatabase/serverless", () => ({
@@ -14,6 +23,7 @@ vi.mock("@neondatabase/serverless", () => ({
 }));
 
 import { handleVisit, ownAnalyticsDb } from "@/lib/visits.server";
+import { getVisitStats } from "@/lib/visits.functions";
 import { cleanReport, deviceName, isRobot, sourceName } from "@/lib/visits.shared";
 import { sitePath } from "@/lib/site-pages";
 
@@ -143,6 +153,18 @@ describe("Visit reports", () => {
       vi.useRealTimers();
       noVisitsTable = "";
       delete process.env["ANALYTICS_DATABASE_URL"];
+    }
+  });
+  it("tells /leads whether the numbers have a database of their own", async () => {
+    process.env["LEADS_PASSWORD"] = "x".repeat(24);
+    const ask = () => (getVisitStats as unknown as (o: { data: unknown }) => Promise<{ status: string; separateAnalyticsDb?: boolean }>)({ data: { password: "x".repeat(24), days: 7 } });
+    try {
+      expect(await ask()).toMatchObject({ status: "ok", separateAnalyticsDb: false });
+      process.env["ANALYTICS_DATABASE_URL"] = "postgresql://u:p@analytics.example/y";
+      expect(await ask()).toMatchObject({ status: "ok", separateAnalyticsDb: true });
+    } finally {
+      delete process.env["ANALYTICS_DATABASE_URL"];
+      delete process.env["LEADS_PASSWORD"];
     }
   });
   it("ignores robots, other sites and junk", async () => {

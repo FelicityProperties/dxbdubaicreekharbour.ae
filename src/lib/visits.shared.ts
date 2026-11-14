@@ -65,7 +65,8 @@ export type VisitStats = {
   countries: Ranked[];
   devices: Ranked[];
 };
-export type VisitStatsResult = { status: "ok"; stats: VisitStats; emailAlerts: boolean } | { status: "not-configured" | "wrong-password" | "offline" };
+/** separateAnalyticsDb: the numbers already have a database of their own (ANALYTICS_DATABASE_URL), apart from the enquiries. */
+export type VisitStatsResult = { status: "ok"; stats: VisitStats; emailAlerts: boolean; separateAnalyticsDb: boolean } | { status: "not-configured" | "wrong-password" | "offline" };
 
 /** Average visits a day above which the shared free database's monthly allowance gets tight (see VERCEL-LAYER.md). */
 export const BUSY_VISITS_PER_DAY = 120;

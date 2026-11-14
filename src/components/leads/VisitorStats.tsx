@@ -180,6 +180,7 @@ export function VisitorStats({ password, onSignedOut, onCountingChange }: { pass
   const [days, setDays] = useState<number>(7);
   const [stats, setStats] = useState<VisitStats | null>(null);
   const [emailAlerts, setEmailAlerts] = useState(true);
+  const [separateDb, setSeparateDb] = useState(false); // the numbers already have their own database
   const [problem, setProblem] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [counted, setCounted] = useState(true);
@@ -193,7 +194,7 @@ export function VisitorStats({ password, onSignedOut, onCountingChange }: { pass
     getVisitStats({ data: { password, days } })
       .then((res) => {
         if (!live) return;
-        if (res.status === "ok") { setStats(res.stats); setEmailAlerts(res.emailAlerts); setProblem(null); return; }
+        if (res.status === "ok") { setStats(res.stats); setEmailAlerts(res.emailAlerts); setSeparateDb(res.separateAnalyticsDb); setProblem(null); return; }
         setStats(null); // never leave another period's numbers under this period's button
         if (res.status === "offline") setProblem("Couldn't read the visitor numbers from the database.");
         else onSignedOut();
@@ -221,7 +222,7 @@ export function VisitorStats({ password, onSignedOut, onCountingChange }: { pass
       {s && !emailAlerts && (
         <p className="viz-warn">Lead emails aren't set up (RESEND_API_KEY in Vercel). They are the backup copy of every enquiry if the database is ever down.</p>
       )}
-      {s && perDay > BUSY_VISITS_PER_DAY && (
+      {s && perDay > BUSY_VISITS_PER_DAY && !separateDb && (
         <p className="viz-warn">Your site is getting busy (about {n(Math.round(perDay))} visits a day). Ask for the visitor numbers to move to their own free database, so they can never use up the enquiries database's monthly allowance.</p>
       )}
       {s && (
