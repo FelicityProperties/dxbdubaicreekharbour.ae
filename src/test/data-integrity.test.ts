@@ -66,6 +66,12 @@ describe("Project data", () => {
     if (other.length) expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}, unless the project page gives another date`);
   });
 
+  it("does not date every price on the home page with Emaar's check date", () => {
+    // The home page's cards include launch prices; the date belongs to the FAQ and the disclaimer, which explain it.
+    const home = readFileSync(join(process.cwd(), "src/routes/index.tsx"), "utf8");
+    expect(home).not.toMatch(/prices checked \{date\}/);
+  });
+
   it("never doubles a brand in a project label", () => {
     for (const p of PROJECTS) expect(projectLabel(p), p.slug).not.toMatch(/\bby (\S+) by \1\b/i);
     expect(PROJECTS.map(projectLabel)).toContain("Lyvia by Palace");
