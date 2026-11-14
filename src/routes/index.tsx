@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
     const summary = t("All {n} Emaar projects in Dubai Creek Harbour side by side: published prices, payment plans, handover dates and DLD-registered sales and rents.", { n: PROJECTS.length });
     return {
       ...pageHead({ locale: t.locale, path: "/", title: t("Dubai Creek Harbour: Emaar Projects, Prices & DLD Sales"), description: fitDescription([summary], descriptionMax(t.locale)) || summary }),
-      scripts: [ldScript([organizationNode(), websiteNode(), ...AI_VIEWINGS.map((v) => videoObjectNode(v, t))])],
+      scripts: [ldScript([organizationNode(t), websiteNode(t.locale), ...AI_VIEWINGS.map((v) => videoObjectNode(v, t))])],
     };
   },
   component: Home,
