@@ -108,9 +108,10 @@ export const MIN_LEADS_PASSWORD = 20;
 /**
  * Phone as typed, made checkable: full-width forms (what Chinese input methods
  * type, such as "（+86）" or "１３８") become plain digits and signs, Arabic-Indic
- * and Persian digits become 0-9, dots become spaces, Unicode dashes become "-",
- * and the invisible direction marks WhatsApp and contact apps add when copying
- * are dropped, so "٠٥٠١٢٣٤٥٦٧", "050.123.4567", "＋８６ １３８ ００１３ ８０００" and a pasted
+ * and Persian digits become 0-9, dots (and "。", which a Chinese input method
+ * types for a dot) become spaces, Unicode dashes become "-", and the invisible
+ * direction marks WhatsApp and contact apps add when copying are dropped, so
+ * "٠٥٠١٢٣٤٥٦٧", "050.123.4567", "050。123。4567", "＋８６ １３８ ００１３ ８０００" and a pasted
  * "\u202a+971 50 123 4567\u202c" pass.
  */
 export function normalisePhone(raw: string): string {
@@ -120,7 +121,7 @@ export function normalisePhone(raw: string): string {
     .replace(/[\u2010-\u2015\u2212]/g, "-")
     .replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x660))
     .replace(/[۰-۹]/g, (c) => String(c.charCodeAt(0) - 0x6f0))
-    .replace(/\./g, " ")
+    .replace(/[.。]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
