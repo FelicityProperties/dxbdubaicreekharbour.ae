@@ -13,7 +13,7 @@
  * from the enquiries; otherwise they share DATABASE_URL.
  */
 import { createHmac, scryptSync } from "node:crypto";
-import { connect, connectionOf, redact, type Sql } from "@/lib/enquiries.functions";
+import { connect, connectionOf, databaseUrl, redact, type Sql } from "@/lib/enquiries.functions";
 import { sitePath, pageName } from "@/lib/site-pages";
 import { SITE, PROJECTS } from "@/data/projects";
 import { projectLabel } from "@/lib/format";
@@ -21,6 +21,11 @@ import { withTimeout } from "@/lib/with-timeout";
 import { STAYED_SECONDS, WA_PLACES, cleanReport, deviceName, isRobot, sourceName, type Ranked, type VisitStats, type WaPlace } from "@/lib/visits.shared";
 
 const dbUrl = () => process.env["ANALYTICS_DATABASE_URL"] || process.env["DATABASE_URL"] || process.env["POSTGRES_URL"] || null;
+/** True when the numbers are kept in a database of their own (ANALYTICS_DATABASE_URL), apart from the enquiries. */
+export const ownAnalyticsDb = (): boolean => {
+  const own = process.env["ANALYTICS_DATABASE_URL"];
+  return !!own && own !== databaseUrl();
+};
 const OWN_HOST = new URL(SITE.url).hostname.replace(/^www\./, "");
 const dubaiDay = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Dubai", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
 
@@ -70,12 +75,24 @@ function keyFor(secret: string): Buffer {
   return visitKey.key;
 }
 
-/* Rows older than 13 months go: once a day per server instance, whether or not anyone opens /leads. */
+/* Rows older than 13 months go: once a day per server instance, whether or not anyone opens /leads. Once the numbers
+   have a database of their own, the rows from before the move stay in the enquiries database, where nothing reads
+   them any more: they go there too, on the same schedule (a failure waits for the next day; no table, nothing to do). */
 let cleanedOn = "";
+let leftBehind = true; // false once the enquiries database turns out to have no site_visits table
 async function cleanOldVisits(sql: Sql, day: string) {
   if (cleanedOn === day) return;
   cleanedOn = day;
   await withTimeout(sql`DELETE FROM site_visits WHERE day < now()::date - 400`, 4000).catch(() => { cleanedOn = ""; });
+  const before = databaseUrl();
+  if (!leftBehind || !before || !ownAnalyticsDb()) return;
+  try {
+    const old = await connect(before);
+    await withTimeout(old`DELETE FROM site_visits WHERE day < now()::date - 400`, 4000);
+  } catch (err) {
+    if ((err as { code?: string }).code === "42P01") leftBehind = false;
+    else console.error("old visits not deleted from the enquiries database:", redact(err, before));
+  }
 }
 
 /** POST /api/visit. Always answers 204: the browser has nothing to do with the answer. */

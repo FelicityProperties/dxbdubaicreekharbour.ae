@@ -2,12 +2,18 @@
 /** Visit reports: what is accepted, how sources and devices are named, and what gets stored. */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const writes: { q: string; values: unknown[] }[] = [];
+const writes: { url: string; q: string; values: unknown[] }[] = [];
+let noVisitsTable = ""; // a database whose site_visits table doesn't exist
 vi.mock("@neondatabase/serverless", () => ({
-  neon: () => async (strings: TemplateStringsArray, ...values: unknown[]) => { writes.push({ q: strings.join("?"), values }); return []; },
+  neon: (url: string) => async (strings: TemplateStringsArray, ...values: unknown[]) => {
+    const q = strings.join("?");
+    writes.push({ url, q, values });
+    if (url === noVisitsTable && q.includes("site_visits")) throw Object.assign(new Error('relation "site_visits" does not exist'), { code: "42P01" });
+    return [];
+  },
 }));
 
-import { handleVisit } from "@/lib/visits.server";
+import { handleVisit, ownAnalyticsDb } from "@/lib/visits.server";
 import { cleanReport, deviceName, isRobot, sourceName } from "@/lib/visits.shared";
 import { sitePath } from "@/lib/site-pages";
 
@@ -16,7 +22,8 @@ const report = { id: "0f8e2a3c-1d4b-4c55-9a6e-7b8c9d0e1f2a", pages: ["/", "/proj
 const post = (body: unknown, headers: Record<string, string> = {}) =>
   handleVisit(new Request("https://dxbdubaicreekharbour.ae/api/visit", { method: "POST", body: typeof body === "string" ? body : JSON.stringify(body), headers: { "user-agent": PHONE, "x-forwarded-for": "203.0.113.7", "x-vercel-ip-country": "ae", ...headers } }));
 
-beforeEach(() => { writes.length = 0; process.env["DATABASE_URL"] = "postgresql://u:p@db.example/x"; });
+const ENQUIRIES_DB = "postgresql://u:p@db.example/x";
+beforeEach(() => { writes.length = 0; process.env["DATABASE_URL"] = ENQUIRIES_DB; });
 
 describe("Visit reports", () => {
   it("keeps only the site's own pages, once each, and sane totals", () => {
@@ -106,6 +113,37 @@ describe("Visit reports", () => {
     expect(a.visitor).not.toBe(b.visitor);
     expect(a.conn).toBe(b.conn);
     expect((await codes(PHONE, "198.51.100.10")).conn).not.toBe(a.conn);
+  });
+  it("after a move to ANALYTICS_DATABASE_URL, still deletes 13-month-old visits left in the enquiries database", async () => {
+    const ANALYTICS_DB = "postgresql://u:p@analytics.example/y";
+    const deletesOn = async (day: string) => {
+      vi.setSystemTime(new Date(`${day}T12:00:00Z`)); // a new day: this server instance hasn't cleaned up yet
+      writes.length = 0;
+      await post({ ...report, id: crypto.randomUUID() });
+      return writes.filter((w) => w.q.startsWith("DELETE FROM site_visits")).map((w) => w.url);
+    };
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      expect(await deletesOn("2031-01-01")).toEqual([ENQUIRIES_DB]); // one database for everything
+      process.env["ANALYTICS_DATABASE_URL"] = ANALYTICS_DB;
+      expect(ownAnalyticsDb()).toBe(true);
+      expect(await deletesOn("2031-01-02")).toEqual([ANALYTICS_DB, ENQUIRIES_DB]);
+      // The enquiries database gets that one delete and nothing else: no table made, no visit written.
+      expect(writes.filter((w) => w.url === ENQUIRIES_DB).map((w) => w.q)).toEqual(["DELETE FROM site_visits WHERE day < now()::date - 400"]);
+      expect(writes.some((w) => w.url === ANALYTICS_DB && w.q.includes("INSERT INTO site_visits"))).toBe(true);
+      // An enquiries database that never had the table: the visit is still recorded, and it is not asked again.
+      noVisitsTable = ENQUIRIES_DB;
+      expect(await deletesOn("2031-01-03")).toEqual([ANALYTICS_DB, ENQUIRIES_DB]);
+      expect(writes.some((w) => w.url === ANALYTICS_DB && w.q.includes("INSERT INTO site_visits"))).toBe(true);
+      expect(await deletesOn("2031-01-04")).toEqual([ANALYTICS_DB]);
+      // The same address in both settings is still one database.
+      process.env["ANALYTICS_DATABASE_URL"] = ENQUIRIES_DB;
+      expect(ownAnalyticsDb()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+      noVisitsTable = "";
+      delete process.env["ANALYTICS_DATABASE_URL"];
+    }
   });
   it("ignores robots, other sites and junk", async () => {
     await post(report, { "user-agent": "Googlebot/2.1" });

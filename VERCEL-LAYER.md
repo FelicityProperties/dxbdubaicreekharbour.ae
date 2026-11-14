@@ -214,6 +214,10 @@ by hand.
     aren't set up, and when the site averages more than 120 visits a day:
     then create a second free Neon project and set `ANALYTICS_DATABASE_URL`
     to it, so visit numbers can never use up the enquiries' allowance.
+    Visits recorded before the switch stay in the enquiries database, where
+    `/leads` no longer reads them (to keep that history, copy the
+    `site_visits` table across first); they are still deleted there once 13
+    months old.
   - Comparisons ("▲ 12% on the 7 days before") use the same stretch of time
     cut at the same clock time, and only once counting covered it.
     "Visitors" over several days adds up each day's visitors. Referring
