@@ -13,11 +13,13 @@ vi.mock("@tanstack/react-start", () => ({
 }));
 const writes: { url: string; q: string; values: unknown[] }[] = [];
 let noVisitsTable = ""; // a database whose site_visits table doesn't exist
+let failingDeletes = ""; // a database whose deletes fail (a timeout, say)
 vi.mock("@neondatabase/serverless", () => ({
   neon: (url: string) => async (strings: TemplateStringsArray, ...values: unknown[]) => {
     const q = strings.join("?");
     writes.push({ url, q, values });
     if (url === noVisitsTable && q.includes("site_visits")) throw Object.assign(new Error('relation "site_visits" does not exist'), { code: "42P01" });
+    if (url === failingDeletes && q.startsWith("DELETE")) throw new Error("canceling statement due to statement timeout");
     return [];
   },
 }));
@@ -29,8 +31,14 @@ import { sitePath } from "@/lib/site-pages";
 
 const PHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
 const report = { id: "0f8e2a3c-1d4b-4c55-9a6e-7b8c9d0e1f2a", pages: ["/", "/projects/creek-haven", "/nope", "/"], views: 4, seconds: 48, ref: "https://www.google.com/", src: "" };
-const post = (body: unknown, headers: Record<string, string> = {}) =>
-  handleVisit(new Request("https://dxbdubaicreekharbour.ae/api/visit", { method: "POST", body: typeof body === "string" ? body : JSON.stringify(body), headers: { "user-agent": PHONE, "x-forwarded-for": "203.0.113.7", "x-vercel-ip-country": "ae", ...headers } }));
+const post = (body: unknown, headers: Record<string, string> = {}, handle = handleVisit) =>
+  handle(new Request("https://dxbdubaicreekharbour.ae/api/visit", { method: "POST", body: typeof body === "string" ? body : JSON.stringify(body), headers: { "user-agent": PHONE, "x-forwarded-for": "203.0.113.7", "x-vercel-ip-country": "ae", ...headers } }));
+/** A fresh copy of the server module: its once-a-day clean-up starts afresh, whatever the tests before it did. */
+async function freshHandleVisit() {
+  vi.resetModules();
+  return (await import("@/lib/visits.server")).handleVisit;
+}
+const deletes = () => writes.filter((w) => w.q.startsWith("DELETE FROM site_visits")).map((w) => w.url);
 
 const ENQUIRIES_DB = "postgresql://u:p@db.example/x";
 beforeEach(() => { writes.length = 0; process.env["DATABASE_URL"] = ENQUIRIES_DB; });
@@ -165,6 +173,29 @@ describe("Visit reports", () => {
     } finally {
       delete process.env["ANALYTICS_DATABASE_URL"];
       delete process.env["LEADS_PASSWORD"];
+    }
+  });
+  it("asks the enquiries database about old visits once a day, even while the numbers' own database fails its delete", async () => {
+    const ANALYTICS_DB = "postgresql://u:p@analytics.example/y";
+    const handle = await freshHandleVisit();
+    const reportsOn = async (day: string, n: number) => {
+      vi.setSystemTime(new Date(`${day}T12:00:00Z`));
+      writes.length = 0;
+      for (let i = 0; i < n; i++) await post({ ...report, id: crypto.randomUUID() }, {}, handle);
+      return deletes();
+    };
+    vi.useFakeTimers({ toFake: ["Date"] });
+    process.env["ANALYTICS_DATABASE_URL"] = ANALYTICS_DB;
+    failingDeletes = ANALYTICS_DB;
+    try {
+      // The failed delete is tried again with the next report; the enquiries database is left alone until tomorrow.
+      expect(await reportsOn("2031-03-01", 3)).toEqual([ANALYTICS_DB, ENQUIRIES_DB, ANALYTICS_DB, ANALYTICS_DB]);
+      failingDeletes = "";
+      expect(await reportsOn("2031-03-02", 2)).toEqual([ANALYTICS_DB, ENQUIRIES_DB]);
+    } finally {
+      vi.useRealTimers();
+      failingDeletes = "";
+      delete process.env["ANALYTICS_DATABASE_URL"];
     }
   });
   it("ignores robots, other sites and junk", async () => {

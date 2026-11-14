@@ -80,12 +80,14 @@ function keyFor(secret: string): Buffer {
    them any more: they go there too, on the same schedule (a failure waits for the next day; no table, nothing to do). */
 let cleanedOn = "";
 let leftBehind = true; // false once the enquiries database turns out to have no site_visits table
+let leftBehindOn = ""; // the day the enquiries database was last asked: once a day, whatever the delete above does
 async function cleanOldVisits(sql: Sql, day: string) {
   if (cleanedOn === day) return;
   cleanedOn = day;
   await withTimeout(sql`DELETE FROM site_visits WHERE day < now()::date - 400`, 4000).catch(() => { cleanedOn = ""; });
   const before = databaseUrl();
-  if (!leftBehind || !before || !ownAnalyticsDb()) return;
+  if (!leftBehind || !before || !ownAnalyticsDb() || leftBehindOn === day) return;
+  leftBehindOn = day;
   try {
     const old = await connect(before);
     await withTimeout(old`DELETE FROM site_visits WHERE day < now()::date - 400`, 4000);
