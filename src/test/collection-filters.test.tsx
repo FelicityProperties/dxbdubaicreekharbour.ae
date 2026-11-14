@@ -8,6 +8,7 @@ import { Outlet, RouterProvider, createBrowserHistory, createMemoryHistory, crea
 import { describe, expect, it, vi } from "vitest";
 
 import { ProjectCollection } from "@/components/showcase/ProjectCollection";
+import { Footer } from "@/components/showcase/shared";
 import { PROJECTS } from "@/data/projects";
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -113,5 +114,29 @@ describe("The project collection's filters", () => {
       form.remove();
       window.history.replaceState(null, "", "/");
     }
+  });
+});
+
+describe("A link to the page on screen", () => {
+  // The logo on the home page and the Projects link on /projects keep the collection's filters, so they lead to
+  // the address already shown: the router adds no history entry, and Back still leaves the page in one press.
+  it.each([
+    ["the logo", "/", <ProjectCollection shelf />, (c: HTMLElement) => c.querySelector<HTMLAnchorElement>("a.dxbch-lockup")!],
+    ["Projects", "/projects", <ProjectCollection heading={false} />, (c: HTMLElement) => within(c.querySelector<HTMLElement>(".footer-nav")!).getByRole("link", { name: "Projects" })],
+  ])("(%s) adds no history entry while the collection has filters", async (_name, path, page, link) => {
+    const root = createRootRoute({ component: () => <><Outlet /><Footer /></> });
+    const route = createRoute({ getParentRoute: () => root, path, component: () => page });
+    const history = createMemoryHistory({ initialEntries: [path] });
+    const router = createRouter({ routeTree: root.addChildren([route]), history });
+    const { container } = render(<RouterProvider router={router} />);
+    await waitFor(() => expect(container.querySelector(".filters")).not.toBeNull());
+    fireEvent.click(within(container.querySelector<HTMLElement>(".filters")!).getByRole("button", { name: "Ready · resale" }));
+    const filtered = `${path}?status=Ready`;
+    await waitFor(() => expect(router.state.location.href).toBe(filtered));
+    expect(link(container).getAttribute("href")).toBe(filtered);
+    fireEvent.click(link(container));
+    await pause(150);
+    expect(router.state.location.href).toBe(filtered);
+    expect(history.length).toBe(1);
   });
 });
