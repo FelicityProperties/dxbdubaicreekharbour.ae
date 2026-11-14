@@ -46,6 +46,14 @@ describe("/llms.txt (the site described for AI assistants)", () => {
     expect(text).toContain(`RERA ORN ${SITE.reraOrn}`);
   });
 
+  it("dates Emaar's figures as the project pages do, and calls a launch price one", () => {
+    // Projects that are not now selling show the starting price Emaar advertised at launch: not every price is that day's.
+    expect(text).toContain(`checked on ${SITE.pricesCheckedOn} unless the project page says otherwise (a check on another day, or the starting price Emaar advertised at launch, with resale prices on request).`);
+    for (const p of PROJECTS.filter((p) => p.status !== "Now selling" && p.startingPrice && !p.pricesFrom)) {
+      expect(lines.find((l) => l.includes(`](${pageUrl(`/projects/${p.slug}`)})`)), p.slug).toContain(`${p.startingPrice} (Emaar's advertised starting price at launch — resale prices on request)`);
+    }
+  });
+
   it("states the snapshot's own 12-month figures, and no by-bedroom median from fewer than five registrations", () => {
     for (const s of TX.summary.sales) {
       expect(text, s.basis).toContain(`${s.basis === "ready" ? "Ready" : "Off-plan"} apartments: ${num(s.count)} registered ${s.count === 1 ? "sale" : "sales"}, median ${num(s.medianPsf)} AED per sq ft, median price ${aed(s.medianPrice)}.`);

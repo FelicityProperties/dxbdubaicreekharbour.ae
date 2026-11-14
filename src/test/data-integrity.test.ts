@@ -2,13 +2,13 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { PROJECTS, DISTRICT, SITE } from "@/data/projects";
+import { PROJECTS, DISTRICT, SITE, FAQ } from "@/data/projects";
 import { BENEFITS } from "@/data/benefits";
 import { TERMS, PRIVACY } from "@/data/legal";
 import { TX, LATEST_ROW, salesCount12m, rentalsCount12m } from "@/data/transactions";
 import { aed, num, projectLabel } from "@/lib/format";
 import { DESCRIPTION_MAX, TITLE_MAX, projectDescription, projectTitle } from "@/lib/seo";
-import { handoverText } from "@/components/showcase/shared";
+import { DISCLAIMER, handoverText, priceSummary } from "@/components/showcase/shared";
 import { LOCALES, LOCALE_META, localizePath } from "@/i18n/locales";
 import sources from "../../design/benefits-sources.json";
 import districtSources from "../../design/business-district-sources.json";
@@ -48,6 +48,22 @@ describe("Project data", () => {
   it("carries the dates its figures were checked", () => {
     expect(TX.source.coverage).toMatch(/\d{4}/);
     expect(TX.source.snapshotDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("dates the prices in the FAQ and the footer disclaimer as the cards and project pages do", () => {
+    const answer = FAQ.find((f) => f.q === "Are the prices current?")?.a ?? "";
+    expect(answer).toContain(`checked on ${SITE.pricesCheckedOn}`);
+    expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}`);
+    // A project that is not now selling shows Emaar's starting price at launch on its card: the FAQ and the disclaimer say so.
+    const launch = PROJECTS.filter((p) => p.status !== "Now selling" && p.startingPrice && !p.pricesFrom);
+    for (const p of launch) expect(priceSummary(p).note, p.slug).toBe("Emaar's advertised starting price at launch — resale prices on request");
+    if (launch.length) {
+      expect(answer).toContain(`for projects now selling, the advertised starting price and, where Emaar lists units, the cheapest unit on its site, checked on ${SITE.pricesCheckedOn}; for the others, the starting price Emaar advertised at launch`);
+      expect(DISCLAIMER).toContain("unless the project page gives another date or says the price was advertised at launch");
+    }
+    // A project page that dates a figure on another day (a handover date or plan from Emaar's booking page): the disclaimer allows for it.
+    const other = PROJECTS.flatMap((p) => [p.startingPriceNote, p.pricesFromNote, p.sizesNote, p.handover?.note, p.paymentPlan?.note]).flatMap((n) => [...(n ?? "").matchAll(/(?:checked|on) (\d{1,2} [A-Z][a-z]+ \d{4})/g)].map((m) => m[1]!)).filter((d) => d !== SITE.pricesCheckedOn);
+    if (other.length) expect(DISCLAIMER).toContain(`as checked on ${SITE.pricesCheckedOn}, unless the project page gives another date`);
   });
 
   it("never doubles a brand in a project label", () => {
