@@ -151,4 +151,14 @@ describe("Phone numbers as pasted", () => {
       expect(enquiryProblem({ name: "Test", phone, email: null }), raw).toBeNull();
     }
   });
+  it("takes the full-width digits and brackets Chinese input methods type, and stores them as plain ones", () => {
+    for (const raw of ["＋８６ １３８ ００１３ ８０００", "１３８００１３８０００", "+971 ５０ １２３ ４５６７", "（+86）13800138000", "+86（0）13800138000", "+86　138　0013　8000", "+86－138－0013－8000"]) {
+      const phone = normalisePhone(raw);
+      expect(enquiryProblem({ name: "Test", phone, email: null }), raw).toBeNull();
+      expect(phone, raw).toMatch(/^[+\d\s()-]+$/);
+    }
+    expect(normalisePhone("＋８６ １３８ ００１３ ８０００")).toBe("+86 138 0013 8000");
+    expect(normalisePhone("（+86）13800138000")).toBe("(+86)13800138000");
+    expect(normalisePhone("+971 ５０ １２３ ４５６７")).toBe("+971 50 123 4567");
+  });
 });

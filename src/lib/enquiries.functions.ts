@@ -106,13 +106,16 @@ export function databaseUrl(): string | null {
 export const MIN_LEADS_PASSWORD = 20;
 
 /**
- * Phone as typed, made checkable: Arabic-Indic and Persian digits become
- * 0-9, dots become spaces, Unicode dashes become "-", and the invisible
- * direction marks WhatsApp and contact apps add when copying are dropped, so
- * "٠٥٠١٢٣٤٥٦٧", "050.123.4567" and a pasted "\u202a+971 50 123 4567\u202c" pass.
+ * Phone as typed, made checkable: full-width forms (what Chinese input methods
+ * type, such as "（+86）" or "１３８") become plain digits and signs, Arabic-Indic
+ * and Persian digits become 0-9, dots become spaces, Unicode dashes become "-",
+ * and the invisible direction marks WhatsApp and contact apps add when copying
+ * are dropped, so "٠٥٠١٢٣٤٥٦٧", "050.123.4567", "＋８６ １３８ ００１３ ８０００" and a pasted
+ * "\u202a+971 50 123 4567\u202c" pass.
  */
 export function normalisePhone(raw: string): string {
   return raw
+    .normalize("NFKC")
     .replace(/\p{Cf}/gu, "")
     .replace(/[\u2010-\u2015\u2212]/g, "-")
     .replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x660))
