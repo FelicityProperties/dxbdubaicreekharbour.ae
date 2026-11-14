@@ -230,6 +230,10 @@ export function ProjectCollection({ heading = true, defaultView = "cards", shelf
       if (here.pathname !== ownPage || here.hash === "filters" || (same(filtersIn(here.search), now.f) && viewIn(here.search, defaultView) === now.view)) return;
       const others = Object.fromEntries(Object.entries(params(here.search)).filter(([k]) => !SEARCH_KEYS.includes(k)));
       const searchStr = router.options.stringifySearch({ ...others, ...searchFor(now.f, now.view, defaultView) });
+      // An entry made by a plain "#…" link (the phone tab bar's Enquire) has no router state, which the router reads as
+      // the first entry: replaced as it is, the phone's back arrow would go to the home page instead of back. Give it
+      // its place first, as useBackCloses does (its index is at least 1: there is a page behind it), without a jump.
+      if (!window.history.state?.__TSR_key) window.history.replaceState({ ...here.state, __TSR_index: Math.max(1, here.state.__TSR_index ?? 0), __hashScrollIntoViewOptions: false }, "");
       void router.navigate({ href: `${here.pathname}${searchStr}${here.hash ? `#${here.hash}` : ""}`, replace: true, resetScroll: false, hashScrollIntoView: false, viewTransition: false });
     });
   }, [f, view, sheet, search, pathname]); // eslint-disable-line react-hooks/exhaustive-deps

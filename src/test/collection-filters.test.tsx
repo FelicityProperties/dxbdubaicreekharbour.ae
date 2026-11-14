@@ -4,8 +4,8 @@
  * filters starts with that list. They stay on their own page: the page the visitor goes on to never gets them.
  */
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { Outlet, RouterProvider, createMemoryHistory, createRootRoute, createRoute, createRouter } from "@tanstack/react-router";
-import { describe, expect, it } from "vitest";
+import { Outlet, RouterProvider, createBrowserHistory, createMemoryHistory, createRootRoute, createRoute, createRouter, type RouterHistory } from "@tanstack/react-router";
+import { describe, expect, it, vi } from "vitest";
 
 import { ProjectCollection } from "@/components/showcase/ProjectCollection";
 import { PROJECTS } from "@/data/projects";
@@ -14,12 +14,12 @@ const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** A page whose code arrives a moment later, as the real routes' split chunks do: the page before stays on screen meanwhile. */
 const pending = () => pause(80);
 
-function openAt(url: string) {
+function openAt(at: string | RouterHistory) {
   const root = createRootRoute({ component: Outlet });
   const home = createRoute({ getParentRoute: () => root, path: "/", loader: pending, component: () => <ProjectCollection shelf /> });
   const list = createRoute({ getParentRoute: () => root, path: "/projects", component: () => <ProjectCollection heading={false} /> });
   const project = createRoute({ getParentRoute: () => root, path: "/projects/$slug", loader: pending, component: () => <p>A project page</p> });
-  const history = createMemoryHistory({ initialEntries: [url] });
+  const history = typeof at === "string" ? createMemoryHistory({ initialEntries: [at] }) : at;
   const router = createRouter({ routeTree: root.addChildren([home, list, project]), history });
   return { router, history, ...render(<RouterProvider router={router} />) };
 }
@@ -83,5 +83,35 @@ describe("The project collection's filters", () => {
     await pause(100);
     expect(router.state.location.href).toBe("/");
     expect(pressed(container)).toEqual(["All", "Anywhere", "Any", "Any budget", "Cards"]);
+  });
+
+  it("leave the back arrow a page to go back to on an entry a plain \"#…\" link added (the phone tab bar's Enquire)", async () => {
+    window.history.replaceState(null, "", "/projects?status=Ready&beds=2");
+    const history = createBrowserHistory();
+    const jumps = vi.fn();
+    const form = document.body.appendChild(Object.assign(document.createElement("div"), { id: "enquire", scrollIntoView: jumps }));
+    try {
+      const { router } = openAt(history);
+      const chip = () => screen.getByRole("button", { name: "Remove filter: Ready · resale" });
+      await waitFor(chip);
+      window.location.hash = "#enquire"; // the browser adds an entry of its own, without the router's state
+      await waitFor(() => expect(router.state.location.hash).toBe("enquire"));
+      expect(window.history.state ?? null).toBeNull();
+      jumps.mockClear();
+      fireEvent.click(chip());
+      await waitFor(() => expect(window.location.search).toBe("?beds=2"));
+      await pause(50);
+      expect(window.location.hash).toBe("#enquire");
+      expect(jumps).not.toHaveBeenCalled(); // the page stays where the visitor is
+      // The phone's back arrow goes back when the router says it can, and to the home page when it can't.
+      expect(window.history.state?.__TSR_index).toBeGreaterThanOrEqual(1);
+      expect(router.history.canGoBack()).toBe(true);
+      router.history.back();
+      await waitFor(() => expect(router.state.location.href).toBe("/projects?beds=2")); // the list as the visitor left it
+    } finally {
+      history.destroy();
+      form.remove();
+      window.history.replaceState(null, "", "/");
+    }
   });
 });
