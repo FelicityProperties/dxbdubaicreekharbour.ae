@@ -105,6 +105,23 @@ describe("/leads", () => {
     expect(screen.getByText("020 7946 0018")).toBeTruthy();
     window.history.replaceState(null, "", "/");
   });
+  it("drops a 0 typed after 971, and reads the bracketed plus a Chinese input method types", async () => {
+    const lead = (id: string, phone: string, country: string | null) => ({
+      id, created_at: "2026-11-14T08:00:00.000Z", name: `Buyer ${id}`, phone, email: null, country, language: null, project: null,
+      looking_for: null, buy_as: null, bedrooms: null, budget: null, timing: null, funding: null, message: null, page: "/",
+    });
+    const leads = [lead("1", "971 050 123 4567", "United Kingdom"), lead("2", "+971 050 123 4567", null), lead("3", "00971 050 123 4567", "United Kingdom"), lead("4", "+44 (0)20 7946 0958", "United Kingdom"), lead("5", "(+86)13800138000", "China")];
+    leadsAnswer = { status: "ok", total: leads.length, leads };
+    window.history.replaceState(null, "", "/leads?tab=enquiries");
+    sessionStorage.setItem("dxbch-leads-password", "x".repeat(24));
+    render(<Page />);
+    await screen.findByText(/5 enquiries, newest first/);
+    const links = (name: string) => [...screen.getByRole("heading", { name }).closest("article")!.querySelectorAll("a")].map((a) => a.getAttribute("href"));
+    for (const name of ["Buyer 1", "Buyer 2", "Buyer 3"]) expect(links(name), name).toEqual(["https://wa.me/971501234567", "tel:+971501234567"]);
+    expect(links("Buyer 4")).toEqual(["https://wa.me/442079460958", "tel:+442079460958"]);
+    expect(links("Buyer 5")).toEqual(["https://wa.me/8613800138000", "tel:+8613800138000"]);
+    window.history.replaceState(null, "", "/");
+  });
   it("asks for the visitor numbers' own database on a busy site, and stops asking once they have one", async () => {
     const busy = { ...stats, visits: 1400 }; // 200 a day over 7 days
     sessionStorage.setItem("dxbch-leads-password", "x".repeat(24));
