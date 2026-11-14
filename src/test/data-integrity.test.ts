@@ -69,7 +69,10 @@ describe("Project data", () => {
   it("does not date every price on the home page with Emaar's check date", () => {
     // The home page's cards include launch prices; the date belongs to the FAQ and the disclaimer, which explain it.
     const home = readFileSync(join(process.cwd(), "src/routes/index.tsx"), "utf8");
-    expect(home).not.toMatch(/prices checked \{date\}/);
+    expect(home).not.toContain("pricesCheckedOn");
+    // The /projects introduction keeps its qualification, as the FAQ and the disclaimer do.
+    const projects = readFileSync(join(process.cwd(), "src/routes/projects.index.tsx"), "utf8");
+    expect(projects).toContain("checked {date} unless the project page says otherwise");
   });
 
   it("never doubles a brand in a project label", () => {
