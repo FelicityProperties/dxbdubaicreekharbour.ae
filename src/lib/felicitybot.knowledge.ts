@@ -145,7 +145,7 @@ function companyBlock(): string {
   return join(
     "## Who runs this site",
     `${SITE.company}, a Dubai real-estate brokerage (${SITE.licence}), ${SITE.address}. Broker: ${SITE.broker}. Emaar has given ${SITE.company} a no-objection certificate (dated ${SITE.emaarNoc}) to market its projects at the prices Emaar publishes.`,
-    `WhatsApp ${SITE.whatsappDisplay} · email ${SITE.email}. Enquiry form on most pages (link /#enquire). Terms: /terms. Privacy: /privacy.`,
+    `WhatsApp ${SITE.whatsappDisplay} · email ${SITE.email}. Enquiry form on most pages. Terms: /terms. Privacy: /privacy.`,
   );
 }
 

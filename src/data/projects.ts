@@ -5438,7 +5438,7 @@ export const FAQ = [
   },
   {
     "q": "Are the prices current?",
-    "a": "Every price is Emaar's own published figure, checked on 9 October 2026: the advertised starting price for the project and, where Emaar lists units, the cheapest unit on its site that day. Prices and availability change often — message us on WhatsApp for today's price list."
+    "a": "Every price is Emaar's own published figure: for projects now selling, the advertised starting price and, where Emaar lists units, the cheapest unit on its site, checked on 9 October 2026; for the others, the starting price Emaar advertised at launch, with resale prices on request. Prices and availability change often — message us on WhatsApp for today's price list."
   },
   {
     "q": "What do 'Now selling', 'Ready' and 'Resale' mean here?",

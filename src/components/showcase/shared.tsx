@@ -36,7 +36,7 @@ export const waMessage = (t: T, english: string, template: string = english, var
 export const genericMessage = (t: T = EN) => waMessage(t, GENERIC_MESSAGE);
 export const projectMessage = (name: string, t: T = EN) => waMessage(t, `Hi, I'm interested in ${name} at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan.`, msg("Hi, I'm interested in {name} at Dubai Creek Harbour. Please send me Emaar's current price list and payment plan."), { name });
 export const whatsappUrl = (message = GENERIC_MESSAGE) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
-export const disclaimer = (t: T = EN) => t("DXB Creek Harbour is an independent property showcase run by {company}, a Dubai real-estate brokerage registered with the Real Estate Regulatory Agency. The projects shown are developed by Emaar Properties PJSC; this website is not owned, operated or endorsed by Emaar, which has given {company} its no-objection certificate (dated {noc}) to market these projects. Prices, sizes, unit counts, payment plans and handover dates are Emaar's own published figures as checked on {checked}; all can change without notice and availability is limited — confirm current details before you commit. Registered sale and rental figures and construction status are {constructionSource}; they are shown as registered and are not valuations or advice. Images and brochures are Emaar's; project names belong to their owners.", { company: SITE.company, noc: dateText(SITE.emaarNoc, t.locale), checked: dateText(SITE.pricesCheckedOn, t.locale), constructionSource: t(SITE.constructionSource) });
+export const disclaimer = (t: T = EN) => t("DXB Creek Harbour is an independent property showcase run by {company}, a Dubai real-estate brokerage registered with the Real Estate Regulatory Agency. The projects shown are developed by Emaar Properties PJSC; this website is not owned, operated or endorsed by Emaar, which has given {company} its no-objection certificate (dated {noc}) to market these projects. Prices, sizes, unit counts, payment plans and handover dates are Emaar's own published figures as checked on {checked}, unless the project page gives another date or says the price was advertised at launch; all can change without notice and availability is limited — confirm current details before you commit. Registered sale and rental figures and construction status are {constructionSource}; they are shown as registered and are not valuations or advice. Images and brochures are Emaar's; project names belong to their owners.", { company: SITE.company, noc: dateText(SITE.emaarNoc, t.locale), checked: dateText(SITE.pricesCheckedOn, t.locale), constructionSource: t(SITE.constructionSource) });
 export const DISCLAIMER = disclaimer();
 
 /** The WhatsApp glyph (the phone-in-a-speech-bubble people recognise), as a plain SVG so it works anywhere an icon does. */
@@ -72,7 +72,10 @@ export function LanguageLinks({ compact = false, onPick }: { compact?: boolean; 
   return <span className={`lang-links${compact ? " compact" : ""}`}>{compact && <Languages className="lang-icon" aria-hidden="true" />}{shown.map((l) => <a key={l} href={hrefFor(l)} lang={LOCALE_META[l].htmlLang} hrefLang={LOCALE_META[l].hreflang} className={`nav-link lang-link${l === locale ? " active" : ""}`} aria-current={l === locale ? "true" : undefined} onClick={onPick}>{LOCALE_META[l].label}</a>)}</span>;
 }
 
-/** Pages that render an enquiry section: "Enquire" jumps to it there (keeping the project prefilled); everything else (terms, privacy, leads, 404s) goes to the home form. */
+/**
+ * Pages that render an enquiry section: "Enquire" jumps to it there (keeping the project prefilled). The others (terms,
+ * privacy, leads, 404s) show no "Enquire": navigation never links to another page's #section.
+ */
 const pageHasForm = (path: string) => ["/", "/projects", "/payment-plans", "/market", "/area", "/guide"].includes(path) || PROJECTS.some((p) => path === `/projects/${p.slug}`);
 function NavLinks({ onPick }: { onPick?: () => void }) {
   const t = useT();
@@ -82,7 +85,7 @@ function NavLinks({ onPick }: { onPick?: () => void }) {
     <Link to="/market" className="nav-link" onClick={onPick}>{t("Market data")}</Link>
     <Link to="/area" className="nav-link" onClick={onPick}>{t("The area")}</Link>
     <Link to="/guide" className="nav-link" onClick={onPick}>{t("Buying guide")}</Link>
-    {pageHasForm(path) ? <a href="#enquire" className="nav-link" onClick={onPick}>{t("Enquire")}</a> : <Link to="/" hash="enquire" className="nav-link" onClick={onPick}>{t("Enquire")}</Link>}
+    {pageHasForm(path) && <a href="#enquire" className="nav-link" onClick={onPick}>{t("Enquire")}</a>}
   </>;
 }
 type InstallPromptEvent = Event & { prompt: () => Promise<void> };
@@ -186,7 +189,7 @@ function AppMenu({ kit, open, onOpenChange, onClosed, leave }: { kit: DrawerKit;
         <ul className="app-menu-group">
           <li><a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" className="app-menu-row app-menu-wa" onClick={close}><WhatsAppIcon /><span className="app-menu-label">{t("WhatsApp us")}<span className="app-menu-sub"><span dir="ltr">{SITE.whatsappDisplay}</span></span></span>{outward}</a></li>
           <li><a href={mailtoUrl()} className="app-menu-row" onClick={close}><Mail aria-hidden="true" /><span className="app-menu-label">{t("Email")}<span className="app-menu-sub"><span dir="ltr">{SITE.email}</span></span></span>{outward}</a></li>
-          <li>{pageHasForm(path) ? <a href="#enquire" className="app-menu-row" onClick={after(toEnquire)}>{enquire}</a> : <Link to="/" hash="enquire" activeProps={{}} className="app-menu-row" onClick={after((replace) => void router.navigate({ to: "/", hash: "enquire", replace, viewTransition: false }))}>{enquire}</Link>}</li>
+          {pageHasForm(path) && <li><a href="#enquire" className="app-menu-row" onClick={after(toEnquire)}>{enquire}</a></li>}
         </ul>
         {/* A full page load: it too takes the place of the "#menu" entry. */}
         <div className="app-menu-lang"><Languages aria-hidden="true" /><LanguageLinks onPick={(e) => { if (plainClick(e) && leave()) { e.preventDefault(); window.location.replace(e.currentTarget.href); } else close(); }} /></div>
@@ -248,7 +251,8 @@ export function Footer() {
 }
 /**
  * Phone-only bottom tab bar, app style: the three places people go plus the two things they do. Tapping the tab
- * you are on scrolls back to the top. On a project's page it becomes that project's contact bar.
+ * you are on scrolls back to the top. On a project's page it becomes that project's contact bar. A page without an
+ * enquiry form leaves "Enquire" out (no link to another page's #enquire), and its four tabs spread across the bar.
  */
 export function MobileBar() {
   const t = useT();
@@ -264,7 +268,7 @@ export function MobileBar() {
     <Link to="/" activeProps={{}} {...tab(path === "/", path === "/")}>{icon(<Home />, t("Home"))}</Link>
     <Link to="/projects" activeProps={{}} {...tab(path.startsWith("/projects"), path === "/projects")}>{icon(<Building2 />, t("Projects"))}</Link>
     <Link to="/market" activeProps={{}} {...tab(path.startsWith("/market"), path === "/market")}>{icon(<TrendingUp />, t("Market"))}</Link>
-    {hasForm ? <a href="#enquire" className="tab">{icon(<PenLine />, t("Enquire"))}</a> : <Link to="/" hash="enquire" className="tab">{icon(<PenLine />, t("Enquire"))}</Link>}
+    {hasForm && <a href="#enquire" className="tab">{icon(<PenLine />, t("Enquire"))}</a>}
     <a href={whatsappUrl(genericMessage(t))} target="_blank" rel="noopener noreferrer" className="tab tab-wa">{icon(<WhatsAppIcon />, "WhatsApp")}</a>
   </nav>;
 }

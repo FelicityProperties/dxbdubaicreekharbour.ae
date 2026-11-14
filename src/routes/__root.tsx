@@ -89,7 +89,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico?v=dhow", sizes: "32x32" },
       { rel: "icon", href: "/favicon.svg?v=dhow", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=dhow" },
-      { rel: "manifest", href: "/site.webmanifest" },
+      // Installed from an Arabic or Chinese page, the app opens in that language (public/site.ar.webmanifest, site.zh.webmanifest).
+      { rel: "manifest", href: t.locale === "en" ? "/site.webmanifest" : `/site.${t.locale}.webmanifest` },
 
       // Fonts are self-hosted (public/fonts, declared in styles.css); preload the two every page needs first.
       { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/inter-latin.woff2", crossOrigin: "anonymous" },

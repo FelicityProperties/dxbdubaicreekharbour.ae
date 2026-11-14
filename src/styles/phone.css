@@ -84,8 +84,8 @@
  :is(.app-menu,.site-footer) .lang-link:active {background:var(--muted);}
  :is(.app-menu,.site-footer) .lang-link.active {background:var(--primary);color:var(--primary-foreground);font-weight:600;}
 
- /* ── Bottom bar: five tabs on glass, the active one with a brass pill behind its icon ── */
- .mobile-bar {grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;gap:0;height:calc(var(--tab-bar-h) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--app-glass);-webkit-backdrop-filter:var(--app-glass-blur);backdrop-filter:var(--app-glass-blur);border-top:1px solid oklch(.88 .012 83 / .75);view-transition-name:tab-bar;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+ /* ── Bottom bar: five tabs on glass (four, spread across, on a page without an enquiry form), the active one with a brass pill behind its icon ── */
+ .mobile-bar {grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;gap:0;height:calc(var(--tab-bar-h) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--app-glass);-webkit-backdrop-filter:var(--app-glass-blur);backdrop-filter:var(--app-glass-blur);border-top:1px solid oklch(.88 .012 83 / .75);view-transition-name:tab-bar;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
  .mobile-bar .tab {gap:4px;height:var(--tab-bar-h);min-height:0;min-width:0;padding:0;font-size:12px;font-weight:500;line-height:16px;letter-spacing:0;color:var(--muted-foreground);-webkit-touch-callout:none;}
  :root:is(:lang(ar),:lang(zh)) .mobile-bar .tab {font-size:12px;}
  .mobile-bar .tab-label {max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}

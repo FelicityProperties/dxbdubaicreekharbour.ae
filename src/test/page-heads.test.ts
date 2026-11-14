@@ -1,4 +1,6 @@
-/** What route heads tell search engines and share previews, in each language. */
+/** What route heads tell search engines, share previews and phones installing the site, in each language. */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { Route as RootRoute } from "@/routes/__root";
@@ -7,9 +9,9 @@ import { Route as ProjectsRoute } from "@/routes/projects.index";
 import { Route as TermsRoute } from "@/routes/terms";
 import { Route as PrivacyRoute } from "@/routes/privacy";
 import { loadMessages, tFor } from "@/i18n/messages";
-import { LOCALES, type Locale } from "@/i18n/locales";
+import { LOCALES, LOCALE_META, localizePath, type Locale } from "@/i18n/locales";
 
-type Head = { meta?: Record<string, string>[]; scripts?: { type?: string; children?: string }[] };
+type Head = { meta?: Record<string, string>[]; links?: { rel: string; href: string }[]; scripts?: { type?: string; children?: string }[] };
 const headOf = (route: { options: { head?: unknown } }, locale: Locale) => (route.options.head as (ctx: unknown) => Head)({ match: { context: { locale } } });
 
 /**
@@ -32,6 +34,41 @@ describe("Share previews", () => {
       const root = headOf(RootRoute, locale);
       for (const [page, route] of [["/terms", TermsRoute], ["/privacy", PrivacyRoute]] as const) expect(pageMeta(root, headOf(route, locale)).get("twitter:card"), `${page} ${locale}`).toBe("summary");
       for (const [page, route] of [["/", HomeRoute], ["/projects", ProjectsRoute]] as const) expect(pageMeta(root, headOf(route, locale)).get("twitter:card"), `${page} ${locale}`).toBe("summary_large_image");
+    }
+  });
+});
+
+describe("The app a phone installs", () => {
+  type Shortcut = { name: string; short_name: string; url: string; icons: unknown };
+  const manifest = (href: string) => JSON.parse(readFileSync(join(process.cwd(), "public", href), "utf8")) as Record<string, unknown>;
+  it("opens in the language of the page it was installed from, with its shortcuts in that language", () => {
+    const english = manifest("/site.webmanifest");
+    const englishShortcuts = english["shortcuts"] as Shortcut[];
+    for (const locale of LOCALES) {
+      const t = tFor(locale);
+      const root = headOf(RootRoute, locale);
+      const links = (root.links ?? []).filter((l) => l.rel === "manifest");
+      expect(links, locale).toHaveLength(1);
+      const m = manifest(links[0]!.href);
+      expect([m["start_url"], m["scope"]], locale).toEqual([localizePath("/", locale), "/"]);
+      expect([m["lang"], m["dir"] ?? "ltr"], locale).toEqual([LOCALE_META[locale].htmlLang, LOCALE_META[locale].dir]);
+      if (locale !== "en") {
+        // Its own app (an English install stays English), described as the site's pages describe it in that language.
+        expect(m["id"], locale).toBe(`/${locale}`);
+        expect(m["description"], locale).toBe(pageMeta(root).get("description"));
+        // The English app's shortcuts, named in this language and opening this language's pages.
+        const shortcuts = m["shortcuts"] as Shortcut[];
+        expect(shortcuts.map((s) => s.url), locale).toEqual(englishShortcuts.map((s) => localizePath(s.url, locale)));
+        shortcuts.forEach((s, i) => {
+          const en = englishShortcuts[i]!;
+          expect(s.name, `${locale} ${en.name}`).toBe(t(en.name));
+          expect([t(en.short_name), t(en.name)], `${locale} ${en.short_name}`).toContain(s.short_name);
+          expect([s.name, s.short_name], `${locale} ${en.name}`).not.toContain(en.name);
+          expect(s.short_name, `${locale} ${en.short_name}`).not.toBe(en.short_name);
+          expect(s.icons, `${locale} ${en.name}`).toEqual(en.icons);
+        });
+      }
+      for (const key of ["name", "short_name", "display", "orientation", "icons", "theme_color", "background_color"]) expect(m[key], `${locale} ${key}`).toEqual(english[key]);
     }
   });
 });
