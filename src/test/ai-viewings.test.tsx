@@ -12,7 +12,7 @@ import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import encoded from "@/data/ai-viewings.json";
-import { AI_VIEWINGS, AI_VIEWING_SPECS, permitLine, videoObjectNode, viewingLine, viewingMessage, type AiViewing, type EncodedViewing } from "@/data/ai-viewings";
+import { AI_VIEWINGS, AI_VIEWING_SPECS, aiViewingFor, permitLine, videoObjectNode, viewingLine, viewingMessage, type AiViewing, type EncodedViewing } from "@/data/ai-viewings";
 import { PROJECTS, SITE } from "@/data/projects";
 import { whatsappUrl } from "@/components/showcase/shared";
 import { ViewingCard } from "@/components/showcase/AiViewings";
@@ -56,20 +56,44 @@ function jpegSize(file: string): [number, number] | null {
 }
 
 describe("AI viewings: what the owner asked for", () => {
-  it("leads with Lyvia, then Valia and Albero, each a project on this site, with its own permit", () => {
-    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["lyvia-by-palace", "valia", "albero"]);
-    for (const v of AI_VIEWING_SPECS) expect(PROJECTS.some((p) => p.slug === v.slug), v.slug).toBe(true);
-    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Lyvia by Palace · Dubai Creek Harbour · Emaar", "Valia · Dubai Creek Harbour · Emaar", "Albero · Dubai Creek Harbour · Emaar"]);
+  it("leads with the Creek Harbour reel, then Lyvia, Valia and Albero, each with its own permits", () => {
+    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["dubai-creek-harbour", "lyvia-by-palace", "valia", "albero"]);
+    // A viewing of one project is named after it; the reel names each project it shows. Every one is a project on this site.
+    for (const v of AI_VIEWING_SPECS) for (const slug of v.covers ? v.covers.map((c) => c.slug) : [v.slug]) expect(PROJECTS.some((p) => p.slug === slug), slug).toBe(true);
+    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Creek Bay · Altan · Lyvia by Palace · Dubai Creek Harbour · Emaar", "Lyvia by Palace · Dubai Creek Harbour · Emaar", "Valia · Dubai Creek Harbour · Emaar", "Albero · Dubai Creek Harbour · Emaar"]);
     expect(AI_VIEWING_SPECS.map(permitLine)).toEqual([
+      // As printed at the foot of the owner's reel (25 Nov 2026).
+      "Felicity Properties · RERA ORN 33951 · DLD Permits: Creek Bay 1140397881 · Altan 1635543433 · Lyvia by Palace 2107900942",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 2107900942",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 0710819088",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1251122980",
     ]);
-    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, true, true]); // all three keep their songs since 27 Oct 2026
+    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, true, true, true]); // every viewing keeps its song (since 27 Oct 2026)
+  });
+
+  it("names the reel's projects exactly as its links and permits do", () => {
+    for (const v of AI_VIEWING_SPECS.filter((s) => s.covers)) {
+      expect(v.project).toBe(v.covers!.map((c) => c.project).join(" · "));
+      expect(v.permit).toBe("");
+      for (const c of v.covers!) {
+        expect(c.permit, c.project).toMatch(/^\d{10}$/);
+        expect(PROJECTS.find((p) => p.slug === c.slug)?.name, c.slug).toBe(c.project);
+      }
+    }
+  });
+
+  it("puts the reel on the Creek Bay and Altan pages, while Lyvia, Valia and Albero keep their own", () => {
+    expect(aiViewingFor("creek-bay")?.slug).toBe("dubai-creek-harbour");
+    expect(aiViewingFor("altan")?.slug).toBe("dubai-creek-harbour");
+    expect(aiViewingFor("lyvia-by-palace")?.slug).toBe("lyvia-by-palace");
+    expect(aiViewingFor("valia")?.slug).toBe("valia");
+    expect(aiViewingFor("albero")?.slug).toBe("albero");
+    expect(aiViewingFor("creek-haven")).toBeNull();
+    expect(aiViewingFor("dubai-creek-harbour")).toBeNull(); // the reel's file name is not a project
   });
 
   it("opens WhatsApp with exactly the owner's message", () => {
-    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Lyvia%20by%20Palace"), ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
+    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Creek%20Bay%20%C2%B7%20Altan%20%C2%B7%20Lyvia%20by%20Palace"), ownerWhatsapp("Lyvia%20by%20Palace"), ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
     expect(whatsappUrl(viewingMessage({ ...AI_VIEWING_SPECS[0]!, project: "Creek Haven & Co" }))).toBe(ownerWhatsapp("Creek%20Haven%20%26%20Co"));
   });
 });
@@ -110,7 +134,7 @@ function strayFiles(dir: string, records: EncodedViewing[]) {
 describe("AI viewings: the encoded files", () => {
   it("records exactly the viewings this site carries, so every one shows, in order", () => {
     for (const v of recorded) expect(AI_VIEWING_SPECS.some((s) => s.slug === v.slug), v.slug).toBe(true);
-    // A spec without an encoded file drops off the page silently; this keeps Lyvia leading the homepage.
+    // A spec without an encoded file drops off the page silently; this keeps the Creek Harbour reel leading the homepage.
     expect(AI_VIEWINGS.map((v) => v.slug)).toEqual(AI_VIEWING_SPECS.map((s) => s.slug));
   });
 
@@ -188,6 +212,12 @@ const fake = (slug: "valia" | "albero"): AiViewing => ({
 });
 
 describe("AI viewings: structured data", () => {
+  it("gives the reel's search description every permit it prints", () => {
+    const reel = AI_VIEWINGS.find((v) => v.covers)!;
+    expect(videoObjectNode(reel).description).toContain("DLD Permits: Creek Bay 1140397881 · Altan 1635543433 · Lyvia by Palace 2107900942.");
+    expect(videoObjectNode(reel).name).toBe("Creek Bay · Altan · Lyvia by Palace AI viewing · Dubai Creek Harbour · Emaar");
+  });
+
   it("describes each video for search with absolute www addresses", () => {
     const node = videoObjectNode(fake("albero"));
     expect(node).toMatchObject({

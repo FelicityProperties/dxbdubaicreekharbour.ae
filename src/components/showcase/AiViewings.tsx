@@ -7,7 +7,7 @@
  * viewings sit in one swipe row, and only one plays at a time: the one that
  * last came into view or was tapped.
  */
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { WhatsApp } from "@/components/showcase/shared";
@@ -137,7 +137,11 @@ export function ViewingCard({ viewing, linkProject = false }: { viewing: AiViewi
         )}
       </div>
       <div className="aiv-body">
-        <h3 className="aiv-project">{linkProject ? <Link to="/projects/$slug" params={{ slug: viewing.slug }}>{name}</Link> : name}</h3>
+        <h3 className={`aiv-project${linkProject && viewing.covers ? " aiv-several" : ""}`}>
+          {!linkProject ? name
+            : viewing.covers ? <>{viewing.covers.map((c, i) => <Fragment key={c.slug}>{i > 0 && " · "}<Link to="/projects/$slug" params={{ slug: c.slug }}>{c.project}</Link></Fragment>)}{` · ${t(viewing.area)} · ${t(viewing.developer)}`}</>
+            : <Link to="/projects/$slug" params={{ slug: viewing.slug }}>{name}</Link>}
+        </h3>
         <span className="chip">{t("Emaar renders · AI visualisation")}</span>
         <WhatsApp message={viewingMessage(viewing, t)} className="aiv-wa">
           {t("Floor plans & prices on WhatsApp")}

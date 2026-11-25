@@ -2,6 +2,19 @@
   "note": "Written by scripts/ai-viewings.mjs; do not hand-edit.",
   "videos": [
     {
+      "slug": "dubai-creek-harbour",
+      "video": "/videos/dubai-creek-harbour-ai-viewing.mp4",
+      "poster": "/videos/dubai-creek-harbour-ai-viewing.jpg",
+      "bytes": 7835840,
+      "seconds": 44.8,
+      "width": 1080,
+      "height": 1920,
+      "audio": true,
+      "hash": "adcc02464f",
+      "uploadDate": "2026-11-25T16:28:25+04:00",
+      "encoding": "H.264 two-pass at 1243 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
+    },
+    {
       "slug": "lyvia-by-palace",
       "video": "/videos/lyvia-by-palace-ai-viewing.mp4",
       "poster": "/videos/lyvia-by-palace-ai-viewing.jpg",

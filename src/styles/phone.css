@@ -342,6 +342,9 @@
  .aiv-grid.app-shelf[data-count="1"] {--shelf-item:100%;}
  .aiv-grid .aiv-project {font-size:22px;}
  .aiv-project a {display:inline-flex;align-items:center;min-height:44px;}
+ /* A title of several project links (the Creek Harbour reel): the links stay inline so its lines are evenly spaced;
+    the padding keeps each one a 44px-tall touch target without pushing the lines apart. */
+ .aiv-project.aiv-several a {display:inline;min-height:0;padding-block:10px;}
  .aiv-body {gap:10px;padding-top:14px;}
  .aiv-body .chip {font-size:12px;letter-spacing:0;text-transform:none;} /* one line in a reel card */
  .aiv-wa:active {transform:scale(.98);}

@@ -110,7 +110,13 @@ starting point but is now behind this repo and should not be copied over it.
   renaming them breaks felicitypro.com. To change them:
   `npm run ai-viewings -- --set felicitypro`, then
   `npm run felicitypro-snippets`, then paste the new code into Durable.
-  This site's own viewings are `public/videos/` (`npm run ai-viewings`).
+  This site's own viewings are `public/videos/` (`npm run ai-viewings`). To add
+  one (or replace one whose source changed) without re-encoding the others,
+  add its source in `scripts/ai-viewings.mjs` and its entry in
+  `src/data/ai-viewings.ts`, then `npm run ai-viewings -- --only <slug>`. A
+  viewing that shows several projects (the Creek Harbour reel) lists them in
+  `covers`, each with its permit; their project pages show it unless they
+  have a viewing of their own.
 
 ## Refreshing the data
 

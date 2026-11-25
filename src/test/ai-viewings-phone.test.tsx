@@ -10,7 +10,7 @@ import { AI_VIEWING_SPECS, type AiViewing } from "@/data/ai-viewings";
 import { ViewingCard } from "@/components/showcase/AiViewings";
 
 const fake = (slug: string, project: string): AiViewing => ({
-  ...AI_VIEWING_SPECS[0]!,
+  ...AI_VIEWING_SPECS.find((s) => !s.covers)!, // a viewing of one project
   slug,
   project,
   video: `/videos/${slug}-ai-viewing.mp4`,
