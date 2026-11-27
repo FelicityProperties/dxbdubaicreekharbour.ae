@@ -3,7 +3,7 @@
   "name": "Dubai Land Department",
   "basis": "Dubai Land Department registration records",
   "coverage": "DLD registrations loaded through October 2026",
-  "snapshotDate": "2026-11-25",
+  "snapshotDate": "2026-11-27",
   "filters": "Market sales only: related-party transfers and completion re-registrations of the same purchase are left out. Apartments only in the 12-month summaries."
  },
  "window": {
@@ -2916,6 +2916,19 @@
    "date": "2026-11-18",
    "building": "The Grand",
    "project": "the-grand",
+   "floor": "18",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1273,
+   "price": 2750000,
+   "psf": 2161,
+   "basis": "ready",
+   "kind": "Resale",
+   "tier": "entry_level"
+  },
+  {
+   "date": "2026-11-18",
+   "building": "The Grand",
+   "project": "the-grand",
    "floor": "28",
    "bedrooms": "2 Bed",
    "sizeSqft": 1324,
@@ -2930,19 +2943,6 @@
    "building": "The Grand",
    "project": "the-grand",
    "floor": "17",
-   "bedrooms": "2 Bed",
-   "sizeSqft": 1273,
-   "price": 2750000,
-   "psf": 2161,
-   "basis": "ready",
-   "kind": "Resale",
-   "tier": "entry_level"
-  },
-  {
-   "date": "2026-11-18",
-   "building": "The Grand",
-   "project": "the-grand",
-   "floor": "18",
    "bedrooms": "2 Bed",
    "sizeSqft": 1273,
    "price": 2750000,
@@ -5700,19 +5700,6 @@
    "project": "the-grand",
    "floor": "59",
    "bedrooms": "2 Bed",
-   "sizeSqft": 1327,
-   "price": 2600000,
-   "psf": 1960,
-   "basis": "ready",
-   "kind": "Resale",
-   "tier": "entry_level"
-  },
-  {
-   "date": "2026-10-14",
-   "building": "The Grand",
-   "project": "the-grand",
-   "floor": "59",
-   "bedrooms": "2 Bed",
    "sizeSqft": 1251,
    "price": 2600000,
    "psf": 2079,
@@ -5729,6 +5716,19 @@
    "sizeSqft": 1282,
    "price": 2600000,
    "psf": 2028,
+   "basis": "ready",
+   "kind": "Resale",
+   "tier": "entry_level"
+  },
+  {
+   "date": "2026-10-14",
+   "building": "The Grand",
+   "project": "the-grand",
+   "floor": "59",
+   "bedrooms": "2 Bed",
+   "sizeSqft": 1327,
+   "price": 2600000,
+   "psf": 1960,
    "basis": "ready",
    "kind": "Resale",
    "tier": "entry_level"
@@ -9506,9 +9506,9 @@
    "building": "Dubai Creek Residences North Tower 1",
    "project": "dubai-creek-residences",
    "bedrooms": "2 Bed",
-   "sizeSqft": 1432,
+   "sizeSqft": 1628,
    "annualRent": 175000,
-   "rentPsf": 122,
+   "rentPsf": 107,
    "newContract": true
   },
   {
@@ -9518,9 +9518,9 @@
    "building": "Dubai Creek Residences North Tower 1",
    "project": "dubai-creek-residences",
    "bedrooms": "2 Bed",
-   "sizeSqft": 1628,
+   "sizeSqft": 1432,
    "annualRent": 175000,
-   "rentPsf": 107,
+   "rentPsf": 122,
    "newContract": true
   },
   {
