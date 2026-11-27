@@ -56,19 +56,19 @@ function jpegSize(file: string): [number, number] | null {
 }
 
 describe("AI viewings: what the owner asked for", () => {
-  it("leads with the Creek Harbour reel, then Lyvia, Valia and Albero, each with its own permits", () => {
-    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["dubai-creek-harbour", "lyvia-by-palace", "valia", "albero"]);
+  it("shows three: the Creek Harbour reel, then Lyvia and Valia, each with its own permits", () => {
+    // Three, by the owner's choice (27 Nov 2026): Albero was taken off.
+    expect(AI_VIEWING_SPECS.map((v) => v.slug)).toEqual(["dubai-creek-harbour", "lyvia-by-palace", "valia"]);
     // A viewing of one project is named after it; the reel names each project it shows. Every one is a project on this site.
     for (const v of AI_VIEWING_SPECS) for (const slug of v.covers ? v.covers.map((c) => c.slug) : [v.slug]) expect(PROJECTS.some((p) => p.slug === slug), slug).toBe(true);
-    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Creek Bay · Altan · Lyvia by Palace · Dubai Creek Harbour · Emaar", "Lyvia by Palace · Dubai Creek Harbour · Emaar", "Valia · Dubai Creek Harbour · Emaar", "Albero · Dubai Creek Harbour · Emaar"]);
+    expect(AI_VIEWING_SPECS.map(viewingLine)).toEqual(["Creek Bay · Altan · Lyvia by Palace · Dubai Creek Harbour · Emaar", "Lyvia by Palace · Dubai Creek Harbour · Emaar", "Valia · Dubai Creek Harbour · Emaar"]);
     expect(AI_VIEWING_SPECS.map(permitLine)).toEqual([
       // As printed at the foot of the owner's reel (25 Nov 2026).
       "Felicity Properties · RERA ORN 33951 · DLD Permits: Creek Bay 1140397881 · Altan 1635543433 · Lyvia by Palace 2107900942",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 2107900942",
       "Felicity Properties · RERA ORN 33951 · DLD Permit No. 0710819088",
-      "Felicity Properties · RERA ORN 33951 · DLD Permit No. 1251122980",
     ]);
-    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, true, true, true]); // every viewing keeps its song (since 27 Oct 2026)
+    expect(AI_VIEWING_SPECS.map((v) => v.audio)).toEqual([true, true, true]); // every viewing keeps its song (since 27 Oct 2026)
   });
 
   it("names the reel's projects exactly as its links and permits do", () => {
@@ -82,18 +82,18 @@ describe("AI viewings: what the owner asked for", () => {
     }
   });
 
-  it("puts the reel on the Creek Bay and Altan pages, while Lyvia, Valia and Albero keep their own", () => {
+  it("puts the reel on the Creek Bay and Altan pages, while Lyvia and Valia keep their own", () => {
     expect(aiViewingFor("creek-bay")?.slug).toBe("dubai-creek-harbour");
     expect(aiViewingFor("altan")?.slug).toBe("dubai-creek-harbour");
     expect(aiViewingFor("lyvia-by-palace")?.slug).toBe("lyvia-by-palace");
     expect(aiViewingFor("valia")?.slug).toBe("valia");
-    expect(aiViewingFor("albero")?.slug).toBe("albero");
+    expect(aiViewingFor("albero")).toBeNull(); // taken off the site, 27 Nov 2026
     expect(aiViewingFor("creek-haven")).toBeNull();
     expect(aiViewingFor("dubai-creek-harbour")).toBeNull(); // the reel's file name is not a project
   });
 
   it("opens WhatsApp with exactly the owner's message", () => {
-    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Creek%20Bay%20%C2%B7%20Altan%20%C2%B7%20Lyvia%20by%20Palace"), ownerWhatsapp("Lyvia%20by%20Palace"), ownerWhatsapp("Valia"), ownerWhatsapp("Albero")]);
+    expect(AI_VIEWING_SPECS.map((v) => whatsappUrl(viewingMessage(v)))).toEqual([ownerWhatsapp("Creek%20Bay%20%C2%B7%20Altan%20%C2%B7%20Lyvia%20by%20Palace"), ownerWhatsapp("Lyvia%20by%20Palace"), ownerWhatsapp("Valia")]);
     expect(whatsappUrl(viewingMessage({ ...AI_VIEWING_SPECS[0]!, project: "Creek Haven & Co" }))).toBe(ownerWhatsapp("Creek%20Haven%20%26%20Co"));
   });
 });
@@ -197,8 +197,13 @@ describe("AI viewings: felicitypro.com's copies", () => {
   });
 });
 
+/** Stand-in viewings for the player and structured-data tests: one without sound, one with (Albero's name and permit, as before it left the site). */
 const fake = (slug: "valia" | "albero"): AiViewing => ({
-  ...AI_VIEWING_SPECS.find((s) => s.slug === slug)!,
+  slug,
+  project: slug === "albero" ? "Albero" : "Valia",
+  area: "Dubai Creek Harbour",
+  developer: "Emaar",
+  permit: slug === "albero" ? "1251122980" : "0710819088",
   video: `/videos/${slug}-ai-viewing.mp4`,
   poster: `/videos/${slug}-ai-viewing.jpg`,
   bytes: 1,

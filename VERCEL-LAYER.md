@@ -116,7 +116,10 @@ starting point but is now behind this repo and should not be copied over it.
   `src/data/ai-viewings.ts`, then `npm run ai-viewings -- --only <slug>`. A
   viewing that shows several projects (the Creek Harbour reel) lists them in
   `covers`, each with its permit; their project pages show it unless they
-  have a viewing of their own.
+  have a viewing of their own. To take one off this site: remove it from the
+  site set in `scripts/ai-viewings.mjs` and from `src/data/ai-viewings.ts`,
+  then `npm run ai-viewings -- --prune` (its two files and its entry go; the
+  others stay byte-identical). felicitypro.com's copies are a separate set.
 
 ## Refreshing the data
 

@@ -10,6 +10,8 @@
 //                                         (add --set felicitypro for that set)
 //   npm run ai-viewings -- --only SLUG    encode that one viewing (a new one, or one whose source changed);
 //                                         every other viewing keeps its recorded files and entry unchanged
+//   npm run ai-viewings -- --prune        encode nothing: a viewing taken out of the set below loses its entry
+//                                         and its two files; every other viewing stays exactly as recorded
 // Needs ffmpeg and ffprobe. Output: H.264 1080x1920 (padded, never cropped, if a
 // source isn't 9:16), at most 30 fps, CRF 26, +faststart, at most 8 MB — when CRF 26
 // alone comes out larger, a two-pass encode aimed at the 8 MB budget replaces it.
@@ -32,7 +34,8 @@ const LYVIA = { slug: "lyvia-by-palace", audio: true, url: "https://d2ol7oe51mr4
 // "What if Dubai was a video game?": Creek Bay, Altan and Lyvia by Palace in one reel (the owner's, 25 Nov 2026).
 const CREEK_HARBOUR = { slug: "dubai-creek-harbour", audio: true, url: "https://d2ol7oe51mr4n9.cloudfront.net/user_3FtvcmlTEalMEsF459UqJq0vs3Z/1f115b19-a161-4846-85da-5cfdc4186f3b.mp4" };
 const SETS = {
-  site: { sources: [CREEK_HARBOUR, LYVIA, VALIA, ALBERO], dir: "videos", manifest: "src/data/ai-viewings.json", poster: { width: 720, height: 1280, quality: "5" } },
+  // Albero was taken off this site by the owner on 27 Nov 2026 (felicitypro.com keeps its own copy).
+  site: { sources: [CREEK_HARBOUR, LYVIA, VALIA], dir: "videos", manifest: "src/data/ai-viewings.json", poster: { width: 720, height: 1280, quality: "5" } },
   felicitypro: { sources: [VALIA, PARKWOOD, ALBERO], dir: "felicitypro", manifest: "design/felicitypro-ai-viewings/videos.json", poster: { width: 1080, height: 1920, quality: "4" } },
 };
 const MAX_BYTES = 8_000_000;
@@ -42,6 +45,7 @@ const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.i
 const from = arg("--from");
 const postersOnly = process.argv.includes("--posters");
 const only = arg("--only");
+const prune = process.argv.includes("--prune");
 const set = SETS[arg("--set") ?? "site"];
 if (!set) throw new Error(`--set must be one of: ${Object.keys(SETS).join(", ")}`);
 const SOURCES = set.sources;
@@ -79,10 +83,10 @@ const work = mkdtempSync(join(tmpdir(), "ai-viewings-"));
 const videos = [];
 try {
   for (const s of SOURCES) {
-    if (only && s.slug !== only) {
-      // --only: this viewing stays exactly as recorded (its files are not touched).
+    if ((only && s.slug !== only) || prune) {
+      // --only, --prune: this viewing stays exactly as recorded (its files are not touched).
       const was = previous.videos.find((p) => p.slug === s.slug);
-      if (!was || !existsSync(join(root, "public", was.video)) || !existsSync(join(root, "public", was.poster))) throw new Error(`${s.slug}: not encoded yet — run without --only`);
+      if (!was || !existsSync(join(root, "public", was.video)) || !existsSync(join(root, "public", was.poster))) throw new Error(`${s.slug}: not encoded yet — run without --only or --prune`);
       videos.push(was);
       continue;
     }
@@ -147,8 +151,14 @@ try {
   // Every source succeeded: only now replace what the site serves.
   mkdirSync(outDir, { recursive: true });
   mkdirSync(dirname(manifestPath), { recursive: true });
-  for (const v of videos) if (!only || v.slug === only) for (const file of postersOnly ? [v.poster] : [v.video, v.poster]) copyFileSync(join(work, basename(file)), join(root, "public", file));
+  // Copy what this run encoded: nothing with --prune, only that viewing with --only.
+  for (const v of videos) if (!prune && (!only || v.slug === only)) for (const file of postersOnly ? [v.poster] : [v.video, v.poster]) copyFileSync(join(work, basename(file)), join(root, "public", file));
   writeFileSync(manifestPath, `${JSON.stringify({ note: previous.note, videos }, null, 2)}\n`);
+  // A viewing no longer in the set: its recorded files go too, so nothing is left on the site that no page plays.
+  for (const gone of previous.videos.filter((p) => !SOURCES.some((s) => s.slug === p.slug))) {
+    for (const file of [gone.video, gone.poster]) rmSync(join(root, "public", file), { force: true });
+    console.log(`${gone.slug}: removed (no longer in this set)`);
+  }
 } finally {
   rmSync(work, { recursive: true, force: true });
 }

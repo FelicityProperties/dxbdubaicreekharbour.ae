@@ -27,8 +27,8 @@ export type EncodedViewing = { slug: string; video: string; poster: string; byte
 export type AiViewing = AiViewingSpec & EncodedViewing;
 
 /**
- * The viewings this site shows, in order. The Creek Harbour reel leads (the owner's choice, 25 Nov 2026), then Lyvia
- * (the owner's main video since 26 Oct 2026), Valia and Albero.
+ * The viewings this site shows, in order: three, by the owner's choice (27 Nov 2026). The Creek Harbour reel leads
+ * (25 Nov 2026), then Lyvia (the owner's main video since 26 Oct 2026) and Valia. Albero was taken off on 27 Nov 2026.
  */
 export const AI_VIEWING_SPECS: AiViewingSpec[] = [
   // area and developer are shown translated (t(v.area), t(v.developer)); msg() makes them translation keys.
@@ -43,7 +43,6 @@ export const AI_VIEWING_SPECS: AiViewingSpec[] = [
   },
   { slug: "lyvia-by-palace", project: "Lyvia by Palace", area: msg("Dubai Creek Harbour"), developer: msg("Emaar"), permit: "2107900942", audio: true },
   { slug: "valia", project: "Valia", area: msg("Dubai Creek Harbour"), developer: msg("Emaar"), permit: "0710819088", audio: true },
-  { slug: "albero", project: "Albero", area: msg("Dubai Creek Harbour"), developer: msg("Emaar"), permit: "1251122980", audio: true },
 ];
 
 const recorded = encoded.videos as EncodedViewing[];

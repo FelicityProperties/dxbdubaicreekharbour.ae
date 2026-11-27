@@ -39,19 +39,6 @@
       "hash": "ebcae0f255",
       "uploadDate": "2026-10-27T18:31:55+04:00",
       "encoding": "H.264 two-pass at 1237 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
-    },
-    {
-      "slug": "albero",
-      "video": "/videos/albero-ai-viewing.mp4",
-      "poster": "/videos/albero-ai-viewing.jpg",
-      "bytes": 7676364,
-      "seconds": 45.01,
-      "width": 1080,
-      "height": 1920,
-      "audio": true,
-      "hash": "654a4bd4ae",
-      "uploadDate": "2026-10-27T18:33:39+04:00",
-      "encoding": "H.264 two-pass at 1237 kb/s (CRF 26 came out over 8 MB), AAC 128 kb/s"
     }
   ]
 }
