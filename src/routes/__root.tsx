@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import phoneCss from "../styles/phone.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SELF_REPAIR_SCRIPT } from "../lib/self-repair";
 import { Header, Footer, MobileBar, PageNotFound } from "@/components/showcase/shared";
 import { SITE } from "@/data/projects";
 import { FelicityBot } from "@/components/felicitybot/FelicityBot";
@@ -100,9 +101,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     scripts: [
       // updateViaCache "none": the browser always checks for a new sw.js, so a fix to it reaches every visitor on their next visit.
       { children: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).catch(function(){})})}" },
-      // Self-repair: if a page ever shows without its design (a stale saved copy: the logo fills the screen),
-      // delete the site's saved copies and reload once. The flag stops it ever looping.
-      { children: "addEventListener('load',function(){try{var m=document.querySelector('.dxbch-mark');if(!m||m.getBoundingClientRect().width<=60||sessionStorage.getItem('dxbch-healed'))return;sessionStorage.setItem('dxbch-healed','1');var go=function(){location.reload()};Promise.all([navigator.serviceWorker?navigator.serviceWorker.getRegistrations().then(function(r){return Promise.all(r.map(function(x){return x.unregister()}))}):0,window.caches?caches.keys().then(function(k){return Promise.all(k.map(function(n){return caches.delete(n)}))}):0]).then(go,go)}catch(e){}})" },
+      // Self-repair: if a build file fails to load (a bad saved copy) or the design is missing, fetch the page's build
+      // files again past the browser's saved copies and reload once (src/lib/self-repair.ts).
+      { children: SELF_REPAIR_SCRIPT },
     ],
   }; },
   shellComponent: RootShell,

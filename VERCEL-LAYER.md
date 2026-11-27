@@ -154,6 +154,26 @@ by hand.
   output. They limit no script, style, image or video: felicitypro.com's
   videos still play from `public/felicitypro`. To check a deployment:
   `curl -sI https://www.dxbdubaicreekharbour.ae/ | grep -i -E "x-frame|content-security|x-content-type|referrer|permissions"`.
+- Build files (`/assets/…`) are kept by browsers for a year, but only files
+  that exist. Nitro's own rule put the year on every answer under
+  `/assets/`, the "not found" page included, so a browser that asked for a
+  build file a deployment didn't have (a page left open across a deploy, or
+  loaded in the minute one goes live) kept that "not found" for a year and
+  the site's scripts stopped starting in it: no videos, no buttons, no
+  FelicityBot. That happened to the owner's Chrome on 27 Nov 2026 (a hard
+  reload fixed it). Now `vite.config.ts` gives `/assets/**` an everyday rule
+  (`max-age=0, must-revalidate`) that the server's own answers carry, and
+  `scripts/vercel-asset-cache.mjs` (run by `npm run build` after
+  `vite build`, Vercel builds only) moves the year into the routes' `hit`
+  phase, which applies only when Vercel finds the file. The build stops if
+  Nitro's output no longer looks as the script expects. And every page has
+  a self-repair script (`src/lib/self-repair.ts`): if a build file fails to
+  load, or the design is missing, it clears the service worker's saved
+  copies, fetches the page's build files again past the browser's saved
+  copies, and reloads once per tab. To check a deployment:
+  `curl -sI https://www.dxbdubaicreekharbour.ae/assets/missing.js | grep -i cache-control`
+  (must not say `immutable`) and the same for a real file from the page
+  (should say `immutable`). Dubai Hills had the same Nitro rule.
 - Environment variables:
   - `DATABASE_URL` — from the Neon integration. Enquiries are saved here.
     One connection can send 5 enquiries per 10 minutes and 10 per day,

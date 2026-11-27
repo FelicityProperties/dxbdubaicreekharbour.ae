@@ -36,6 +36,12 @@ export default defineConfig({
   // The security headers are the first route of .vercel/output/config.json, which nitro writes from `vercel.config`
   // (vercel.json's "headers" are not read for a prebuilt output).
   nitro: {
+    // Build files (/assets/…) are named after their content, so a browser may keep one for a year — if it exists.
+    // nitro's own rule put that year on every answer under /assets/, the "not found" page included, so a browser that
+    // once asked for a build file a deployment didn't have kept the "not found" for a year and the site's scripts
+    // stopped starting in it (the owner's Chrome, 27 Nov 2026). This everyday rule replaces nitro's for the server's own
+    // answers there; scripts/vercel-asset-cache.mjs, run after `vite build`, gives the year back to the files Vercel finds.
+    routeRules: { "/assets/**": { headers: { "cache-control": "public, max-age=0, must-revalidate" } } },
     vercel: {
       functions: { maxDuration: 60 },
       config: { routes: [{ src: "/(.*)", headers: SECURITY_HEADERS, continue: true }] },
